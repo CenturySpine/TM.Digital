@@ -6,4 +6,14 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="SimpleInjector" Version="4.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TM.Digital.Model\TM.Digital.Model.csproj" />
+    <ProjectReference Include="..\TM.Digital.Transport\TM.Digital.Transport.csproj" />
+  </ItemGroup>
+
 </Project>
