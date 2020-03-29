@@ -9,7 +9,7 @@
         Capital,
         Volcano,
         Quarry,
-        Geothermie,
+        Geothermy,
         Factory,
         EcologicalArea,
         Mall,

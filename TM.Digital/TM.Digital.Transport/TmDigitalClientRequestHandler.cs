@@ -24,5 +24,11 @@ namespace TM.Digital.Transport
             string json = await result.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(json);
         }
+
+        public async Task Post<T>(string uri, T postParameter)
+        {
+            var result = await _client.PostAsync(uri, new StringContent(JsonConvert.SerializeObject(postParameter)));
+            result.EnsureSuccessStatusCode();
+        }
     }
 }

@@ -7,9 +7,26 @@
         xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model"
         xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
         d:DataContext="{d:DesignInstance {x:Type local:MainWindowViewModel}}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow"  d:DesignHeight="800" d:DesignWidth="1000">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="2">
+            <UniformGrid Columns="2">
+                <TextBlock Text="Server's address"  Margin="2"/>
+                <TextBox Margin="2" Text="{Binding Server}"></TextBox>
+            </UniformGrid>
+            <UniformGrid Columns="2">
+                <TextBlock Text="Player's name" Margin="2"/>
+                <TextBox Margin="2" Text="{Binding PlayerName}"></TextBox>
+            </UniformGrid>
+            <Button Command="{Binding StartGameCommand}" Content="Join" Margin="2"></Button>
+        </StackPanel>
         <ItemsControl ItemsSource="{Binding Board.BoardLines}" HorizontalAlignment="Center" VerticalAlignment="Center">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -79,7 +96,7 @@
                                                                                         <Setter Property="Data" Value="{Binding Source={StaticResource card}, Path=Data}" />
                                                                                         <Setter Property="Fill" Value="Black" />
                                                                                     </DataTrigger>
-                                                                                    <DataTrigger Binding="{Binding BonusType}" Value="{x:Static resources:ResourceType.Titane}">
+                                                                                    <DataTrigger Binding="{Binding BonusType}" Value="{x:Static resources:ResourceType.Titanium}">
                                                                                         <Setter Property="Data" Value="{Binding Source={StaticResource starbox}, Path=Data}" />
                                                                                         <Setter Property="Fill" Value="Black" />
                                                                                         <Setter Property="Stroke" Value="Yellow" />

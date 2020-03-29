@@ -5,6 +5,8 @@
         None,
         Ocean,
         Volcano,
-        NoctisCity
+        NoctisCity,
+        Phobos,
+        Ganymede
     }
 }

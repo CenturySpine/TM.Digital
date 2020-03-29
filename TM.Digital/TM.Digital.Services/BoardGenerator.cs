@@ -37,7 +37,7 @@ namespace TM.Digital.Services
                     new BoardPlace { Index = index++ },
                     new BoardPlace { Index = index++ },
                     new BoardPlace { Index = index++ },
-                    new BoardPlace { Index = index++, PlacementBonus = new List<BoardPlaceBonus>{new BoardPlaceBonus { BonusType = ResourceType.Card  },new BoardPlaceBonus { BonusType = ResourceType.Card  } }, Reserved = new BoardPlaceReservedSpace {  ReservedFor = ReservedFor.Ocean } } 
+                    new BoardPlace { Index = index++, PlacementBonus = new List<BoardPlaceBonus>{new BoardPlaceBonus { BonusType = ResourceType.Card  },new BoardPlaceBonus { BonusType = ResourceType.Card  } }, Reserved = new BoardPlaceReservedSpace {  ReservedFor = ReservedFor.Ocean } }
                     }},
                     new BoardLine
                     { Index = 2,
@@ -55,7 +55,7 @@ namespace TM.Digital.Services
                     { Index = 3,
                         BoardPlaces = new List<BoardPlace>{
                     //line #4
-                    new BoardPlace { Index = index++, Name="Pavonis Mons",PlacementBonus =  new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Titane  },new BoardPlaceBonus { BonusType = ResourceType.Plant  } }, Reserved = new BoardPlaceReservedSpace {IsExclusive=false, ReservedFor = ReservedFor.Volcano } },
+                    new BoardPlace { Index = index++, Name="Pavonis Mons",PlacementBonus =  new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Titanium  },new BoardPlaceBonus { BonusType = ResourceType.Plant  } }, Reserved = new BoardPlaceReservedSpace {IsExclusive=false, ReservedFor = ReservedFor.Volcano } },
                     new BoardPlace { Index = index++, PlacementBonus = new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Plant  } } },
                     new BoardPlace { Index = index++, PlacementBonus = new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Plant  } } },
                     new BoardPlace { Index = index++, PlacementBonus = new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Plant  } } },
@@ -112,7 +112,7 @@ namespace TM.Digital.Services
                     new BoardPlace { Index = index++,PlacementBonus =  new List<BoardPlaceBonus>{new BoardPlaceBonus { BonusType = ResourceType.Card  } } },
                     new BoardPlace { Index = index++ ,PlacementBonus =  new List<BoardPlaceBonus>{new BoardPlaceBonus { BonusType = ResourceType.Card  } }},
                     new BoardPlace { Index = index++ },
-                    new BoardPlace { Index = index++ ,PlacementBonus = new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Titane  } }}
+                    new BoardPlace { Index = index++ ,PlacementBonus = new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Titanium  } }}
                     }},
                     new BoardLine
                     { Index = 8,
@@ -123,9 +123,15 @@ namespace TM.Digital.Services
                     new BoardPlace { Index = index++ },
                     new BoardPlace { Index = index++},
 
-                    new BoardPlace { Index = index ,PlacementBonus = new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Titane  },new BoardPlaceBonus { BonusType = ResourceType.Titane  } },Reserved = new BoardPlaceReservedSpace {  ReservedFor = ReservedFor.Ocean } }
+                    new BoardPlace { Index = index ,PlacementBonus = new List<BoardPlaceBonus>{ new BoardPlaceBonus { BonusType = ResourceType.Titanium  },new BoardPlaceBonus { BonusType = ResourceType.Titanium  } },Reserved = new BoardPlaceReservedSpace {  ReservedFor = ReservedFor.Ocean } }
                     }}
+                },
+                IsolatedPlaces = new List<BoardPlace>
+                {
+                    new BoardPlace {Index = -1,Name = "Phobos Space Haven",Reserved = new BoardPlaceReservedSpace {ReservedFor = ReservedFor.Phobos}},
+                    new BoardPlace {Index = -2,Name = "Ganymede Colony",Reserved = new BoardPlaceReservedSpace {ReservedFor = ReservedFor.Ganymede}},
                 }
+
             };
 
 

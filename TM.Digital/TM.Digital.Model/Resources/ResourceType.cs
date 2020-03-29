@@ -4,10 +4,15 @@
     {
         None,
         Steel,
-        Titane,
+        Titanium,
         Card,
         Plant,
         Heat,
-        Money
+        Money,
+        Energy,
+        Animal,
+        Microbe,
+        Fleet,
+        Science
     }
 }

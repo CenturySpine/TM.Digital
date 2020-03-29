@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Model", "TM.Digi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Services", "TM.Digital.Services\TM.Digital.Services.csproj", "{0B9F59A3-BD67-426A-A588-5F7A8C972683}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TM.Digital.Transport", "TM.Digital.Transport\TM.Digital.Transport.csproj", "{376EDD0F-0345-46E3-A086-B60C8AA34710}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Transport", "TM.Digital.Transport\TM.Digital.Transport.csproj", "{376EDD0F-0345-46E3-A086-B60C8AA34710}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TM.Digital.Cards", "TM.Digital.Cards\TM.Digital.Cards.csproj", "{07EB9337-BEE1-4259-9C4A-0390040034C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{376EDD0F-0345-46E3-A086-B60C8AA34710}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{376EDD0F-0345-46E3-A086-B60C8AA34710}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{376EDD0F-0345-46E3-A086-B60C8AA34710}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07EB9337-BEE1-4259-9C4A-0390040034C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07EB9337-BEE1-4259-9C4A-0390040034C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07EB9337-BEE1-4259-9C4A-0390040034C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07EB9337-BEE1-4259-9C4A-0390040034C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

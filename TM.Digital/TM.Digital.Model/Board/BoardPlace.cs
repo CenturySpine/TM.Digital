@@ -17,11 +17,7 @@ namespace TM.Digital.Model.Board
         public BoardPlaceReservedSpace Reserved { get; set; }
 
         public List<BoardPlaceBonus> PlacementBonus { get; set; }
-    }
 
-    public class BoardLine 
-    {
-        public int Index { get; set; }
-        public List<BoardPlace> BoardPlaces { get; set; }
+        public Tile.Tile PlayedTile { get; set; }
     }
 }
