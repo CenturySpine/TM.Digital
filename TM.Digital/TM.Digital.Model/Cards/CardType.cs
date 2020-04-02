@@ -2,9 +2,9 @@
 {
     public enum CardType
     {
-        Instant,
-        Action,
-        Event,
+        Green,
+        Blue,
+        Red,
         Corporation,
         Prelude,
     }

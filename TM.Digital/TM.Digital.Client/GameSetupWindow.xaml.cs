@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 
 namespace TM.Digital.Client
@@ -59,6 +60,18 @@ namespace TM.Digital.Client
     {
         private bool _isSelected;
         public Corporation Corporation { get; set; }
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set { _isSelected = value; OnPropertyChanged(nameof(IsSelected)); }
+        }
+    }
+
+    public class PatentSelector : NotifierBase
+    {
+        private bool _isSelected;
+        public Patent Patent { get; set; }
 
         public bool IsSelected
         {

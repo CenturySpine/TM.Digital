@@ -36,6 +36,22 @@ namespace TM.Digital.Transport
 
             var result = await _client.PostAsync(uri, content);
             result.EnsureSuccessStatusCode();
+
+        }
+        public async Task<TOut> Post<TIn, TOut>(string uri, TIn postParameter)
+        {
+            HttpContent content = new StringContent(System.Text.Json.JsonSerializer.Serialize(postParameter));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var result = await _client.PostAsync(uri, content);
+            result.EnsureSuccessStatusCode();
+            string json = await result.Content.ReadAsStringAsync();
+            return System.Text.Json.JsonSerializer.Deserialize<TOut>(json, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            
+
         }
     }
 }

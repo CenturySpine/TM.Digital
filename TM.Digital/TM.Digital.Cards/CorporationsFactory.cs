@@ -10,7 +10,7 @@ namespace TM.Digital.Cards
     {
         public static Corporation CheungShingMars()
         {
-            var c = new Corporation()
+            var c = new Corporation
             {
                 Name = "Cheung Shing Mars",
                 StartingMoney = 44,
@@ -18,7 +18,7 @@ namespace TM.Digital.Cards
                 Tags = new List<Tags>()
             };
             c.ResourcesEffects.Add(new ResourceEffect { Amount = 3, ResourceType = ResourceType.Money });
-            c.TagEffects.Add(new TagEffect() { AffectedTag = Tags.Building, EffectValue = -2 , TagEffectType = TagEffectType.CostAlteration});
+            c.TagEffects.Add(new TagEffect { AffectedTag = Tags.Building, EffectValue = -2 , TagEffectType = TagEffectType.CostAlteration});
 
             c.Tags.Add(Tags.Building);
             return c;
@@ -26,7 +26,7 @@ namespace TM.Digital.Cards
 
         public static Corporation Teractor()
         {
-            var c = new Corporation()
+            var c = new Corporation
             {
                 Name = "Terractor",
                 StartingMoney = 60,

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 
 namespace TM.Digital.Model.Game
@@ -7,5 +9,8 @@ namespace TM.Digital.Model.Game
     {
         public Corporation Corporation { get; set; }
         public Guid PlayerId { get; set; }
+
+        public List<Patent> BoughtCards { get; set; }
+        
     }
 }

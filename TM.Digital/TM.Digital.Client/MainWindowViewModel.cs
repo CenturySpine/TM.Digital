@@ -85,12 +85,16 @@ namespace TM.Digital.Client
                     await TmDigitalClientRequestHandler.Instance.Request<GameSetup>("game/addplayer/" + PlayerName);
 
                 var result = _popup.ShowGameSetup(gameSetup);
-                if(result.CorporationChoices.Any())
-                    await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection>("game/addplayer/setup", new GameSetupSelection
+
+                if (result.CorporationChoices.Any())
+                {
+                    var player = await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>("game/addplayer/setup", new GameSetupSelection
                     {
                         Corporation = result.CorporationChoices.First(c => c.IsSelected).Corporation,
+                        BoughtCards= result.PatentChoices.Where(p=>p.IsSelected).Select(p=>p.Patent).ToList(),
                         PlayerId = result.PlayerId
                     });
+                }
             });
 
 

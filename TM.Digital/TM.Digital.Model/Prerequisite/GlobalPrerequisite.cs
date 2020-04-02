@@ -13,7 +13,7 @@ namespace TM.Digital.Model.Prerequisite
         {
             switch (Parameter)
             {
-                case GlobalParameterType.Heat:
+                case GlobalParameterType.Temperature:
                     return IsMax
                         ? board.GlobalParameterLevels[Parameter].Level <= Level
                         : board.GlobalParameterLevels[Parameter].Level >= Level;

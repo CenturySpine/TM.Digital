@@ -12,7 +12,7 @@ namespace TM.Digital.Model.Effects
         public void Apply(Player.Player player, Board.Board board, Card card)
         {
             var tagCount = card.Tags.Count(t => t == AffectedTag);
-            card.ModifiedCost = card.BaseCost += CostEffect * tagCount;
+            //card.ModifiedCost = card.BaseCost += CostEffect * tagCount;
         }
     }
 }

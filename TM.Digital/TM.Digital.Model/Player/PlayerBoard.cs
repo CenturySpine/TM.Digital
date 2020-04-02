@@ -8,7 +8,8 @@ namespace TM.Digital.Model.Player
     {
         public PlayerBoard()
         {
-            Cards = new List<Card>();
+            Cards = new List<Patent>();
+            
         }
         public List<ResourceHandler> Resources { get; set; } = new List<ResourceHandler>
         {
@@ -20,7 +21,7 @@ namespace TM.Digital.Model.Player
             new ResourceHandler {ResourceType = ResourceType.Heat}
         };
 
-        public List<Card> Cards { get; set; }
+        public List<Patent> Cards { get; set; }
 
     }
 }
