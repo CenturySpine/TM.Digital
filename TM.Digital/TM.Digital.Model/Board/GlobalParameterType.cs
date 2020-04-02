@@ -2,6 +2,7 @@
 {
     public enum GlobalParameterType
     {
-        Heat, Oxygen, Oceans
+        Heat, Oxygen,  Terraformation,
+        Oceans
     }
 }

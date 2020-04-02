@@ -14,20 +14,30 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Margin="2">
+            <UniformGrid Columns="3">
+                
+                <TextBlock Text="Players" Margin="2"></TextBlock>
+                <TextBox Text="{Binding NumberOfPlayers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"></TextBox>
+            </UniformGrid>
             <UniformGrid Columns="2">
                 <TextBlock Text="Server's address"  Margin="2"/>
                 <TextBox Margin="2" Text="{Binding Server}"></TextBox>
             </UniformGrid>
+            <Button Command="{Binding StartGameCommand}" Content="Start Game" Margin="2" Padding="2"></Button>
+
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="2">
             <UniformGrid Columns="2">
                 <TextBlock Text="Player's name" Margin="2"/>
                 <TextBox Margin="2" Text="{Binding PlayerName}"></TextBox>
             </UniformGrid>
-            <Button Command="{Binding StartGameCommand}" Content="Join" Margin="2"></Button>
+            <Button Command="{Binding AddPlayerCommand}" Content="Join" Margin="2" Padding="2"></Button>
         </StackPanel>
-        <ItemsControl ItemsSource="{Binding Board.BoardLines}" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Board.BoardLines}" HorizontalAlignment="Center" VerticalAlignment="Center">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="Transparent" >

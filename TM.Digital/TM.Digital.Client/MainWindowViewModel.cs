@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
@@ -13,79 +15,40 @@ namespace TM.Digital.Client
         private readonly PopupService _popup;
 
         private Board _board;
+        private bool _gameStarted;
         private string _playerName;
         private string _server;
+        public MainWindowViewModel(PopupService popup)
+        {
+            _popup = popup;
+        }
+
+        public RelayCommand AddPlayerCommand { get; set; }
 
         public Board Board
         {
             get => _board;
             set { _board = value; OnPropertyChanged(nameof(Board)); }
         }
-
-        public MainWindowViewModel(PopupService popup)
-        {
-            _popup = popup;
-        }
-        public async Task Initialize()
-        {
-            await Task.CompletedTask;
-            OtherPlayers = new List<Player>();
-            Refresh = new RelayCommand(ExecuteRefresh);
-            StartGameCommand = new RelayCommand(ExecuteStart, CanExecuteStart);
-            AddPlayerCommand = new RelayCommand(ExecuteAddPlayer, CanExecuteAddPlayer);
-
-        }
-
         public Player Current { get; set; }
+
+        public bool GameStarted
+        {
+            get => _gameStarted;
+            set { _gameStarted = value; OnPropertyChanged(nameof(GameStarted)); }
+        }
+
+        public int NumberOfPlayers { get; set; } = 2;
+
         public List<Player> OtherPlayers { get; set; }
-
-        private bool CanExecuteAddPlayer(object arg)
-        {
-            return true;
-        }
-
-        private async void ExecuteAddPlayer(object obj)
-        {
-            var gameSetup = await TmDigitalClientRequestHandler.Instance.Request<GameSetup>("game/addplayer");
-            var result = _popup.ShowGameSetup(gameSetup);
-            await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection>("game/addplayer/setup",new GameSetupSelection
-            {
-                Corporation = result.CorporationChoices.First(c=>c.IsSelected).Corporation,
-                PlayerId = result.PlayerId
-            });
-        }
-
-        public RelayCommand AddPlayerCommand { get; set; }
-
-        private async void ExecuteStart(object obj)
-        {
-
-            await GetBoard();
-        }
-
-        private bool CanExecuteStart(object arg)
-        {
-            return !string.IsNullOrEmpty(PlayerName) && !string.IsNullOrEmpty(Server);
-        }
-
-        private async Task GetBoard()
-        {
-            Board = await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
-        }
-
-        private async void ExecuteRefresh(object obj)
-        {
-            await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
-            await GetBoard();
-        }
-
-        public RelayCommand Refresh { get; set; }
 
         public string PlayerName
         {
             get => _playerName;
             set { _playerName = value; OnPropertyChanged(nameof(PlayerName)); }
         }
+
+        public RelayCommand Refresh { get; set; }
 
         public string Server
         {
@@ -94,5 +57,78 @@ namespace TM.Digital.Client
         }
 
         public RelayCommand StartGameCommand { get; set; }
+
+        public async Task Initialize()
+        {
+            await Task.CompletedTask;
+            OtherPlayers = new List<Player>();
+            Refresh = new RelayCommand(ExecuteRefresh);
+            StartGameCommand = new RelayCommand(ExecuteStartGame, CanExecuteStartGame);
+            AddPlayerCommand = new RelayCommand(ExecuteAddPlayer, CanExecuteAddPlayer);
+
+        }
+        private bool CanExecuteAddPlayer(object arg)
+        {
+            return GameStarted && !string.IsNullOrEmpty(PlayerName);
+        }
+
+        private bool CanExecuteStartGame(object arg)
+        {
+            return  /*&& !string.IsNullOrEmpty(Server)*/  NumberOfPlayers > 0 && NumberOfPlayers <= 5;
+        }
+
+        private void ExecuteAddPlayer(object obj)
+        {
+            CallErrorHandler.Handle(async () =>
+            {
+                var gameSetup =
+                    await TmDigitalClientRequestHandler.Instance.Request<GameSetup>("game/addplayer/" + PlayerName);
+
+                var result = _popup.ShowGameSetup(gameSetup);
+                if(result.CorporationChoices.Any())
+                    await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection>("game/addplayer/setup", new GameSetupSelection
+                    {
+                        Corporation = result.CorporationChoices.First(c => c.IsSelected).Corporation,
+                        PlayerId = result.PlayerId
+                    });
+            });
+
+
+        }
+        private async void ExecuteRefresh(object obj)
+        {
+            await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
+            await GetBoard();
+        }
+
+        private void ExecuteStartGame(object obj)
+        {
+
+            CallErrorHandler.Handle(async () =>
+            {
+                GameStarted = await TmDigitalClientRequestHandler.Instance.Request<bool>("game/start/" + NumberOfPlayers);
+            });
+        }
+        private async Task GetBoard()
+        {
+            Board = await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
+        }
+    }
+
+    static class CallErrorHandler
+    {
+        internal static void Handle(Action a)
+        {
+            try
+            {
+                a();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+                Console.WriteLine(e);
+
+            }
+        }
     }
 }

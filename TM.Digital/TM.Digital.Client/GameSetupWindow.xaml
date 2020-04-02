@@ -10,28 +10,51 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <ItemsControl ItemsSource="{Binding CorporationChoices}" >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"></StackPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5">
-                        <StackPanel>
+                    <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="2" Width="150" Height="300" Padding="10">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Background" Value="White"></Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                                        <Setter Property="Background" Value="LightGray"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
                             <UniformGrid Columns="2">
                                 <TextBlock Text="Name" />
                                 <TextBlock Text="{Binding Corporation.Name}"></TextBlock>
                             </UniformGrid>
-                            <UniformGrid Columns="2">
+                            <UniformGrid Grid.Row="1" Columns="2">
                                 <TextBlock Text="Credits" />
                                 <TextBlock Text="{Binding Corporation.StartingMoney}"></TextBlock>
                             </UniformGrid>
-                            <ToggleButton Content="Select" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.SelectCorporation}"
+                            
+                            <ToggleButton Grid.Row="2" Content="Select" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.SelectCorporation}"
                                           CommandParameter="{Binding}"
-                                          IsChecked="{Binding IsSelected}" />
-                        </StackPanel>
+                                          IsChecked="{Binding IsSelected, Mode=OneWay}" />
+                        </Grid>
+
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <Button Grid.Row="2" Content="Validate" Command="{Binding CloseCommand}"></Button>
     </Grid>
 </Window>

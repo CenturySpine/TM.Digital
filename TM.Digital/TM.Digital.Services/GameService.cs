@@ -15,27 +15,31 @@ namespace TM.Digital.Services
 
         private readonly List<Corporation> _allCorporations = new List<Corporation>()
         {
-            new Arklight(),new CheungShingMars(),new InterPlanetaryCinematics(), new Teractor()
+            CorporationsFactory.Arklight(),CorporationsFactory.CheungShingMars(),CorporationsFactory.InterPlanetaryCinematics(), CorporationsFactory.Teractor()
         };
-        Dictionary<Guid, Player> _players = new Dictionary<Guid, Player>();
+
+        readonly Dictionary<Guid, Player> _players = new Dictionary<Guid, Player>();
         private Queue<Corporation> _availableCorporations;
         private Board _board;
+        private int _numberofplayer;
 
 
-        public void StartGame()
+        public bool StartGame(int numberofplayer)
         {
+            _numberofplayer = numberofplayer;
             _board = BoardGenerator.Instance.Original();
             _allCorporations.Shuffle();
             _availableCorporations = new Queue<Corporation>(_allCorporations);
+            return true;
         }
 
-        public GameSetup AddPlayer()
+        public GameSetup AddPlayer(string playername)
         {
-            var player = new Player { PlayerId = Guid.NewGuid() };
+            var player = new Player { PlayerId = Guid.NewGuid(), Name = playername };
 
             _players.Add(player.PlayerId, player);
 
-            GameSetup gs = new GameSetup() { PlayerId = player.PlayerId };
+            GameSetup gs = new GameSetup() { PlayerId = player.PlayerId, Corporations =  new List<Corporation>()};
             for (int i = 0; i < 2; i++)
             {
                 gs.Corporations.Add(_availableCorporations.Dequeue());
@@ -49,7 +53,7 @@ namespace TM.Digital.Services
 
             if (_players.TryGetValue(selection.PlayerId, out var player))
             {
-                foreach (var corporationEffect in selection.Corporation.Effects)
+                foreach (var corporationEffect in selection.Corporation.ResourcesEffects)
                 {
                     corporationEffect.Apply(player, _board, selection.Corporation);
                 }

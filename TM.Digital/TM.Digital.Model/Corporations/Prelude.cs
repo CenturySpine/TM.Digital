@@ -2,8 +2,8 @@
 
 namespace TM.Digital.Model.Corporations
 {
-    public  class Corporation: Card
+    public class Prelude : Card
     {
-        public int StartingMoney { get; set; }
+        
     }
 }

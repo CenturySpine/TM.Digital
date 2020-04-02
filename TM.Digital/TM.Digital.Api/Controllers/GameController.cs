@@ -10,18 +10,18 @@ namespace TM.Digital.Api.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
-        [Route("start")]
-        public async Task Start()
+        [Route("start/{numberofplayer:int}")]
+        public async Task<bool> Start(int numberofplayer)
         {
             await Task.CompletedTask;
-            GameService.Instance.StartGame();
+            return GameService.Instance.StartGame(numberofplayer);
         }
 
-        [Route("addplayer")]
-        public async Task<GameSetup> AddPlayer()
+        [Route("addplayer/{playername}")]
+        public async Task<GameSetup> AddPlayer(string playername)
         {
             await Task.CompletedTask;
-           return GameService.Instance.AddPlayer();
+           return GameService.Instance.AddPlayer(playername);
         }
 
         [Route("addplayer/setup")]
