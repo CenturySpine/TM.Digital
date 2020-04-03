@@ -10,10 +10,11 @@ namespace TM.Digital.Client
     {
         public GameSetupViewModel()
         {
-            SelectCorporation = new RelayCommand(ExecuteSelectCorporation);
+            SelectCardCommand = new RelayCommand(ExecuteSelectCorporation);
             CloseCommand = new RelayCommand(ExecuteClose, CanExecuteClose);
             ;
             CorporationChoices = new ObservableCollection<CorporationSelector>();
+            PatentChoices = new ObservableCollection<PatentSelector>();
         }
 
         private bool CanExecuteClose(object arg)
@@ -31,7 +32,7 @@ namespace TM.Digital.Client
         public ObservableCollection<CorporationSelector> CorporationChoices { get; set; }
         public ObservableCollection<PatentSelector> PatentChoices { get; set; }
 
-        public RelayCommand SelectCorporation { get; set; }
+        public RelayCommand SelectCardCommand { get; set; }
 
         private void ExecuteSelectCorporation(object obj)
         {

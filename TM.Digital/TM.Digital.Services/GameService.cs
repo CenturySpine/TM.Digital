@@ -6,6 +6,7 @@ using TM.Digital.Cards;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
@@ -30,11 +31,11 @@ namespace TM.Digital.Services
         private Queue<Corporation> _availableCorporations;
         private Queue<Patent> _availablePatents;
         private Board _board;
-        private int _numberofplayer;
+        private int _numberOfPlayers;
 
-        public bool StartGame(int numberofplayer)
+        public bool StartGame(int numberOfPlayer)
         {
-            _numberofplayer = numberofplayer;
+            _numberOfPlayers = numberOfPlayer;
             _board = BoardGenerator.Instance.Original();
             _allCorporations.Shuffle();
             _availableCorporations = new Queue<Corporation>(_allCorporations);
@@ -43,9 +44,9 @@ namespace TM.Digital.Services
             return true;
         }
 
-        public GameSetup AddPlayer(string playername)
+        public GameSetup AddPlayer(string playerName)
         {
-            var player = new Player { PlayerId = Guid.NewGuid(), Name = playername };
+            var player = new Player { PlayerId = Guid.NewGuid(), Name = playerName };
 
             _players.Add(player.PlayerId, player);
 
@@ -66,20 +67,20 @@ namespace TM.Digital.Services
         {
             if (_players.TryGetValue(selection.PlayerId, out var player))
             {
-                player.PlayerBoard = new PlayerBoard();
+                
 
                 foreach (var corporationEffect in selection.Corporation.ResourcesEffects)
                 {
-                    corporationEffect.Apply(player, _board, selection.Corporation);
+                    EffectHandler.HandleResourceEffect(player, corporationEffect);
                 }
 
-                var playersMoney = player.PlayerBoard.Resources.First(r => r.ResourceType == ResourceType.Money);
+                var playersMoney = player.Resources.First(r => r.ResourceType == ResourceType.Money);
+                playersMoney.UnitCount = selection.Corporation.StartingMoney;
                 foreach (var selectionBoughtCard in selection.BoughtCards)
                 {
                     playersMoney.UnitCount -= 3;
-                    player.PlayerBoard.Cards.Add(selectionBoughtCard);
+                    player.HandCards.Add(selectionBoughtCard);
                 }
-
 
                 return player;
             }

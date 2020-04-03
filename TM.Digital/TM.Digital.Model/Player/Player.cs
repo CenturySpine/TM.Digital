@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using TM.Digital.Model.Cards;
+using TM.Digital.Model.Resources;
 
 namespace TM.Digital.Model.Player
 {
@@ -7,11 +10,25 @@ namespace TM.Digital.Model.Player
         public Player()
         {
             TerraformationLevel = 20;
-            PlayerBoard = new PlayerBoard();
+            
+            HandCards = new List<Patent>();
+            PlayedCards = new List<Patent>();
+
         }
         public Guid PlayerId { get; set; }
         public string Name { get; set; }
-        public PlayerBoard PlayerBoard { get; set; }
         public int TerraformationLevel { get; set; }
+        public List<ResourceHandler> Resources { get; set; } = new List<ResourceHandler>
+        {
+            new ResourceHandler {ResourceType = ResourceType.Money},
+            new ResourceHandler {ResourceType = ResourceType.Steel},
+            new ResourceHandler {ResourceType = ResourceType.Titanium},
+            new ResourceHandler {ResourceType = ResourceType.Plant},
+            new ResourceHandler {ResourceType = ResourceType.Energy},
+            new ResourceHandler {ResourceType = ResourceType.Heat}
+        };
+
+        public List<Patent> HandCards { get; set; }
+        public List<Patent> PlayedCards { get; set; }
     }
 }

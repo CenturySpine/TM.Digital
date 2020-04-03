@@ -12,7 +12,7 @@ namespace TM.Digital.Model.Prerequisite
 
         public bool MatchPrerequisite(Player.Player player, Board.Board board)
         {
-            return player.PlayerBoard.Resources.First(r => r.ResourceType == ResourceType).Production > Amount;
+            return player.Resources.First(r => r.ResourceType == ResourceType).Production > Amount;
         }
     }
 }

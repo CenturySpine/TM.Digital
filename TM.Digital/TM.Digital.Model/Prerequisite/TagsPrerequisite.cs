@@ -11,7 +11,7 @@ namespace TM.Digital.Model.Prerequisite
         
         public bool MatchPrerequisite(Player.Player player, Board.Board board)
         {
-            return player.PlayerBoard.Cards.SelectMany(c => c.Tags).Count(t => t == Tag) >= Count;
+            return player.HandCards.SelectMany(c => c.Tags).Count(t => t == Tag) >= Count;
         }
     }
 }

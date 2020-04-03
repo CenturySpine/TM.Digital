@@ -18,6 +18,8 @@ namespace TM.Digital.Client
         private bool _gameStarted;
         private string _playerName;
         private string _server;
+        private Player _current;
+
         public MainWindowViewModel(PopupService popup)
         {
             _popup = popup;
@@ -30,7 +32,12 @@ namespace TM.Digital.Client
             get => _board;
             set { _board = value; OnPropertyChanged(nameof(Board)); }
         }
-        public Player Current { get; set; }
+
+        public Player Current
+        {
+            get => _current;
+            set { _current = value;OnPropertyChanged(nameof(Current)); }
+        }
 
         public bool GameStarted
         {
@@ -94,6 +101,8 @@ namespace TM.Digital.Client
                         BoughtCards= result.PatentChoices.Where(p=>p.IsSelected).Select(p=>p.Patent).ToList(),
                         PlayerId = result.PlayerId
                     });
+
+                    Current = player;
                 }
             });
 
@@ -111,6 +120,10 @@ namespace TM.Digital.Client
             CallErrorHandler.Handle(async () =>
             {
                 GameStarted = await TmDigitalClientRequestHandler.Instance.Request<bool>("game/start/" + NumberOfPlayers);
+                if(GameStarted)
+                {
+                    await GetBoard();
+                }
             });
         }
         private async Task GetBoard()

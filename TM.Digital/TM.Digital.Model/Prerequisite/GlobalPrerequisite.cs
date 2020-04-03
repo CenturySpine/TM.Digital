@@ -13,18 +13,18 @@ namespace TM.Digital.Model.Prerequisite
         {
             switch (Parameter)
             {
-                case GlobalParameterType.Temperature:
-                    return IsMax
-                        ? board.GlobalParameterLevels[Parameter].Level <= Level
-                        : board.GlobalParameterLevels[Parameter].Level >= Level;
-                case GlobalParameterType.Oxygen:
-                    return IsMax
-                        ? board.GlobalParameterLevels[Parameter].Level <= Level
-                        : board.GlobalParameterLevels[Parameter].Level >= Level;
-                case GlobalParameterType.Oceans:
-                    return IsMax
-                        ? board.GlobalParameterLevels[Parameter].Level >= Level
-                        : board.GlobalParameterLevels[Parameter].Level <= Level;
+                //case GlobalParameterType.Temperature:
+                //    return IsMax
+                //        ? board.GlobalParameterLevels[Parameter].Level <= Level
+                //        : board.GlobalParameterLevels[Parameter].Level >= Level;
+                //case GlobalParameterType.Oxygen:
+                //    return IsMax
+                //        ? board.GlobalParameterLevels[Parameter].Level <= Level
+                //        : board.GlobalParameterLevels[Parameter].Level >= Level;
+                //case GlobalParameterType.Oceans:
+                //    return IsMax
+                //        ? board.GlobalParameterLevels[Parameter].Level >= Level
+                //        : board.GlobalParameterLevels[Parameter].Level <= Level;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -16,10 +16,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
         <StackPanel Orientation="Horizontal" Margin="2">
             <UniformGrid Columns="3">
-                
+
                 <TextBlock Text="Players" Margin="2"></TextBlock>
                 <TextBox Text="{Binding NumberOfPlayers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"></TextBox>
             </UniformGrid>
@@ -30,6 +32,7 @@
             <Button Command="{Binding StartGameCommand}" Content="Start Game" Margin="2" Padding="2"></Button>
 
         </StackPanel>
+
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="2">
             <UniformGrid Columns="2">
                 <TextBlock Text="Player's name" Margin="2"/>
@@ -37,6 +40,7 @@
             </UniformGrid>
             <Button Command="{Binding AddPlayerCommand}" Content="Join" Margin="2" Padding="2"></Button>
         </StackPanel>
+
         <ItemsControl Grid.Row="2" ItemsSource="{Binding Board.BoardLines}" HorizontalAlignment="Center" VerticalAlignment="Center">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -150,5 +154,79 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
+        <Grid Grid.Row="3" DataContext="{Binding Current}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBlock Text="NT" Margin="2"></TextBlock>
+            <TextBlock Text="{Binding TerraformationLevel}" Margin="2"></TextBlock>
+            </StackPanel>
+            <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Resources}" Margin="5">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="3" Rows="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding ResourceType}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="2" VerticalAlignment="Center"/>
+                            <Grid Grid.Row="0"  Grid.Column="1" Background="Brown" Margin="2">
+                                <TextBlock Text="{Binding Production}" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2"/>
+                            </Grid>
+                            <Grid Grid.Row="1"  Grid.Column="1" Background="LightGray" VerticalAlignment="Center" Margin="2">
+                                <TextBlock Text="{Binding UnitCount}"  FontWeight="Bold" HorizontalAlignment="Center" Margin="2"/>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <ItemsControl  ItemsSource="{Binding HandCards}" Margin="5">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Black" BorderThickness="1" Margin="2" CornerRadius="5" Padding="2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                            <Border Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1">
+                                    <TextBlock Text="{Binding BaseCost}" VerticalAlignment="Center"></TextBlock>
+                                </Border>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"></TextBlock>
+                        </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>

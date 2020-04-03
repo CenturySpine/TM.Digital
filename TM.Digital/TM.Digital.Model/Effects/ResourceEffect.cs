@@ -10,7 +10,7 @@ namespace TM.Digital.Model.Effects
         Self,
         OtherPlayer
     }
-    public class ResourceEffect : IEffect
+    public class ResourceEffect
     {
         public ResourceKind ResourceKind { get; set; }
         public ResourceType ResourceType { get; set; }
@@ -18,23 +18,36 @@ namespace TM.Digital.Model.Effects
 
         public EffectDestination EffectDestination { get; set; }
 
-        public void Apply(Player.Player player, Board.Board board, Card card)
+
+    }
+
+    public static class EffectHandler
+    {
+        public static void HandleResourceEffect(Player.Player player, ResourceEffect effect)
         {
-            var resource = player.PlayerBoard.Resources.FirstOrDefault(r => r.ResourceType == ResourceType);
+            var resource = player.Resources.FirstOrDefault(r => r.ResourceType == effect.ResourceType);
 
             if (resource != null)
             {
-                resource.Production += Amount;
+                if (effect.ResourceKind == ResourceKind.Production)
+                {
+                    resource.Production += effect.Amount;
 
-                //never go below -5 for money production
-                if (resource.ResourceType == ResourceType.Money && resource.Production < -5)
-                {
-                    resource.Production = -5;
+                    //never go below -5 for money production
+                    if (resource.ResourceType == ResourceType.Money && resource.Production < -5)
+                    {
+                        resource.Production = -5;
+                    }
+                    //never go below zero for other resources production
+                    else if (resource.Production < 0)
+                    {
+                        resource.Production = 0;
+                    }
                 }
-                //never go below zero for other resources production
-                else if (resource.Production < 0)
+                else
                 {
-                    resource.Production = 0;
+                    resource.UnitCount += effect.Amount;
+                    if (resource.UnitCount < 0) resource.UnitCount = 0;
                 }
             }
         }

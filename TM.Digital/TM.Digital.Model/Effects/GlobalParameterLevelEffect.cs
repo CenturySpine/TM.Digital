@@ -12,8 +12,8 @@ namespace TM.Digital.Model.Effects
 
         public void Apply(Player.Player player, Board.Board board, Card card)
         {
-            board.GlobalParameterLevels[GlobalParameterType].Level +=
-                Level * board.GlobalParameterLevels[GlobalParameterType].Increment;
+            //board.GlobalParameterLevels[GlobalParameterType].Level +=
+            //    Level * board.GlobalParameterLevels[GlobalParameterType].Increment;
         }
     }
 }

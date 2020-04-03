@@ -17,7 +17,7 @@ namespace TM.Digital.Model.Effects
         public void Apply(Player.Player player, Board.Board board, Card card)
         {
             var tagCount = card.Tags.Count(t => t == AffectedTag);
-            var res = player.PlayerBoard.Resources.FirstOrDefault(r => r.ResourceType == ResourceType);
+            var res = player.Resources.FirstOrDefault(r => r.ResourceType == ResourceType);
             if (ResourceKind == ResourceKind.Unit)
             {
                 if (res != null) res.UnitCount += tagCount * EffectValue;
