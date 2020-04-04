@@ -1,6 +1,6 @@
 ﻿namespace TM.Digital.Model.Board
 {
-    public enum GlobalParameterType
+    public enum BoardLevelType
     {
         Temperature, Oxygen,  Terraformation,
         Oceans

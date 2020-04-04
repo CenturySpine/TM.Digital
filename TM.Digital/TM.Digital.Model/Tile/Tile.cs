@@ -8,10 +8,4 @@ namespace TM.Digital.Model.Tile
         public Guid? Owner { get; set; }
         public int BoardIndex { get; set; }
     }
-
-    public class TileEffect
-    {
-        public TileType Type { get; set; }
-        public int Number { get; set; }
-    }
 }

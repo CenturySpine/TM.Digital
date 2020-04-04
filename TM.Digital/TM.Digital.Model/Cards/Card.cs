@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using TM.Digital.Model.Board;
+﻿using System;
+using System.Collections.Generic;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Prerequisite;
 using TM.Digital.Model.Resources;
@@ -7,27 +7,27 @@ using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Model.Cards
 {
-    public class Patent : Card
-    {
-        public int BaseCost { get; set; }
-        public int ModifiedCost { get; set; }
-
-        public List<TagsPrerequisite> TagsPrerequisites { get; set; } = new List<TagsPrerequisite>();
-        public List<GlobalPrerequisite> GlobalPrerequisites { get; set; } = new List<GlobalPrerequisite>();
-    }
-
-    public class TagsPrerequisite : Prerequisite.Prerequisite
-    {
-        public Tags Tag { get; set; }
-
-    }
-    public class GlobalPrerequisite : Prerequisite.Prerequisite
-    {
-        public GlobalParameterType Parameter { get; set; }
-
-    }
     public class Card
     {
+        protected bool Equals(Card other)
+        {
+            return Guid.Equals(other.Guid);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Card) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Guid.GetHashCode();
+        }
+
+        public Guid Guid { get; set; } = Guid.NewGuid();
         
         public string Name { get; set; }
 
@@ -45,7 +45,7 @@ namespace TM.Digital.Model.Cards
         public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
 
         public List<ResourceEffect> ResourcesEffects { get; set; } = new List<ResourceEffect>();
-        public List<GlobalParameterLevelEffect> GlobalParameterEffects { get; set; } = new List<GlobalParameterLevelEffect>();
+        public List<BoardLevelEffect> BoardEffects { get; set; } = new List<BoardLevelEffect>();
 
         public List<TagEffect> TagEffects { get; set; } = new List<TagEffect>();
 

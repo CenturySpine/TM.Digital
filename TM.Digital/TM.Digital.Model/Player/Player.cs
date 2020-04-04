@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TM.Digital.Model.Cards;
+using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Resources;
 
 namespace TM.Digital.Model.Player
@@ -15,6 +16,8 @@ namespace TM.Digital.Model.Player
             PlayedCards = new List<Patent>();
 
         }
+
+        public Corporation Corporation { get; set; }
         public Guid PlayerId { get; set; }
         public string Name { get; set; }
         public int TerraformationLevel { get; set; }

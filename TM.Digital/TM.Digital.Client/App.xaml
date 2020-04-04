@@ -6,6 +6,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Icons.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="EffectTemplates.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="BoardPlacesTemplates.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="CardsTemplates.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

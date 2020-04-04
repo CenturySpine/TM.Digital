@@ -5,7 +5,7 @@ namespace TM.Digital.Model.Prerequisite
 {
     public class GlobalPrerequisite : IPrerequisite
     {
-        public GlobalParameterType Parameter { get; set; }
+        public BoardLevelType Parameter { get; set; }
         public int Level { get; set; }
         public bool IsMax { get; set; }
 
@@ -13,15 +13,15 @@ namespace TM.Digital.Model.Prerequisite
         {
             switch (Parameter)
             {
-                //case GlobalParameterType.Temperature:
+                //case BoardLevelType.Temperature:
                 //    return IsMax
                 //        ? board.GlobalParameterLevels[Parameter].Level <= Level
                 //        : board.GlobalParameterLevels[Parameter].Level >= Level;
-                //case GlobalParameterType.Oxygen:
+                //case BoardLevelType.Oxygen:
                 //    return IsMax
                 //        ? board.GlobalParameterLevels[Parameter].Level <= Level
                 //        : board.GlobalParameterLevels[Parameter].Level >= Level;
-                //case GlobalParameterType.Oceans:
+                //case BoardLevelType.Oceans:
                 //    return IsMax
                 //        ? board.GlobalParameterLevels[Parameter].Level >= Level
                 //        : board.GlobalParameterLevels[Parameter].Level <= Level;

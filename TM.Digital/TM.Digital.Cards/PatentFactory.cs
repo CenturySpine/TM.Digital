@@ -54,7 +54,7 @@ namespace TM.Digital.Cards
                 },
                 GlobalPrerequisites = new List<GlobalPrerequisite>() { new GlobalPrerequisite()
                 {
-                    IsMax = true,Parameter = GlobalParameterType.Oxygen,PrerequisiteKind = PrerequisiteKind.Board,Value = 9
+                    IsMax = true,Parameter = BoardLevelType.Oxygen,PrerequisiteKind = PrerequisiteKind.Board,Value = 9
                 } }
             };
         }
@@ -72,13 +72,13 @@ namespace TM.Digital.Cards
                     {
                         Amount = 4,ResourceKind =ResourceKind.Unit,ResourceType = ResourceType.Titanium
                     },
-                    new ResourceEffect {Amount = -3,ResourceKind = ResourceKind.Unit,ResourceType = ResourceType.Plant, EffectDestination = EffectDestination.OtherPlayer}
+                    new ResourceEffect {Amount = -4,ResourceKind = ResourceKind.Unit,ResourceType = ResourceType.Plant, EffectDestination = EffectDestination.OtherPlayer}
                 },
-                GlobalParameterEffects = new List<GlobalParameterLevelEffect>()
+                BoardEffects = new List<BoardLevelEffect>()
 {
-    new GlobalParameterLevelEffect()
+    new BoardLevelEffect()
     {
-        GlobalParameterType = GlobalParameterType.Temperature,Level = 2
+        BoardLevelType = BoardLevelType.Temperature,Level = 2
     }
 }
             };
@@ -138,7 +138,7 @@ namespace TM.Digital.Cards
                     },
                     new ResourceEffect
                     {
-                        Amount = 1,ResourceKind =ResourceKind.Production,ResourceType = ResourceType.Money
+                        Amount = 2,ResourceKind =ResourceKind.Production,ResourceType = ResourceType.Money
                     },
                     new ResourceEffect
                     {
@@ -149,7 +149,7 @@ namespace TM.Digital.Cards
                 CardVictoryPoints = new StandardVictoryPoint() { Points = 2 },
                 GlobalPrerequisites = new List<GlobalPrerequisite>() { new GlobalPrerequisite()
                 {
-                    Parameter = GlobalParameterType.Temperature,PrerequisiteKind = PrerequisiteKind.Board,Value = -6
+                    Parameter = BoardLevelType.Temperature,PrerequisiteKind = PrerequisiteKind.Board,Value = -6
                 } }
 
             };
@@ -162,7 +162,7 @@ namespace TM.Digital.Cards
                 Name = "Idle gaz liberation",
                 BaseCost = 14,
                 Tags = new List<Tags> { Tags.Event },
-                GlobalParameterEffects = new List<GlobalParameterLevelEffect>() { new GlobalParameterLevelEffect() { Level = 2, GlobalParameterType = GlobalParameterType.Terraformation } }
+                BoardEffects = new List<BoardLevelEffect>() { new BoardLevelEffect() { Level = 2, BoardLevelType = BoardLevelType.Terraformation } }
 
             };
         }

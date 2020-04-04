@@ -7,14 +7,4 @@ namespace TM.Digital.Model.Effects
         
         void Apply(Player.Player player, Board.Board board, Card card);
     }
-
-    public enum EffectType
-    {
-        Global,
-        ResourceProd,
-        ResourceUnit,
-        TagCost,
-        TagPlay,
-        Terraformation
-    }
 }

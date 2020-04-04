@@ -1,24 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using TM.Digital.Model.Board;
+using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Transport;
 
 namespace TM.Digital.Client
 {
+    public class PlayerSelector
+    {
+        public PlayerSelector(Player player)
+        {
+            Player = player;
+            PatentsSelectors = new ObservableCollection<PatentSelector>(player.HandCards.Select(c => new PatentSelector() { Patent = c }));
+        }
+
+        public Player Player { get; set; }
+        public ObservableCollection<PatentSelector> PatentsSelectors { get; set; }
+    }
+
     public class MainWindowViewModel : NotifierBase
     {
         private readonly PopupService _popup;
 
         private Board _board;
-        private bool _gameStarted;
+        private Guid _gameId;
         private string _playerName;
         private string _server;
-        private Player _current;
+        private PlayerSelector _currentPlayer;
 
         public MainWindowViewModel(PopupService popup)
         {
@@ -33,16 +47,16 @@ namespace TM.Digital.Client
             set { _board = value; OnPropertyChanged(nameof(Board)); }
         }
 
-        public Player Current
+        public PlayerSelector CurrentPlayer
         {
-            get => _current;
-            set { _current = value;OnPropertyChanged(nameof(Current)); }
+            get => _currentPlayer;
+            set { _currentPlayer = value; OnPropertyChanged(nameof(CurrentPlayer)); }
         }
 
-        public bool GameStarted
+        public Guid GameId
         {
-            get => _gameStarted;
-            set { _gameStarted = value; OnPropertyChanged(nameof(GameStarted)); }
+            get => _gameId;
+            set { _gameId = value; OnPropertyChanged(nameof(GameId)); }
         }
 
         public int NumberOfPlayers { get; set; } = 2;
@@ -72,11 +86,32 @@ namespace TM.Digital.Client
             Refresh = new RelayCommand(ExecuteRefresh);
             StartGameCommand = new RelayCommand(ExecuteStartGame, CanExecuteStartGame);
             AddPlayerCommand = new RelayCommand(ExecuteAddPlayer, CanExecuteAddPlayer);
-
+            SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
         }
+
+        private async void ExecuteSelectCard(object obj)
+        {
+            if (obj is PatentSelector patent)
+            {
+                if (!patent.Patent.CanBePlayed)
+                    return;
+
+                await TmDigitalClientRequestHandler.Instance.Post<Patent>($"game/{GameId}/play/{CurrentPlayer.Player.PlayerId}", patent.Patent);
+            }
+        }
+
+        private bool CanExecuteSelectCard(object obj)
+        {
+            if (obj is PatentSelector patent)
+            {
+                return patent.Patent.CanBePlayed;
+            }
+            return false;
+        }
+
         private bool CanExecuteAddPlayer(object arg)
         {
-            return GameStarted && !string.IsNullOrEmpty(PlayerName);
+            return GameId != Guid.Empty && !string.IsNullOrEmpty(PlayerName);
         }
 
         private bool CanExecuteStartGame(object arg)
@@ -84,30 +119,32 @@ namespace TM.Digital.Client
             return  /*&& !string.IsNullOrEmpty(Server)*/  NumberOfPlayers > 0 && NumberOfPlayers <= 5;
         }
 
+        public RelayCommand SelectCardCommand { get; set; }
+
         private void ExecuteAddPlayer(object obj)
         {
             CallErrorHandler.Handle(async () =>
             {
                 var gameSetup =
-                    await TmDigitalClientRequestHandler.Instance.Request<GameSetup>("game/addplayer/" + PlayerName);
+                    await TmDigitalClientRequestHandler.Instance.Request<GameSetup>($"game/addplayer/{GameId}/" + PlayerName);
 
                 var result = _popup.ShowGameSetup(gameSetup);
 
-                if (result.CorporationChoices.Any())
+                //if (result.CorporationChoices.Any())
                 {
-                    var player = await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>("game/addplayer/setup", new GameSetupSelection
+                    var player = await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>("game/addplayer/setupplayer", new GameSetupSelection
                     {
                         Corporation = result.CorporationChoices.First(c => c.IsSelected).Corporation,
-                        BoughtCards= result.PatentChoices.Where(p=>p.IsSelected).Select(p=>p.Patent).ToList(),
-                        PlayerId = result.PlayerId
+                        BoughtCards = result.PatentChoices.Where(p => p.IsSelected).Select(p => p.Patent).ToList(),
+                        PlayerId = result.PlayerId,
+                        GameId = GameId,
                     });
 
-                    Current = player;
+                    CurrentPlayer = new PlayerSelector(player);
                 }
             });
-
-
         }
+
         private async void ExecuteRefresh(object obj)
         {
             await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
@@ -116,23 +153,23 @@ namespace TM.Digital.Client
 
         private void ExecuteStartGame(object obj)
         {
-
             CallErrorHandler.Handle(async () =>
             {
-                GameStarted = await TmDigitalClientRequestHandler.Instance.Request<bool>("game/start/" + NumberOfPlayers);
-                if(GameStarted)
+                GameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>("game/start/" + NumberOfPlayers);
+                if (GameId != Guid.Empty)
                 {
                     await GetBoard();
                 }
             });
         }
+
         private async Task GetBoard()
         {
             Board = await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
         }
     }
 
-    static class CallErrorHandler
+    internal static class CallErrorHandler
     {
         internal static void Handle(Action a)
         {
@@ -144,7 +181,6 @@ namespace TM.Digital.Client
             {
                 MessageBox.Show(e.ToString());
                 Console.WriteLine(e);
-
             }
         }
     }

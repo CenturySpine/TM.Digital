@@ -1,0 +1,65 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:TM.Digital.Client"
+                    xmlns:cards="clr-namespace:TM.Digital.Model.Cards;assembly=TM.Digital.Model">
+    <DataTemplate DataType="{x:Type cards:Patent}">
+        <Border BorderBrush="Black" BorderThickness="1" Margin="2" CornerRadius="5" Padding="2">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CanBePlayed}" Value="false">
+                            <Setter Property="IsEnabled" Value="False"></Setter>
+                        </DataTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"></Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Border Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1">
+                    <TextBlock Text="{Binding BaseCost}" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" />
+                <ItemsControl Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding ResourcesEffects}" />
+                <ItemsControl Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding BoardEffects}" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type local:PatentSelector}">
+        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="2" Width="150" Height="300" Padding="10">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="Background" Value="White"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                            <Setter Property="Background" Value="LightGray"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <ContentControl Content="{Binding Patent}"></ContentControl>
+
+                <ToggleButton Grid.Row="1" Content="Select" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.SelectCardCommand}"
+                                          CommandParameter="{Binding}"
+                                          IsChecked="{Binding IsSelected, Mode=OneWay}" />
+            </Grid>
+
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>
