@@ -39,6 +39,23 @@ namespace TM.Digital.Cards
             return c;
         }
 
+        public static Corporation PhobLog()
+        {
+            var c = new Corporation
+            {
+                Name = "Phoblog",
+                StartingMoney = 23,
+
+                Tags = new List<Tags>()
+            };
+            c.ResourcesEffects.Add(new ResourceEffect { Amount = 10, ResourceType = ResourceType.Titanium });
+
+            c.TitaniumValueModifier = 1;
+            c.Tags.Add(Tags.Space);
+            return c;
+        }
+
+
         public static Corporation InterPlanetaryCinematics()
         {
             var c = new Corporation

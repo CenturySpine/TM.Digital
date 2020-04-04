@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TM.Digital.Api.Hubs;
 
 namespace TM.Digital.Api
 {
@@ -19,9 +20,7 @@ namespace TM.Digital.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
-
-
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +40,7 @@ namespace TM.Digital.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ClientNotificationHub>("/ClientNotificationHub");
             });
         }
     }

@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Transport;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TM.Digital.Client
 {
@@ -33,6 +37,7 @@ namespace TM.Digital.Client
         private string _playerName;
         private string _server;
         private PlayerSelector _currentPlayer;
+        private HubConnection connection;
 
         public MainWindowViewModel(PopupService popup)
         {
@@ -87,6 +92,35 @@ namespace TM.Digital.Client
             StartGameCommand = new RelayCommand(ExecuteStartGame, CanExecuteStartGame);
             AddPlayerCommand = new RelayCommand(ExecuteAddPlayer, CanExecuteAddPlayer);
             SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
+            connection = new HubConnectionBuilder()
+                .WithUrl(@"http://localhost:50154/ClientNotificationHub")
+                .WithAutomaticReconnect()
+                .Build();
+
+            await connection.StartAsync();
+            connection.On<string, string>("ReceiveGameUpdate", (user, message) =>
+            {
+                if (user == "PlayResult")
+                {
+                    UpdateGame(message);
+                }
+            });
+        }
+
+        private void UpdateGame(string message)
+        {
+            //var gameResult = JsonSerializer.Deserialize<Game>(message, new JsonSerializerOptions
+            //{
+            //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                
+            //});
+
+            var gameResult2 = JsonConvert.DeserializeObject<Game>(message);
+
+            //update game with result
+            Board = gameResult2.Board;
+            CurrentPlayer = new PlayerSelector(gameResult2.AllPlayers.First(p => p.PlayerId == CurrentPlayer.Player.PlayerId));
+            //TODO update other players
         }
 
         private async void ExecuteSelectCard(object obj)
@@ -158,7 +192,9 @@ namespace TM.Digital.Client
                 GameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>("game/start/" + NumberOfPlayers);
                 if (GameId != Guid.Empty)
                 {
+
                     await GetBoard();
+
                 }
             });
         }

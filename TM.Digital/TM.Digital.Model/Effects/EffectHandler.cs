@@ -57,5 +57,30 @@ namespace TM.Digital.Model.Effects
                 player.HandCards.Add(selectionBoughtCard);
             }
         }
+
+        public static void CheckCardsReductions(Player.Player player)
+        {
+            var reductions = player.PlayedCards.Concat(new List<Card> { player.Corporation })
+                .SelectMany(c => c.TagEffects).Where(te => te.TagEffectType == TagEffectType.CostAlteration)
+                .ToList();
+
+            foreach (var playerHandCard in player.HandCards)
+            {
+                var reductionForCard = reductions.Where(r => playerHandCard.Tags.Contains(r.AffectedTag))
+                    .ToList();
+                if (reductionForCard.Any())
+                {
+                    foreach (var tagEffect in reductionForCard)
+                    {
+                        playerHandCard.ModifiedCost = playerHandCard.BaseCost += tagEffect.EffectValue;
+                    }
+
+                }
+                else
+                {
+                    playerHandCard.ModifiedCost = playerHandCard.BaseCost;
+                }
+            }
+        }
     }
 }

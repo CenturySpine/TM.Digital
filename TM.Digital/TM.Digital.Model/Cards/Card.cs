@@ -45,6 +45,9 @@ namespace TM.Digital.Model.Cards
         public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
 
         public List<ResourceEffect> ResourcesEffects { get; set; } = new List<ResourceEffect>();
+
+        public int TitaniumValueModifier { get; set; }
+        public int SteelValueModifier { get; set; }
         public List<BoardLevelEffect> BoardEffects { get; set; } = new List<BoardLevelEffect>();
 
         public List<TagEffect> TagEffects { get; set; } = new List<TagEffect>();

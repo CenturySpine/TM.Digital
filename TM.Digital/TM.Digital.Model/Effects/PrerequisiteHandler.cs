@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Resources;
@@ -8,8 +9,15 @@ namespace TM.Digital.Model.Effects
     public static class PrerequisiteHandler
     {
 
+        public static void CanPlayCards(Board.Board board, Player.Player player)
+        {
+            foreach (var playerHandCard in player.HandCards)
+            {
+                playerHandCard.CanBePlayed = CanPlayCard(playerHandCard, board, player);
+            }
+        }
 
-        public static bool CanPlayCard(Patent patent, Board.Board board, Player.Player player)
+        private static bool CanPlayCard(Patent patent, Board.Board board, Player.Player player)
         {
             return CheckGlobalPrerequisite(patent, board)
                    && CheckPatentCost(player, patent)
@@ -69,7 +77,20 @@ namespace TM.Digital.Model.Effects
 
         private static bool CheckPatentCost(Player.Player player, Patent patent)
         {
-            return player.Resources.First(r => r.ResourceType == ResourceType.Money).UnitCount >= patent.BaseCost;
+            var pleyrsMoney = player.Resources.First(r => r.ResourceType == ResourceType.Money).UnitCount;
+            bool cashCostRequired = pleyrsMoney >= patent.ModifiedCost;
+
+            var allCards = player.PlayedCards.Concat(new List<Card>() {player.Corporation}).ToList();
+
+            var titaniumModifier = 3 + allCards.Where(r => r.TitaniumValueModifier > 0).Sum(t => t.TitaniumValueModifier);
+            var steelModifier = 2 + allCards.Where(r => r.SteelValueModifier > 0).Sum(t => t.SteelValueModifier);
+
+            var titaniumModifiedMoney = player.Resources.First(r => r.ResourceType == ResourceType.Titanium).UnitCount * titaniumModifier;
+            var steelModifiedMoney = player.Resources.First(r => r.ResourceType == ResourceType.Steel).UnitCount * steelModifier;
+
+            var resourceCostRequired = pleyrsMoney + titaniumModifiedMoney + steelModifiedMoney >= patent.ModifiedCost;
+
+            return cashCostRequired || resourceCostRequired;
         }
 
         private static bool CheckGlobalPrerequisite(Patent patent, Board.Board board)
@@ -86,5 +107,7 @@ namespace TM.Digital.Model.Effects
 
             return true;
         }
+
+
     }
 }

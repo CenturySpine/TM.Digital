@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
+using TM.Digital.Model.Resources;
 
 namespace TM.Digital.Services
 {
@@ -20,7 +22,23 @@ namespace TM.Digital.Services
 
         public GameSetup AddPlayer(string playerName)
         {
-            var player = new Player { PlayerId = Guid.NewGuid(), Name = playerName };
+            var player = new Player
+            {
+                PlayerId = Guid.NewGuid(),
+                Name = playerName,
+                Resources = new List<ResourceHandler>
+                {
+                    new ResourceHandler {ResourceType = ResourceType.Money},
+                    new ResourceHandler {ResourceType = ResourceType.Steel},
+                    new ResourceHandler {ResourceType = ResourceType.Titanium},
+                    new ResourceHandler {ResourceType = ResourceType.Plant},
+                    new ResourceHandler {ResourceType = ResourceType.Energy},
+                    new ResourceHandler {ResourceType = ResourceType.Heat}
+                },
+                HandCards = new List<Patent>(),
+                PlayedCards = new List<Patent>(),
+                TerraformationLevel = 20,
+            };
             Players.Add(player.PlayerId, player);
             GameSetup gs = new GameSetup
             {
@@ -53,22 +71,28 @@ namespace TM.Digital.Services
                 EffectHandler.HandleInitialPatentBuy(player, selection.BoughtCards, selection.Corporation);
                 player.Corporation = selection.Corporation;
 
-                foreach (var patent in player.HandCards)
-                {
-                    patent.CanBePlayed = PrerequisiteHandler.CanPlayCard(patent, Board, player);
-                }
+                EffectHandler.CheckCardsReductions(player);
+                PrerequisiteHandler.CanPlayCards(Board, player);
 
                 return player;
             }
             return null;
         }
 
-        public void PlayCard(Patent card, Guid playerId)
+        public Game PlayCard(Patent card, Guid playerId)
         {
             if (Players.TryGetValue(playerId, out var player))
             {
                 CardPlayHandler.Play(card, player, Board);
+                EffectHandler.CheckCardsReductions(player);
+                PrerequisiteHandler.CanPlayCards(Board, player);
             }
+
+            return new Game
+            {
+                Board = Board,
+                AllPlayers = Players.Select(p => p.Value).ToList(),
+            };
         }
     }
 }

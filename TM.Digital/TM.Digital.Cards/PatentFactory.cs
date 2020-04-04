@@ -166,5 +166,18 @@ namespace TM.Digital.Cards
 
             };
         }
+
+        public static Patent AdvancedAlliages()
+        {
+            return new Patent
+            {
+                Name = "Advanced alliages",
+                BaseCost = 9,
+                Tags = new List<Tags> { Tags.Science },
+                TitaniumValueModifier = 1,
+                SteelValueModifier = 1
+
+            };
+        }
     }
 }

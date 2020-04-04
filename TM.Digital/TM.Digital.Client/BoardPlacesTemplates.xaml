@@ -29,13 +29,15 @@
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
             <TextBlock Text="{Binding Type}" HorizontalAlignment="Center"></TextBlock>
             <Slider Height="300" HorizontalAlignment="Center" Grid.Row="1" Orientation="Vertical" 
                     TickPlacement="Both"
-                    
+                    IsEnabled="False"
                     Minimum="{Binding GlobalParameterLevel.Min}" Maximum="{Binding GlobalParameterLevel.Max}" Value="{Binding GlobalParameterLevel.Level}" 
                     AutoToolTipPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency="{Binding GlobalParameterLevel.Increment}"></Slider>
+            <TextBlock Grid.Row="2" Text="{Binding GlobalParameterLevel.Level}" HorizontalAlignment="Center"></TextBlock>
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type board:BoardLine}">

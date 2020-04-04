@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Transport", "TM.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Cards", "TM.Digital.Cards\TM.Digital.Cards.csproj", "{07EB9337-BEE1-4259-9C4A-0390040034C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TM.Digital.UnitTests", "TM.Digital.UnitTests\TM.Digital.UnitTests.csproj", "{72925672-06EB-4121-9AE5-4519DA44A3B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.UnitTests", "TM.Digital.UnitTests\TM.Digital.UnitTests.csproj", "{72925672-06EB-4121-9AE5-4519DA44A3B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

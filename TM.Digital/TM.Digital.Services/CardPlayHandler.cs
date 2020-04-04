@@ -9,6 +9,8 @@ namespace TM.Digital.Services
     {
         public static void Play(Patent card, Player player, Board board)
         {
+            //TODO check resources for reductions
+
             foreach (var cardResourceEffect in card.ResourcesEffects)
             {
                 EffectHandler.HandleResourceEffect(player, cardResourceEffect);
