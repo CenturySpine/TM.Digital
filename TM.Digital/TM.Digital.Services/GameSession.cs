@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
@@ -8,6 +11,8 @@ using TM.Digital.Model.Effects;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
+using TM.Digital.Model.Tile;
+using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Services
 {
@@ -78,21 +83,103 @@ namespace TM.Digital.Services
             }
             return null;
         }
-
-        public Game PlayCard(Patent card, Guid playerId)
+        static Queue<Action<Player, Board>> RemainingActions = new Queue<Action<Player, Board>>();
+        private static TileEffect PendingTileEffect;
+        public async Task PlayCard(Patent card, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
             if (Players.TryGetValue(playerId, out var player))
             {
-                CardPlayHandler.Play(card, player, Board);
-                EffectHandler.CheckCardsReductions(player);
-                PrerequisiteHandler.CanPlayCards(Board, player);
+                var choices = CardPlayHandler.Play(card, player, Board);
+                if (choices != null)
+                {
+                    if (choices.TileEffects != null && choices.TileEffects.Any())
+                    {
+                        foreach (var choicesTileEffect in choices.TileEffects)
+                        {
+                            RemainingActions.Enqueue(async (p, b) =>
+                                {
+                                    PendingTileEffect = choicesTileEffect;
+                                    var choiceBoard = BoardHandler.GetPlacesChoices(PendingTileEffect, b);
+                                    await hubContext.Clients.All.SendAsync("PlaceTile", $"{p.PlayerId}", JsonSerializer.Serialize(choiceBoard));
+
+                                });
+                        }
+
+                    }
+                    RemainingActions.Enqueue(async (p, b) =>
+                    {
+
+                        EffectHandler.CheckCardsReductions(p);
+                        await VerifyRemainingAction(p, hubContext);
+                    });
+                    RemainingActions.Enqueue(async (p, b) =>
+                    {
+                        PrerequisiteHandler.CanPlayCards(b, p);
+                        await VerifyRemainingAction(p, hubContext);
+                    });
+                }
+
+                if (RemainingActions.Any())
+                {
+                    await Task.Run(() =>
+                    {
+                        var action = RemainingActions.Dequeue();
+                        action.Invoke(player, Board);
+                    });
+
+                }
+                //EffectHandler.CheckCardsReductions(player);
+                //PrerequisiteHandler.CanPlayCards(Board, player);
             }
 
-            return new Game
+            //await _hubContext.Clients.All.SendAsync("ReceiveGameUpdate", "PlayResult", JsonSerializer.Serialize(playResult));
+
+
+            //return new Game
+            //{
+            //    Board = Board,
+            //    AllPlayers = Players.Select(p => p.Value).ToList(),
+            //};
+        }
+
+        private async Task VerifyRemainingAction(Player player, IHubContext<ClientNotificationHub> hubContext)
+        {
+
+            if (RemainingActions.Any())
             {
-                Board = Board,
-                AllPlayers = Players.Select(p => p.Value).ToList(),
-            };
+                var action = RemainingActions.Dequeue();
+                action.Invoke(player, Board);
+            }
+            else
+            {
+                var game = new Game
+                {
+                    Board = Board,
+                    AllPlayers = Players.Select(p => p.Value).ToList(),
+                };
+                await hubContext.Clients.All.SendAsync("ReceiveGameUpdate", "PlayResult", JsonSerializer.Serialize(game));
+
+
+
+            }
+        }
+
+        public async Task PlaceTile(BoardPlace place, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (PendingTileEffect != null)
+            {
+                if (Players.TryGetValue(playerId, out var player))
+                {
+                    BoardHandler.PlaceTileOnBoard(place, player, PendingTileEffect, Board, AvailablePatents);
+                    PendingTileEffect = null;
+                    await VerifyRemainingAction(player, hubContext);
+                }
+                //TODO manage
+            }
+            else
+            {
+                //TODO manage
+            }
         }
     }
 }

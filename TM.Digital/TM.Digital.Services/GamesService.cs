@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using TM.Digital.Cards;
+using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
+using TM.Digital.Transport.Hubs.Hubs;
 
 
 namespace TM.Digital.Services
 {
     public class GamesService
     {
+
         public static GamesService Instance { get; } = new GamesService();
 
         private readonly List<Corporation> _allCorporations = new List<Corporation>
@@ -64,12 +68,25 @@ namespace TM.Digital.Services
             throw Errors.ErrorGameIdNotFound(selection.GameId);
         }
 
-        public Game Play(Patent card, Guid gameId, Guid playerId)
+        public async Task Play(Patent card, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
             if (_currentSessions.TryGetValue(gameId, out var session))
             {
 
-                return session.PlayCard(card, playerId);
+                await session.PlayCard(card, playerId, hubContext);
+                return;
+            }
+
+            throw Errors.ErrorGameIdNotFound(gameId);
+        }
+
+        public async Task PlaceTile(BoardPlace place, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+
+                await session.PlaceTile(place, playerId, hubContext);
+                return;
             }
 
             throw Errors.ErrorGameIdNotFound(gameId);

@@ -51,19 +51,38 @@ namespace TM.Digital.Model.Effects
             return availablePlaces;
         }
 
-        private static Point[] GetPlaceSurroundingsIndexes(BoardPlace space)
+        private static PlaceCoordinates[] GetPlaceSurroundingsIndexes(BoardPlace space)
         {
-            var surr = new Point[]
+            var surr = new PlaceCoordinates[]
             {
                 //left surroundings
-                new Point(space.Index.X - 1, space.Index.Y - 1),
-                new Point(space.Index.X, space.Index.Y - 1),
-                new Point(space.Index.X + 1, space.Index.Y - 1),
+                new PlaceCoordinates {X = space.Index.X - 1, Y = space.Index.Y - 1},
+                new PlaceCoordinates
+                {
+                    X = space.Index.X,
+                    Y = space.Index.Y - 1
+                },
+                new PlaceCoordinates
+                {
+                    X = space.Index.X + 1,
+                    Y = space.Index.Y - 1
+                },
 
                 //right surroundings
-                new Point(space.Index.X - 1, space.Index.Y),
-                new Point(space.Index.X, space.Index.Y + 1),
-                new Point(space.Index.X + 1, space.Index.Y),
+                new PlaceCoordinates
+                {
+                    X = space.Index.X - 1,
+                    Y = space.Index.Y
+                },
+                new PlaceCoordinates
+                {
+                    X = space.Index.X,
+                    Y = space.Index.Y + 1
+                },
+                new PlaceCoordinates
+                {
+                    X = space.Index.X + 1,
+                }
             };
             return surr;
         }
@@ -86,6 +105,93 @@ namespace TM.Digital.Model.Effects
         public static List<BoardPlace> VolcanicSpaces(List<BoardPlace> nonOccupiedSpaces)
         {
             return nonOccupiedSpaces.Where(t => t.Reserved.ReservedFor == ReservedFor.Volcano).ToList();
+        }
+
+        public static Board.Board GetPlacesChoices(TileEffect first, Board.Board board)
+        {
+            List<BoardPlace> choicePlaces = new List<BoardPlace>();
+            var nonOccupiedSpaces = BoardHandler.GetNonOccupiedSpaces(board);
+            switch (first.Constrains)
+            {
+                case TilePlacementCosntrains.None:
+                    choicePlaces = BoardHandler.AnyNonReservedSpace(nonOccupiedSpaces);
+                    break;
+
+                case TilePlacementCosntrains.ReservedForOcean:
+                    choicePlaces = BoardHandler.GetOceansSpaces(nonOccupiedSpaces);
+                    break;
+                case TilePlacementCosntrains.StandardCity:
+                    choicePlaces = BoardHandler.GetCitySpaces(board, nonOccupiedSpaces);
+                    break;
+                case TilePlacementCosntrains.VolcanicSpace:
+                    choicePlaces = BoardHandler.VolcanicSpaces(nonOccupiedSpaces);
+                    break;
+                case TilePlacementCosntrains.NothingAround:
+                    choicePlaces = BoardHandler.SpacesWithNothingAround(nonOccupiedSpaces, board);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            foreach (var choicePlace in choicePlaces)
+            {
+                choicePlace.CanBeChosed = true;
+            }
+
+            return board;
+        }
+
+        public static void PlaceTileOnBoard(BoardPlace place, Player.Player playerId, TileEffect pendingTileEffect,
+            Board.Board board, Queue<Patent> availablePatents)
+        {
+            var targetTile = board.BoardLines.SelectMany(l => l.BoardPlaces).FirstOrDefault(p => p.Index.Equals(place.Index));
+            if (targetTile != null)
+            {
+                targetTile.PlayedTile = new Tile.Tile
+                {
+                    Owner = pendingTileEffect.Type != TileType.Ocean ? playerId.PlayerId : default(Guid?),
+                    Type = pendingTileEffect.Type,
+                };
+
+                //inherent tile placement bonus
+                if (targetTile.PlacementBonus.Any())
+                {
+                    var bonusGroup = targetTile.PlacementBonus.GroupBy(b => b.BonusType);
+                    foreach (var bonus in bonusGroup)
+                    {
+                        var resource = playerId.Resources.FirstOrDefault(t => t.ResourceType == bonus.Key);
+                        if (resource != null)
+                        {
+                            resource.UnitCount += bonus.Count();
+                        }
+                        else
+                        {
+                            if (bonus.Key == ResourceType.Card)
+                            {
+                                for (int i = 0; i < bonus.Count(); i++)
+                                {
+                                    playerId.HandCards.Add(availablePatents.Dequeue());
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                //bonus for placement near ocean tiles
+                var surroundings = GetPlaceSurroundingsIndexes(place);
+                var surroundingTiles = board.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => surroundings.Contains(p.Index)).ToList();
+                foreach (var surroundingTile in surroundingTiles)
+                {
+                    if (surroundingTile.PlayedTile != null && surroundingTile.PlayedTile.Type == TileType.Ocean)
+                    {
+                        playerId.Resources.First(r => r.ResourceType == ResourceType.Money).UnitCount += 2;
+
+                    }
+                }
+
+            }
+
         }
     }
 

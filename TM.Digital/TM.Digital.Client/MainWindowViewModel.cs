@@ -92,6 +92,7 @@ namespace TM.Digital.Client
             StartGameCommand = new RelayCommand(ExecuteStartGame, CanExecuteStartGame);
             AddPlayerCommand = new RelayCommand(ExecuteAddPlayer, CanExecuteAddPlayer);
             SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
+            SelectBoardPlace = new RelayCommand(ExecuteSelectBoardPlace, CanExecuteSelectBoardPlace);
             connection = new HubConnectionBuilder()
                 .WithUrl(@"http://localhost:50154/ClientNotificationHub")
                 .WithAutomaticReconnect()
@@ -105,6 +106,41 @@ namespace TM.Digital.Client
                     UpdateGame(message);
                 }
             });
+            connection.On<string, string>("PlaceTile", (user, message) =>
+            {
+                if (Guid.Parse(user) == CurrentPlayer.Player.PlayerId)
+                {
+                    ShowTilesPlacement(message);
+                }
+            });
+        }
+
+        private bool CanExecuteSelectBoardPlace(object arg)
+        {
+            if (arg is BoardPlace bp)
+            {
+                return bp.CanBeChosed;
+            }
+
+            return false;
+        }
+
+        private async void ExecuteSelectBoardPlace(object obj)
+        {
+            if (obj is BoardPlace bp)
+            {
+                await TmDigitalClientRequestHandler.Instance.Post<BoardPlace>($"game/{GameId}/placetile/{CurrentPlayer.Player.PlayerId}", bp);
+
+            }
+        }
+
+        public RelayCommand SelectBoardPlace { get; set; }
+
+        private void ShowTilesPlacement(string message)
+        {
+            var gameResult2 = JsonConvert.DeserializeObject<Board>(message);
+            Board = gameResult2;
+
         }
 
         private void UpdateGame(string message)

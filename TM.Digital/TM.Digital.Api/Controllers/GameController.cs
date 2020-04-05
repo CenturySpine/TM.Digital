@@ -1,13 +1,13 @@
-﻿using System;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using TM.Digital.Api.Hubs;
+using System;
+using System.Threading.Tasks;
+using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Services;
+using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Api.Controllers
 {
@@ -21,6 +21,7 @@ namespace TM.Digital.Api.Controllers
         {
             _hubContext = hubContext;
         }
+
         [Route("start/{numberofplayer:int}")]
         public async Task<Guid> Start(int numberofplayer)
         {
@@ -45,12 +46,17 @@ namespace TM.Digital.Api.Controllers
         [Route("{gameId}/play/{playerId}")]
         public async Task<ActionResult> PlayCard(Patent card, Guid gameId, Guid playerId)
         {
-            await Task.CompletedTask;
-            var playResult = GamesService.Instance.Play(card, gameId, playerId);
-            await _hubContext.Clients.All.SendAsync("ReceiveGameUpdate", "PlayResult", JsonSerializer.Serialize(playResult));
+             await GamesService.Instance.Play(card, gameId, playerId, _hubContext);
+
+            return Ok();
+        }
+
+        [Route("{gameId}/placetile/{playerId}")]
+        public async Task<ActionResult> PlaceTile(BoardPlace place, Guid gameId, Guid playerId)
+        {
+            await GamesService.Instance.PlaceTile(place, gameId, playerId, _hubContext);
+
             return Ok();
         }
     }
-
-
 }

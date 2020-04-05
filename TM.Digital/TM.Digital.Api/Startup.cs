@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TM.Digital.Api.Hubs;
+
+using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Api
 {

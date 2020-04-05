@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Cards", "TM.Digi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.UnitTests", "TM.Digital.UnitTests\TM.Digital.UnitTests.csproj", "{72925672-06EB-4121-9AE5-4519DA44A3B4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Transport.Hubs", "TM.Digital.Transport.Hubs\TM.Digital.Transport.Hubs.csproj", "{55B2702F-FAC1-433F-9112-BB12C6515045}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{72925672-06EB-4121-9AE5-4519DA44A3B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72925672-06EB-4121-9AE5-4519DA44A3B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72925672-06EB-4121-9AE5-4519DA44A3B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55B2702F-FAC1-433F-9112-BB12C6515045}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55B2702F-FAC1-433F-9112-BB12C6515045}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55B2702F-FAC1-433F-9112-BB12C6515045}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55B2702F-FAC1-433F-9112-BB12C6515045}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

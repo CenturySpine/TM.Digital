@@ -1,14 +1,20 @@
-﻿using TM.Digital.Model.Board;
+﻿using System.Collections.Generic;
+using System.Linq;
+using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
+using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Services
 {
     public static class CardPlayHandler
     {
-        public static void Play(Patent card, Player player, Board board)
+        public static Choices Play(Patent card, Player player, Board board)
         {
+            Choices ch = new Choices();
+            player.HandCards.Remove(card);
+            player.PlayedCards.Add(card);
             //TODO check resources for reductions
 
             foreach (var cardResourceEffect in card.ResourcesEffects)
@@ -21,12 +27,14 @@ namespace TM.Digital.Services
                 BoardEffectHandler.HandleBoardEffect(boardLevelEffect, board, player);
             }
 
-            foreach (var cardTileEffect in card.TileEffects)
+            if (card.TileEffects.Any())
             {
-                
+                ch.TileEffects = new List<TileEffect>(card.TileEffects);
             }
-            player.HandCards.Remove(card);
-            player.PlayedCards.Add(card);
+
+            return ch;
         }
+
+        
     }
 }

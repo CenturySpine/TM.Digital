@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:TM.Digital.Client"
                     xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model"
-                    xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model">
+                    xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model"
+                    xmlns:tile="clr-namespace:TM.Digital.Model.Tile;assembly=TM.Digital.Model">
     <DataTemplate DataType="{x:Type board:Board}">
         <Grid Background="Transparent" >
             <Grid.ColumnDefinitions>
@@ -52,22 +53,48 @@
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type board:BoardPlace}">
-        <Button>
+        <Button  
+                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.SelectBoardPlace}"
+                CommandParameter="{Binding}">
             <Button.Template>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid Background="Transparent" >
 
                         <Path x:Name="placeOutline" Width="70" Height="80"
                                                     Data="M35,0 70,20 70,60 35,80 0,60 0,20 35,0"
-                                                    Fill="BurlyWood"
+                                                    
                                                     Margin="3,0"
                                                     StrokeThickness="2">
                             <Path.Style>
                                 <Style TargetType="{x:Type Path}">
                                     <Setter Property="Stroke" Value="Orange"></Setter>
+                                    <Setter Property="Fill" Value="BurlyWood"></Setter>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Reserved.ReservedFor}" Value="{x:Static board:ReservedFor.Ocean}">
+
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding PlayedTile}" Value="{x:Null}" />
+                                                <Condition Binding="{Binding Reserved.ReservedFor}" Value="{x:Static board:ReservedFor.Ocean}" />
+                                            </MultiDataTrigger.Conditions>
                                             <Setter Property="Stroke" Value="Blue"></Setter>
+                                        </MultiDataTrigger>
+
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding PlayedTile}" Value="{x:Null}" />
+                                                <Condition Binding="{Binding CanBeChosed}" Value="true" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Stroke" Value="Red"></Setter>
+                                        </MultiDataTrigger>
+
+                                        <DataTrigger Binding="{Binding PlayedTile.Type}" Value="{x:Static tile:TileType.City}">
+                                            <Setter Property="Fill" Value="Gray"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding PlayedTile.Type}" Value="{x:Static tile:TileType.Ocean}">
+                                            <Setter Property="Fill" Value="Blue"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding PlayedTile.Type}" Value="{x:Static tile:TileType.Forest}">
+                                            <Setter Property="Fill" Value="Green"></Setter>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -91,11 +118,15 @@
                             <ItemsControl ItemsSource="{Binding PlacementBonus}" HorizontalAlignment="Center">
                                 <ItemsControl.Style>
                                     <Style TargetType="{x:Type ItemsControl}">
-                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                         <Style.Triggers>
+                                            <DataTrigger Binding="{Binding PlayedTile}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
                                             <DataTrigger Binding="{Binding PlacementBonus.Count}" Value="0">
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
+                                            
                                         </Style.Triggers>
                                     </Style>
                                 </ItemsControl.Style>
