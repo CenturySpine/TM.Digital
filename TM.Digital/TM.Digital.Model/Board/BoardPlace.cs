@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using TM.Digital.Model.Resources;
 
 namespace TM.Digital.Model.Board
@@ -13,7 +14,7 @@ namespace TM.Digital.Model.Board
 
         public string Name { get; set; }
 
-        public int Index { get; set; }
+        public Point Index { get; set; }
         public BoardPlaceReservedSpace Reserved { get; set; }
 
         public List<BoardPlaceBonus> PlacementBonus { get; set; }

@@ -21,7 +21,7 @@ namespace TM.Digital.Client
         public PlayerSelector(Player player)
         {
             Player = player;
-            PatentsSelectors = new ObservableCollection<PatentSelector>(player.HandCards.Select(c => new PatentSelector() { Patent = c }));
+            PatentsSelectors = new ObservableCollection<PatentSelector>(player.HandCards.Select(c => new PatentSelector { Patent = c }));
         }
 
         public Player Player { get; set; }

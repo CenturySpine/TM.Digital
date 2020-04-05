@@ -4,5 +4,6 @@
     {
         public TileType Type { get; set; }
         public int Number { get; set; }
+        public TilePlacementCosntrains Constrains { get; set; }
     }
 }

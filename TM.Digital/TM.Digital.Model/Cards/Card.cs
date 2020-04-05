@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using TM.Digital.Model.Effects;
-using TM.Digital.Model.Prerequisite;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 
@@ -19,7 +18,7 @@ namespace TM.Digital.Model.Cards
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Card) obj);
+            return Equals((Card)obj);
         }
 
         public override int GetHashCode()
@@ -28,7 +27,7 @@ namespace TM.Digital.Model.Cards
         }
 
         public Guid Guid { get; set; } = Guid.NewGuid();
-        
+
         public string Name { get; set; }
 
         public List<Tags> Tags { get; set; }
@@ -38,8 +37,6 @@ namespace TM.Digital.Model.Cards
         public ResourceType ResourceType { get; set; }
 
         public int ResourcesCount { get; set; }
-
-
 
         public StandardVictoryPoint CardVictoryPoints { get; set; }
         public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
@@ -54,5 +51,7 @@ namespace TM.Digital.Model.Cards
 
         public List<TileEffect> TileEffects { get; set; } = new List<TileEffect>();
 
+        public int PlantsConversionRate { get; set; }
+        public int HeatConversionRate { get; set; }
     }
 }

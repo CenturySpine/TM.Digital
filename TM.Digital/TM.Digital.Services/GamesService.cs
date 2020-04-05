@@ -19,16 +19,17 @@ namespace TM.Digital.Services
             CorporationsFactory.Arklight(),CorporationsFactory.CheungShingMars(),CorporationsFactory.InterPlanetaryCinematics(), CorporationsFactory.Teractor(), CorporationsFactory.PhobLog(),
         };
 
-        private readonly List<Patent> _allPatents = new List<Patent>()
+        private readonly List<Patent> _allPatents = new List<Patent>
         {
-            PatentFactory.BubbleCity(),PatentFactory.FusionEnergy(),PatentFactory.GiantAsteroid(),PatentFactory.IdleGazLiberation(),PatentFactory.SolarWindEnergy(),PatentFactory.ThreeDimensionalHomePrinting(),PatentFactory.ToundraAgriculture(),PatentFactory.AdvancedAlliages()
+            PatentFactory.BubbleCity(),PatentFactory.FusionEnergy(),PatentFactory.GiantAsteroid(),PatentFactory.IdleGazLiberation(),PatentFactory.SolarWindEnergy(),PatentFactory.ThreeDimensionalHomePrinting(),PatentFactory.ToundraAgriculture(),PatentFactory.AdvancedAlliages(),
+            PatentFactory.Comet(),PatentFactory.ProtectedValley()
         };
 
         private readonly Dictionary<Guid, GameSession> _currentSessions = new Dictionary<Guid, GameSession>();
 
         public Guid StartGame(int numberOfPlayer)
         {
-            GameSession gs = new GameSession() { Id = Guid.NewGuid() };
+            GameSession gs = new GameSession { Id = Guid.NewGuid() };
             _allCorporations.Shuffle();
             _allPatents.Shuffle();
             gs.NumberOfPlayers = numberOfPlayer;

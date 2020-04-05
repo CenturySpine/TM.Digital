@@ -21,6 +21,10 @@ namespace TM.Digital.Services
                 BoardEffectHandler.HandleBoardEffect(boardLevelEffect, board, player);
             }
 
+            foreach (var cardTileEffect in card.TileEffects)
+            {
+                
+            }
             player.HandCards.Remove(card);
             player.PlayedCards.Add(card);
         }
