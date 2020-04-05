@@ -57,7 +57,7 @@
                 <TextBlock Text="NT" Margin="2"></TextBlock>
                 <TextBlock Text="{Binding Player.TerraformationLevel}" Margin="2"></TextBlock>
                 <TextBlock Text="Corp" Margin="2"></TextBlock>
-                <TextBlock Text="{Binding Player.Name}" Margin="2"></TextBlock>
+                <TextBlock Text="{Binding Player.Corporation.Name}" Margin="2" FontWeight="Bold"></TextBlock>
             </StackPanel>
             <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Player.Resources}" Margin="5">
                 <ItemsControl.ItemsPanel>

@@ -29,11 +29,11 @@ namespace TM.Digital.Api.Controllers
             return GamesService.Instance.StartGame(numberofplayer);
         }
 
-        [Route("addplayer/{gameId}/{playername}")]
-        public async Task<GameSetup> AddPlayer(Guid gameId, string playername)
+        [Route("addplayer/{gameId}/{playername}/{test}")]
+        public async Task<GameSetup> AddPlayer(Guid gameId, string playername, bool test)
         {
             await Task.CompletedTask;
-            return GamesService.Instance.AddPlayer(gameId, playername);
+            return GamesService.Instance.AddPlayer(gameId, playername, test);
         }
 
         [Route("addplayer/setupplayer")]

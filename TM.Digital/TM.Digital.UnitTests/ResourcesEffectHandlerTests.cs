@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
+using TM.Digital.Services;
 
 namespace TM.Digital.UnitTests
 {

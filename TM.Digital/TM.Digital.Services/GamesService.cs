@@ -25,8 +25,17 @@ namespace TM.Digital.Services
 
         private readonly List<Patent> _allPatents = new List<Patent>
         {
-            PatentFactory.BubbleCity(),PatentFactory.FusionEnergy(),PatentFactory.GiantAsteroid(),PatentFactory.IdleGazLiberation(),PatentFactory.SolarWindEnergy(),PatentFactory.ThreeDimensionalHomePrinting(),PatentFactory.ToundraAgriculture(),PatentFactory.AdvancedAlliages(),
-            PatentFactory.Comet(),PatentFactory.ProtectedValley()
+            PatentFactory.BubbleCity(),
+            PatentFactory.FusionEnergy(),
+            PatentFactory.GiantAsteroid(),
+            PatentFactory.IdleGazLiberation(),
+            PatentFactory.SolarWindEnergy(),
+            PatentFactory.ThreeDimensionalHomePrinting(),
+            PatentFactory.ToundraAgriculture(),
+            PatentFactory.AdvancedAlliages(),
+            PatentFactory.Comet(),
+            PatentFactory.ProtectedValley(),
+            PatentFactory.GiantIceAsteroid()
         };
 
         private readonly Dictionary<Guid, GameSession> _currentSessions = new Dictionary<Guid, GameSession>();
@@ -46,26 +55,46 @@ namespace TM.Digital.Services
             return gs.Id;
         }
 
-        public GameSetup AddPlayer(Guid gameId, string playerName)
+        public GameSetup AddPlayer(Guid gameId, string playerName, bool test)
         {
-            if (_currentSessions.TryGetValue(gameId, out var session))
+            try
             {
-                GameSetup gameSetup = session.AddPlayer(playerName);
-                return gameSetup;
+                if (_currentSessions.TryGetValue(gameId, out var session))
+                {
+                    GameSetup gameSetup = session.AddPlayer(playerName, test);
+                    return gameSetup;
+                }
+
+                throw Errors.ErrorGameIdNotFound(gameId);
+            }
+            catch (Exception e)
+            {
+
+                Logger.Log("ERROR", e.ToString());
             }
 
-            throw Errors.ErrorGameIdNotFound(gameId);
+            return null;
         }
 
         public Player SetupPlayer(GameSetupSelection selection)
         {
-            if (_currentSessions.TryGetValue(selection.GameId, out var session))
+            try
             {
-                Player gameSetup = session.SetupPlayer(selection);
-                return gameSetup;
+                if (_currentSessions.TryGetValue(selection.GameId, out var session))
+                {
+                    Player gameSetup = session.SetupPlayer(selection);
+                    return gameSetup;
+                }
+
+                throw Errors.ErrorGameIdNotFound(selection.GameId);
+            }
+            catch (Exception e)
+            {
+
+                Logger.Log("ERROR", e.ToString());
             }
 
-            throw Errors.ErrorGameIdNotFound(selection.GameId);
+            return null;
         }
 
         public async Task Play(Patent card, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)

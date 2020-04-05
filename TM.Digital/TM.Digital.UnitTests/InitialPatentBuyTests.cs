@@ -4,6 +4,7 @@ using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
+using TM.Digital.Services;
 
 namespace TM.Digital.UnitTests
 {

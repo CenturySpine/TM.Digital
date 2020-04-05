@@ -25,7 +25,7 @@ namespace TM.Digital.Services
         public Queue<Patent> AvailablePatents { get; set; }
         public Dictionary<Guid, Player> Players { get; set; }
 
-        public GameSetup AddPlayer(string playerName)
+        public GameSetup AddPlayer(string playerName, bool test)
         {
             var player = new Player
             {
@@ -33,12 +33,12 @@ namespace TM.Digital.Services
                 Name = playerName,
                 Resources = new List<ResourceHandler>
                 {
-                    new ResourceHandler {ResourceType = ResourceType.Money},
-                    new ResourceHandler {ResourceType = ResourceType.Steel},
-                    new ResourceHandler {ResourceType = ResourceType.Titanium},
-                    new ResourceHandler {ResourceType = ResourceType.Plant},
-                    new ResourceHandler {ResourceType = ResourceType.Energy},
-                    new ResourceHandler {ResourceType = ResourceType.Heat}
+                    new ResourceHandler {ResourceType = ResourceType.Money,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Steel,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Titanium,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Plant,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Energy,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Heat,UnitCount = test?20:0,Production = test?5:0}
                 },
                 HandCards = new List<Patent>(),
                 PlayedCards = new List<Patent>(),
@@ -56,7 +56,7 @@ namespace TM.Digital.Services
             {
                 gs.Corporations.Add(AvailableCorporations.Dequeue());
             }
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 10; i++)
             {
                 gs.Patents.Add(AvailablePatents.Dequeue());
             }
@@ -92,14 +92,20 @@ namespace TM.Digital.Services
                 var choices = CardPlayHandler.Play(card, player, Board);
                 if (choices != null)
                 {
+                    
+
                     if (choices.TileEffects != null && choices.TileEffects.Any())
                     {
+                        Logger.Log(player.Name, $"Playing card '{card.Name}' requires player '{player.Name}' to make {choices.TileEffects.Count} tile choices");
                         foreach (var choicesTileEffect in choices.TileEffects)
                         {
                             RemainingActions.Enqueue(async (p, b) =>
                                 {
                                     PendingTileEffect = choicesTileEffect;
+                                    Logger.Log(player.Name, $"Effect {PendingTileEffect.Type}... Getting board available spaces...");
+
                                     var choiceBoard = BoardHandler.GetPlacesChoices(PendingTileEffect, b);
+                                    Logger.Log(player.Name, $"Found {choiceBoard.BoardLines.SelectMany(r=>r.BoardPlaces).Where(p=>p.CanBeChosed).Count()} available places. Sending choices to player");
                                     await hubContext.Clients.All.SendAsync("PlaceTile", $"{p.PlayerId}", JsonSerializer.Serialize(choiceBoard));
 
                                 });
@@ -152,6 +158,8 @@ namespace TM.Digital.Services
             }
             else
             {
+                Logger.Log(player.Name, $"All actions choices done. Sending game update to all players");
+
                 var game = new Game
                 {
                     Board = Board,
@@ -168,8 +176,10 @@ namespace TM.Digital.Services
         {
             if (PendingTileEffect != null)
             {
+                
                 if (Players.TryGetValue(playerId, out var player))
                 {
+                    Logger.Log(player.Name, $"Placing tile '{PendingTileEffect.Type}' on place '{place.Index}'");
                     BoardHandler.PlaceTileOnBoard(place, player, PendingTileEffect, Board, AvailablePatents);
                     PendingTileEffect = null;
                     await VerifyRemainingAction(player, hubContext);

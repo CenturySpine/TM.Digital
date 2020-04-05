@@ -12,6 +12,8 @@ namespace TM.Digital.Services
     {
         public static Choices Play(Patent card, Player player, Board board)
         {
+            Logger.Log(player.Name, $"Player '{player.Name}' playing card '{card.Name}'");
+
             Choices ch = new Choices();
             player.HandCards.Remove(card);
             player.PlayedCards.Add(card);
@@ -35,6 +37,6 @@ namespace TM.Digital.Services
             return ch;
         }
 
-        
+
     }
 }

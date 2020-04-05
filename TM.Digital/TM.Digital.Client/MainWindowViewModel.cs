@@ -148,7 +148,7 @@ namespace TM.Digital.Client
             //var gameResult = JsonSerializer.Deserialize<Game>(message, new JsonSerializerOptions
             //{
             //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                
+
             //});
 
             var gameResult2 = JsonConvert.DeserializeObject<Game>(message);
@@ -196,7 +196,7 @@ namespace TM.Digital.Client
             CallErrorHandler.Handle(async () =>
             {
                 var gameSetup =
-                    await TmDigitalClientRequestHandler.Instance.Request<GameSetup>($"game/addplayer/{GameId}/" + PlayerName);
+                    await TmDigitalClientRequestHandler.Instance.Request<GameSetup>($"game/addplayer/{GameId}/" + PlayerName + "/" + true);
 
                 var result = _popup.ShowGameSetup(gameSetup);
 

@@ -9,23 +9,45 @@
                 <Grid>
                     <Path x:Name="placeOutline" Width="70" Height="80"
                           Data="M35,0 70,20 70,60 35,80 0,60 0,20 35,0"
-                          Fill="BurlyWood"
+                          
                           Margin="3,0"
                           StrokeThickness="2">
-
+                        <Path.Style>
+                            <Style TargetType="{x:Type Path}">
+                                <Setter Property="Fill" Value="BurlyWood"></Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.City}">
+                                        <Setter Property="Data" Value="{Binding Source={StaticResource city}}" />
+                                        <Setter Property="Fill" Value="DarkGray"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Forest}">
+                                        <Setter Property="Data" Value="{Binding Source={StaticResource pine_tree}}" />
+                                        <Setter Property="Fill" Value="Green"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Ocean}">
+                                        <Setter Property="Data" Value="{Binding Source={StaticResource water}}" />
+                                        <Setter Property="Fill" Value="Blue"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
                     </Path>
                     <Path VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Path.Style>
                             <Style TargetType="{x:Type Path}">
+                                <Setter Property="Fill" Value="BurlyWood"></Setter>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.City}">
                                         <Setter Property="Data" Value="{Binding Source={StaticResource city}}" />
+                                        
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Forest}">
                                         <Setter Property="Data" Value="{Binding Source={StaticResource pine_tree}}" />
+                                        
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Ocean}">
                                         <Setter Property="Data" Value="{Binding Source={StaticResource water}}" />
+                                        
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -38,45 +60,70 @@
 
     </DataTemplate>
     <DataTemplate DataType="{x:Type cards:Patent}">
-        <Border BorderBrush="Black" BorderThickness="1" Margin="2" CornerRadius="5" Padding="2">
+        <Border BorderBrush="Black" BorderThickness="1" Margin="2"  Padding="2"
+                Background="Beige">
             <Border.Style>
                 <Style TargetType="{x:Type Border}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding CanBePlayed}" Value="false">
                             <Setter Property="IsEnabled" Value="False"></Setter>
                         </DataTrigger>
-                        <Trigger Property="IsEnabled" Value="False">
+                        <!--<Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.5"></Setter>
-                        </Trigger>
+                        </Trigger>-->
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <Grid>
+            <Grid >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="25" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <Border Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1">
+
+                <Border Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1" Opacity="0.5">
                     <TextBlock Text="{Binding BaseCost}" VerticalAlignment="Center" />
                 </Border>
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" />
-                <ItemsControl Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding ResourcesEffects}" />
-                <ItemsControl Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding BoardEffects}" />
-                <ItemsControl Grid.Row="2" Grid.Column="0"  ItemsSource="{Binding TileEffects}" />
+                <Border Grid.Row="0" Grid.Column="1" Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1">
+                    <TextBlock Text="{Binding ModifiedCost}" VerticalAlignment="Center" />
+                </Border>
+
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Name}" VerticalAlignment="Center" />
+
+                <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"   ItemsSource="{Binding ResourcesEffects}" />
+                <ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding BoardEffects}" />
+                <ItemsControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding TileEffects}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </Grid>
         </Border>
     </DataTemplate>
+
     <DataTemplate DataType="{x:Type local:PatentSelector}">
-        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="2" Width="150" Height="300" Padding="10">
+        <Border BorderBrush="Black" BorderThickness="1"  Margin="2" Width="150" Height="300" Padding="2">
             <Border.Style>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="Background" Value="White"></Setter>
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding Patent.CardType}" Value="{x:Static cards:CardType.Blue}">
+                            <Setter Property="Background" Value="DeepSkyBlue"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Patent.CardType}" Value="{x:Static cards:CardType.Green}">
+                            <Setter Property="Background" Value="GreenYellow"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Patent.CardType}" Value="{x:Static cards:CardType.Red}">
+                            <Setter Property="Background" Value="IndianRed"></Setter>
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsSelected}" Value="true">
                             <Setter Property="Background" Value="LightGray"></Setter>
                         </DataTrigger>

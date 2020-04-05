@@ -2,24 +2,24 @@
 using System.Linq;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 
-namespace TM.Digital.Model.Effects
+namespace TM.Digital.Services
 {
     public static class EffectHandler
     {
-        public static void HandleResourceEffect(Player.Player player, ResourceEffect effect)
+        public static void HandleResourceEffect(Model.Player.Player player, ResourceEffect effect)
         {
             if (effect.EffectDestination == EffectDestination.Self)
             {
-
-
                 var resource = player.Resources.FirstOrDefault(r => r.ResourceType == effect.ResourceType);
 
                 if (resource != null)
                 {
                     if (effect.ResourceKind == ResourceKind.Production)
                     {
+                        
                         resource.Production += effect.Amount;
 
                         //never go below -5 for money production
@@ -32,11 +32,14 @@ namespace TM.Digital.Model.Effects
                         {
                             resource.Production = 0;
                         }
+                        Logger.Log(player.Name, $"Resource {resource.ResourceType} Production modified for {effect.Amount}, new value {resource.Production}");
                     }
                     else
                     {
                         resource.UnitCount += effect.Amount;
+                        
                         if (resource.UnitCount < 0) resource.UnitCount = 0;
+                        Logger.Log(player.Name, $"Resource {resource.ResourceType} Unit modified for {effect.Amount}, new value {resource.UnitCount}");
                     }
                 }
             }
@@ -46,20 +49,24 @@ namespace TM.Digital.Model.Effects
             }
         }
 
-        public static void HandleInitialPatentBuy(Player.Player player, List<Patent> selectionBoughtCards,
+        public static void HandleInitialPatentBuy(Model.Player.Player player, List<Patent> selectionBoughtCards,
             Corporation selectionCorporation)
         {
             var playersMoney = player.Resources.First(r => r.ResourceType == ResourceType.Money);
             playersMoney.UnitCount = selectionCorporation.StartingMoney;
+            Logger.Log(player.Name, $"Initial money count {selectionCorporation.StartingMoney}");
             foreach (var selectionBoughtCard in selectionBoughtCards)
             {
                 playersMoney.UnitCount -= 3;
                 player.HandCards.Add(selectionBoughtCard);
+                Logger.Log(player.Name, $"Buying patent '{selectionBoughtCard.Name}', remaining money {playersMoney.UnitCount}");
             }
         }
 
-        public static void CheckCardsReductions(Player.Player player)
+        public static void CheckCardsReductions(Model.Player.Player player)
         {
+            
+
             var reductions = player.PlayedCards.Concat(new List<Card> { player.Corporation })
                 .SelectMany(c => c.TagEffects).Where(te => te.TagEffectType == TagEffectType.CostAlteration)
                 .ToList();
@@ -70,11 +77,13 @@ namespace TM.Digital.Model.Effects
                     .ToList();
                 if (reductionForCard.Any())
                 {
+                    Logger.Log(player.Name, $"Updating players '{player.Name}' cards costs...");
                     foreach (var tagEffect in reductionForCard)
                     {
-                        playerHandCard.ModifiedCost = playerHandCard.BaseCost += tagEffect.EffectValue;
+                        playerHandCard.ModifiedCost = playerHandCard.BaseCost + tagEffect.EffectValue;
+                        if (playerHandCard.ModifiedCost < 0) playerHandCard.ModifiedCost = 0;
+                        Logger.Log(player.Name, $"New card '{playerHandCard.Name}' cost => {playerHandCard.ModifiedCost}");
                     }
-
                 }
                 else
                 {

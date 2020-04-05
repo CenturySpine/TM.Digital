@@ -189,6 +189,34 @@ namespace TM.Digital.Cards
             };
         }
 
+        public static Patent GiantIceAsteroid()
+        {
+            return new Patent
+            {
+                Name = "Giant ice asteroid",
+                BaseCost = 36,
+                Tags = new List<Tags> { Tags.Space, Tags.Event },
+                ResourcesEffects = new List<ResourceEffect>
+                {
+                    new ResourceEffect
+                    {
+                        Amount = -6,ResourceKind =ResourceKind.Unit,ResourceType = ResourceType.Plant,EffectDestination = EffectDestination.OtherPlayer
+                    },
+                },
+
+                TileEffects = new List<TileEffect>
+                {
+                    new TileEffect { Type = TileType.Ocean, Number = 1, Constrains = TilePlacementCosntrains.ReservedForOcean },
+                    new TileEffect { Type = TileType.Ocean, Number = 1, Constrains = TilePlacementCosntrains.ReservedForOcean }
+                },
+                BoardEffects = new List<BoardLevelEffect>
+                {
+                    new BoardLevelEffect { Level = 1, BoardLevelType = BoardLevelType.Temperature },
+                    new BoardLevelEffect { Level = 1, BoardLevelType = BoardLevelType.Temperature }
+                }
+            };
+        }
+
         public static Patent ToundraAgriculture()
         {
             return new Patent
