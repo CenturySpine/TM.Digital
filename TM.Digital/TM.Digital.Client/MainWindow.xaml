@@ -9,12 +9,12 @@
         WindowState="Maximized"
         d:DataContext="{d:DesignInstance {x:Type local:MainWindowViewModel}}"
         Title="MainWindow"  d:DesignHeight="800" d:DesignWidth="1000">
-    <Grid>
+    <Grid x:Name="rootContent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
-            <RowDefinition Height="Auto" />
+
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="2">
@@ -28,19 +28,52 @@
                 <TextBox Margin="2" Text="{Binding Server}"></TextBox>
             </UniformGrid>-->
             <Button Command="{Binding StartGameCommand}" Content="Create new game" Margin="2" Padding="2"></Button>
-            
+
+            <TextBlock Text="{Binding GameId}" Margin="2"></TextBlock>
+
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="2">
             <UniformGrid Columns="2">
                 <TextBlock Text="Player's name" Margin="2" />
-                <TextBox Margin="2" Text="{Binding PlayerName}"></TextBox>
+                <TextBox Margin="2" Text="{Binding PlayerName, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             </UniformGrid>
             <Button Command="{Binding AddPlayerCommand}" Content="Join" Margin="2" Padding="2"></Button>
         </StackPanel>
 
-        <ContentControl Grid.Row="2" Content="{Binding Board}"></ContentControl>
+        <Grid Grid.Row="2">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="IsEnabled" Value="True" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsBoardLocked}" Value="true">
+                            <Setter Property="IsEnabled" Value="false" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ContentControl Grid.Row="0" Content="{Binding Board}"></ContentControl>
 
-        <ContentControl Content="{Binding CurrentPlayer}" Grid.Row="3"></ContentControl>
+            <ContentControl Content="{Binding CurrentPlayer}" Grid.Row="1"></ContentControl>
+        </Grid>
+
+
+        <Grid Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed">
+            <Grid.Background>
+                <SolidColorBrush Color="White" Opacity="0.5" />
+            </Grid.Background>
+            <Border VerticalAlignment="Center" HorizontalAlignment="Center" Padding="60,10" Margin="15" BorderBrush="Black" BorderThickness="1" Background="White">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="3" Opacity="0.8"></DropShadowEffect>
+                </Border.Effect>
+                <TextBlock Text="{Binding LockedMessage}" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                           Margin="10"
+                           FontSize="25" FontWeight="Bold"></TextBlock>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

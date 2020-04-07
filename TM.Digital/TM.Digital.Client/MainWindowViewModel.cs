@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,18 +13,6 @@ using TM.Digital.Transport;
 
 namespace TM.Digital.Client
 {
-    public class PlayerSelector
-    {
-        public PlayerSelector(Player player)
-        {
-            Player = player;
-            PatentsSelectors = new ObservableCollection<PatentSelector>(player.HandCards.Select(c => new PatentSelector { Patent = c }));
-        }
-
-        public Player Player { get; set; }
-        public ObservableCollection<PatentSelector> PatentsSelectors { get; set; }
-    }
-
     public class MainWindowViewModel : NotifierBase
     {
         private readonly PopupService _popup;
@@ -36,6 +23,8 @@ namespace TM.Digital.Client
         private string _server;
         private PlayerSelector _currentPlayer;
         private HubConnection connection;
+        private bool _isBoardLocked;
+        private string _lockedMessage;
 
         public MainWindowViewModel(PopupService popup)
         {
@@ -225,8 +214,23 @@ namespace TM.Digital.Client
                 if (GameId != Guid.Empty)
                 {
                     await GetBoard();
+                    IsBoardLocked = true;
+                    LockedMessage = "Awaiting players...";
+                    _popup.ShowLockedOverlay();
                 }
             });
+        }
+
+        public bool IsBoardLocked
+        {
+            get => _isBoardLocked;
+            set { _isBoardLocked = value; OnPropertyChanged(nameof(IsBoardLocked)); }
+        }
+
+        public string LockedMessage
+        {
+            get => _lockedMessage;
+            private set { _lockedMessage = value;OnPropertyChanged(nameof(LockedMessage)); }
         }
 
         private async Task GetBoard()
