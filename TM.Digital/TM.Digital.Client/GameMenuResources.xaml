@@ -5,74 +5,102 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d">
     <DataTemplate DataType="{x:Type local:MainMenuViewModel}">
-        <Border Background="White" Opacity="0.5">
-            <Grid Width="300" Height="300" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Border >
+
+            <Border.Background>
+                <SolidColorBrush Color="WhiteSmoke" Opacity="1"></SolidColorBrush>
+            </Border.Background>
+
+            <Grid    VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <Border BorderBrush="Black" BorderThickness="2" Background="White" >
+                    <Border.Effect>
+                        <DropShadowEffect Opacity="0.8" ShadowDepth="3"></DropShadowEffect>
+                    </Border.Effect>
+                </Border>
+
+                <Grid Margin="30" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition  />
 
                 </Grid.ColumnDefinitions>
-
-                <Grid>
+                
+                <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Menu" HorizontalAlignment="Center"/>
+                    <TextBlock Text=" - Menu - " HorizontalAlignment="Center" FontSize="50" FontWeight="Bold"/>
 
-                    <StackPanel Grid.Row="1">
-                        <Button Content="Create new game" Margin="20" Command="{Binding ShowCreateGameCommand}"/>
-                        <Button Content="Join game" Command="{Binding ListGameSessionsCommand}" Margin="20" />
+                    <StackPanel Grid.Row="1" Margin="20">
+                        <Button Content="Create new game" Margin="20" Command="{Binding ShowCreateGameCommand}" Padding="10" FontSize="20"/>
+                            <Button Content="Join game" Command="{Binding ListGameSessionsCommand}" Margin="20" Padding="10" FontSize="20"/>
                     </StackPanel>
                 </Grid>
 
                 <!-- join game -->
-                <Grid Grid.Column="1" Visibility="{Binding IsSessionListVisible, Converter={StaticResource boolToVisConverter}}">
+                    <Border Grid.Column="1" Width="1" Background="Black" Margin="10" HorizontalAlignment="Left" Visibility="{Binding IsSessionListVisible, Converter={StaticResource boolToVisConverter}}" />
+
+                <Grid Grid.Column="1" Margin="20" Visibility="{Binding IsSessionListVisible, Converter={StaticResource boolToVisConverter}}" VerticalAlignment="Center">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Join game" HorizontalAlignment="Center" Margin="10" VerticalAlignment="Center" />
+                        <TextBlock Text="Join game" HorizontalAlignment="Center" Margin="20" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"  />
+                    
+                    <UniformGrid Grid.Row="1" Columns="2">
+                            <TextBlock Text="Your name" Margin="5" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBox  Text="{Binding PlayerName, UpdateSourceTrigger=PropertyChanged}" Margin="5" Padding="5"></TextBox>
+                    </UniformGrid>
 
-                    <DataGrid Grid.Row="1" ItemsSource="{Binding GameSessionInformation}" AutoGenerateColumns="True" 
+                    <DataGrid Grid.Row="2" ItemsSource="{Binding GameSessionInformation}" AutoGenerateColumns="True" 
                               ColumnWidth="*"
+                              MinHeight="100"
+                              MaxWidth="400"
                               IsReadOnly="True" RowHeaderWidth="0"
                               SelectionMode="Single" SelectionUnit="FullRow"
                               SelectedItem="{Binding SelectedSession, Mode=TwoWay}">
 
                     </DataGrid>
 
-                    <Button Grid.Row="2" Content="Join" Command="{Binding JoinGameCommand}" Margin="10"></Button>
+                    <Button Grid.Row="3" Content="Join" Command="{Binding JoinGameCommand}" Margin="10"></Button>
                 </Grid>
 
                 <!-- create game -->
-                <Grid Grid.Column="1" Visibility="{Binding IsGameCreationVisible, Converter={StaticResource boolToVisConverter}}">
+                    <Border Grid.Column="1" Width="1" Background="Black" Margin="10" HorizontalAlignment="Left" Visibility="{Binding IsGameCreationVisible, Converter={StaticResource boolToVisConverter}}"></Border>
+                    <Grid Margin="20" Grid.Column="1" Visibility="{Binding IsGameCreationVisible, Converter={StaticResource boolToVisConverter}}"
+                          VerticalAlignment="Center">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-
                         <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Create game" HorizontalAlignment="Center" Margin="10" VerticalAlignment="Center" />
+                    <TextBlock Text="Create game" HorizontalAlignment="Center" Margin="20" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
 
                     <UniformGrid Grid.Row="1" Columns="2">
-                        <TextBlock Text="Your name" />
-                        <TextBox  Text="{Binding PlayerName}"></TextBox>
+                            <TextBlock Text="Your name" Margin="5" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBox  Text="{Binding PlayerName, UpdateSourceTrigger=PropertyChanged}" Margin="5" Padding="5"></TextBox>
                     </UniformGrid>
 
                     <UniformGrid Grid.Row="2" Columns="2">
-                        <TextBlock Text="Number of players" />
-                        <TextBox  Text="{Binding NumberOfPlayers}"></TextBox>
+                            <TextBlock Text="Number of players" FontWeight="Bold" Margin="5" VerticalAlignment="Center"/>
+                            <TextBox  Text="{Binding NumberOfPlayers}" Margin="5" Padding="5"></TextBox>
                     </UniformGrid>
 
+                        <TextBlock Grid.Row="3" Text="More options to come..." Foreground="Gray" HorizontalAlignment="Center" FontStyle="Italic" Margin="5"></TextBlock>
 
-                    <Button Grid.Row="3" Content="Create" Command="{Binding CreateGameCommand}" Margin="10"></Button>
+                    <Button Grid.Row="4" Content="Create" Command="{Binding CreateGameCommand}" Margin="10"></Button>
 
                 </Grid>
+                
+            </Grid>
             </Grid>
         </Border>
     </DataTemplate>

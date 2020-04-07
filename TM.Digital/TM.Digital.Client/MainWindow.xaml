@@ -59,7 +59,7 @@
         </Grid>
 
 
-        <ContentControl Grid.Row="0" Grid.RowSpan="3">
+        <ContentControl Grid.Row="0" Grid.RowSpan="3" Content="{Binding MenuVm}">
             <ContentControl.Style>
                 <Style TargetType="{x:Type ContentControl}">
                     <Setter Property="Visibility" Value="Collapsed" />

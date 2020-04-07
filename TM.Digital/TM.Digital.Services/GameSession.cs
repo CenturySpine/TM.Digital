@@ -18,15 +18,16 @@ namespace TM.Digital.Services
 {
     internal class GameSession
     {
-        public string Owner { get; set; }
+        public string OwnerName { get; set; }
         public Guid Id { get; set; }
         public int NumberOfPlayers { get; set; }
         public Board Board { get; set; }
         public Queue<Corporation> AvailableCorporations { get; set; }
         public Queue<Patent> AvailablePatents { get; set; }
         public Dictionary<Guid, Player> Players { get; set; }
+        public Guid OwnerId { get; set; }
 
-        public void AddPlayer(string playerName, bool test)
+        public Player AddPlayer(string playerName, bool test)
         {
             var player = new Player
             {
@@ -47,6 +48,7 @@ namespace TM.Digital.Services
             };
             Players.Add(player.PlayerId, player);
 
+            return player;
             //return CreatePlayerSetup(player);
         }
 

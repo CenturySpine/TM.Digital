@@ -2,11 +2,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using TM.Digital.Model.Game;
+using TM.Digital.Model.Player;
 using TM.Digital.Transport;
 
 namespace TM.Digital.Client
 {
-    public delegate void GameStartedEventHandler(Guid gameId);
+    public delegate void GameCreatedEventHandler(GameSessionInformation gameId);
+    public delegate void GameJoinSuccessEventHandler(Player joindPlayer);
 
     public class MainMenuViewModel : NotifierBase
     {
@@ -22,13 +24,15 @@ namespace TM.Digital.Client
             GameSessionInformation = new ObservableCollection<GameSessionInformation>();
 
             ShowCreateGameCommand = new RelayCommand(ExecuteShowCreateGame);
-            CreateGameCommand = new RelayCommand(ExecuteStartGame, CanExecuteStartGame);
+            CreateGameCommand = new RelayCommand(ExecuteCreatetGame, CanExecuteStartGame);
 
             ListGameSessionsCommand = new RelayCommand(ExecuteListGames, CanExecuteListGames);
             JoinGameCommand = new RelayCommand(ExecuteJoinGame, CanExecuteJoinGame);
         }
 
-        public event GameStartedEventHandler GameStarted;
+        public event GameJoinSuccessEventHandler GameJoined;
+
+        public event GameCreatedEventHandler GameStarted;
 
         public RelayCommand CreateGameCommand { get; set; }
         public ObservableCollection<GameSessionInformation> GameSessionInformation { get; set; }
@@ -43,7 +47,6 @@ namespace TM.Digital.Client
         {
             get => _isGameCreationVisible;
             set { _isGameCreationVisible = value; OnPropertyChanged(nameof(IsGameCreationVisible)); }
-
         }
 
         public bool IsSessionListVisible
@@ -76,7 +79,7 @@ namespace TM.Digital.Client
 
         public RelayCommand ShowCreateGameCommand { get; set; }
 
-        protected virtual void OnGameStarted(Guid gameId)
+        protected virtual void OnGameCreated(GameSessionInformation gameId)
         {
             GameStarted?.Invoke(gameId);
         }
@@ -107,22 +110,32 @@ namespace TM.Digital.Client
             if (SelectedSession.NumnerOfPlayers == 5)
             {
                 MessageBox.Show("The selected game is full");
+                return;
             }
 
             if (string.IsNullOrEmpty(PlayerName))
             {
                 MessageBox.Show("You must enter your name");
+                return;
             }
 
             CallErrorHandler.Handle(async () =>
             {
-                var joinResult = await TmDigitalClientRequestHandler.Instance.Request<bool>($"game/join/{SelectedSession.GameSessionId}/{PlayerName}");
-
-                IsGameCreationVisible = false;
-                IsSessionListVisible = true;
+                var joinResult = await TmDigitalClientRequestHandler.Instance.Request<Player>($"game/join/{SelectedSession.GameSessionId}/{PlayerName}");
+                if (joinResult != null)
+                {
+                    IsGameCreationVisible = false;
+                    IsSessionListVisible = false;
+                    IsVisible = false;
+                    OnGameJoined(joinResult);
+                }
+                else
+                {
+                    MessageBox.Show("Can't join game");
+                }
             });
-
         }
+
 
         private void ExecuteListGames(object obj)
         {
@@ -136,7 +149,6 @@ namespace TM.Digital.Client
                 GameSessionInformation.Clear();
                 foreach (var gameSession in sessions.GameSessionsList)
                 {
-
                     GameSessionInformation.Add(gameSession);
                 }
 
@@ -149,19 +161,25 @@ namespace TM.Digital.Client
             IsGameCreationVisible = true;
             IsSessionListVisible = false;
         }
-        private void ExecuteStartGame(object obj)
+
+        private void ExecuteCreatetGame(object obj)
         {
             if (!CreateGameCommand.CanExecute(null))
                 return;
 
             CallErrorHandler.Handle(async () =>
             {
-                var gameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>($"game/create/{PlayerName}/" + 2);
-
-                OnGameStarted(gameId);
-
-
+                var gameId = await TmDigitalClientRequestHandler.Instance.Request<GameSessionInformation>($"game/create/{PlayerName}/" + 2);
+                IsGameCreationVisible = false;
+                IsSessionListVisible = false;
+                IsVisible = false;
+                OnGameCreated(gameId);
             });
+        }
+
+        protected virtual void OnGameJoined(Player joindplayer)
+        {
+            GameJoined?.Invoke(joindplayer);
         }
     }
 }

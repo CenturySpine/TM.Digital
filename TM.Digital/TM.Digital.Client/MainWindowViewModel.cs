@@ -26,26 +26,43 @@ namespace TM.Digital.Client
         private HubConnection connection;
         private bool _isBoardLocked;
         private string _lockedMessage;
+        private bool _isGameOwner;
 
         public MainWindowViewModel(PopupService popup, MainMenuViewModel menuVm)
         {
             MenuVm = menuVm;
-            
+
             _popup = popup;
 
             MenuVm.IsVisible = true;
-            MenuVm.GameStarted += MenuVm_GameStarted;
+            MenuVm.GameStarted += MenuVm_GameCreated;
+            MenuVm.GameJoined += MenuVm_GameJoined;
         }
 
-        private async void MenuVm_GameStarted(Guid gameId)
+        private async void MenuVm_GameJoined(Player joindPlayer)
         {
-            if (GameId != Guid.Empty)
-            {
-                await GetBoard();
-                IsBoardLocked = true;
-                LockedMessage = "Awaiting players...";
-                _popup.ShowLockedOverlay();
-            }
+            IsGameOwner = false;
+            await GetBoard();
+            IsBoardLocked = true;
+            LockedMessage = "....Waiting for game owner to start game...";
+            _popup.ShowLockedOverlay();
+        }
+
+        private async void MenuVm_GameCreated(GameSessionInformation gameSessionInformation)
+        {
+
+            IsGameOwner = true;//TODO enable game start
+            await GetBoard();
+            IsBoardLocked = true;
+            LockedMessage = "Awaiting players...";
+            _popup.ShowLockedOverlay();
+
+        }
+
+        public bool IsGameOwner
+        {
+            get => _isGameOwner;
+            set { _isGameOwner = value; OnPropertyChanged(nameof(IsGameOwner)); }
         }
 
         public RelayCommand AddPlayerCommand { get; set; }
@@ -86,7 +103,7 @@ namespace TM.Digital.Client
             set { _server = value; OnPropertyChanged(nameof(Server)); }
         }
 
-        
+
 
         public async Task Initialize()
         {
@@ -243,7 +260,7 @@ namespace TM.Digital.Client
         public string LockedMessage
         {
             get => _lockedMessage;
-            private set { _lockedMessage = value;OnPropertyChanged(nameof(LockedMessage)); }
+            private set { _lockedMessage = value; OnPropertyChanged(nameof(LockedMessage)); }
         }
 
         private async Task GetBoard()

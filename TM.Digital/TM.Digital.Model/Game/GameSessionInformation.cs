@@ -14,5 +14,6 @@ namespace TM.Digital.Model.Game
         public string Owner { get; set; }
 
         public int NumnerOfPlayers { get; set; }
+        public Guid OwnerId { get; set; }
     }
 }

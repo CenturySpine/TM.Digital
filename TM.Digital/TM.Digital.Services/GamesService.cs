@@ -41,9 +41,9 @@ namespace TM.Digital.Services
 
         private readonly Dictionary<Guid, GameSession> _currentSessions = new Dictionary<Guid, GameSession>();
 
-        public Guid CreateGame(string playerName, int numberOfPlayer)
+        public GameSessionInformation CreateGame(string playerName, int numberOfPlayer)
         {
-            GameSession gs = new GameSession { Id = Guid.NewGuid(), Owner = playerName };
+            GameSession gs = new GameSession { Id = Guid.NewGuid(), OwnerName = playerName };
 
             _allCorporations.Shuffle();
             _allPatents.Shuffle();
@@ -54,14 +54,22 @@ namespace TM.Digital.Services
             gs.AvailableCorporations = new Queue<Corporation>(_allCorporations);
             gs.AvailablePatents = new Queue<Patent>(_allPatents);
 
-            
+
 
             gs.Players = new Dictionary<Guid, Player>();
-            gs.AddPlayer(playerName, false);
+            var owner = gs.AddPlayer(playerName, false);
 
+            gs.OwnerId = owner.PlayerId;
             _currentSessions.Add(gs.Id, gs);
 
-            return gs.Id;
+            return
+                new GameSessionInformation()
+                {
+                    Owner = gs.OwnerName,
+                    OwnerId = gs.OwnerId,
+                    GameSessionId = gs.Id,
+                    NumnerOfPlayers = gs.NumberOfPlayers
+                };
         }
 
         public GameSetup AddPlayer(Guid gameId, string playerName, bool test)
@@ -136,7 +144,8 @@ namespace TM.Digital.Services
             {
                 GameSessionsList = _currentSessions.Select(s => new GameSessionInformation()
                 {
-                    Owner = s.Value.Owner,
+                    Owner = s.Value.OwnerName,
+                    OwnerId = s.Value.OwnerId,
                     GameSessionId = s.Key,
                     NumnerOfPlayers = s.Value.NumberOfPlayers
                 })
@@ -144,15 +153,19 @@ namespace TM.Digital.Services
             };
         }
 
-        public bool JoinSession(Guid gameId, string playerName)
+        public Player JoinSession(Guid gameId, string playerName)
         {
             if (_currentSessions.TryGetValue(gameId, out var session))
             {
+                //game full
+                if (session.Players.Count == session.NumberOfPlayers)
+                    return null;
 
-
+                
+                return session.AddPlayer(playerName, false);
             }
 
-            return false;
+            return null;
         }
     }
 }
