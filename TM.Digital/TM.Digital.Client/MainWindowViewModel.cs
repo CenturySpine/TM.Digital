@@ -15,6 +15,7 @@ namespace TM.Digital.Client
 {
     public class MainWindowViewModel : NotifierBase
     {
+        public MainMenuViewModel MenuVm { get; }
         private readonly PopupService _popup;
 
         private Board _board;
@@ -26,9 +27,25 @@ namespace TM.Digital.Client
         private bool _isBoardLocked;
         private string _lockedMessage;
 
-        public MainWindowViewModel(PopupService popup)
+        public MainWindowViewModel(PopupService popup, MainMenuViewModel menuVm)
         {
+            MenuVm = menuVm;
+            
             _popup = popup;
+
+            MenuVm.IsVisible = true;
+            MenuVm.GameStarted += MenuVm_GameStarted;
+        }
+
+        private async void MenuVm_GameStarted(Guid gameId)
+        {
+            if (GameId != Guid.Empty)
+            {
+                await GetBoard();
+                IsBoardLocked = true;
+                LockedMessage = "Awaiting players...";
+                _popup.ShowLockedOverlay();
+            }
         }
 
         public RelayCommand AddPlayerCommand { get; set; }
@@ -69,14 +86,13 @@ namespace TM.Digital.Client
             set { _server = value; OnPropertyChanged(nameof(Server)); }
         }
 
-        public RelayCommand StartGameCommand { get; set; }
+        
 
         public async Task Initialize()
         {
             await Task.CompletedTask;
             OtherPlayers = new List<Player>();
             Refresh = new RelayCommand(ExecuteRefresh);
-            StartGameCommand = new RelayCommand(ExecuteStartGame, CanExecuteStartGame);
             AddPlayerCommand = new RelayCommand(ExecuteAddPlayer, CanExecuteAddPlayer);
             SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
             SelectBoardPlace = new RelayCommand(ExecuteSelectBoardPlace, CanExecuteSelectBoardPlace);
@@ -169,10 +185,7 @@ namespace TM.Digital.Client
             return GameId != Guid.Empty && !string.IsNullOrEmpty(PlayerName);
         }
 
-        private bool CanExecuteStartGame(object arg)
-        {
-            return  /*&& !string.IsNullOrEmpty(Server)*/  NumberOfPlayers > 0 && NumberOfPlayers <= 5;
-        }
+
 
         public RelayCommand SelectCardCommand { get; set; }
 
@@ -206,20 +219,20 @@ namespace TM.Digital.Client
             await GetBoard();
         }
 
-        private void ExecuteStartGame(object obj)
-        {
-            CallErrorHandler.Handle(async () =>
-            {
-                GameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>("game/start/" + NumberOfPlayers);
-                if (GameId != Guid.Empty)
-                {
-                    await GetBoard();
-                    IsBoardLocked = true;
-                    LockedMessage = "Awaiting players...";
-                    _popup.ShowLockedOverlay();
-                }
-            });
-        }
+        //private void ExecuteStartGame(object obj)
+        //{
+        //    CallErrorHandler.Handle(async () =>
+        //    {
+        //        GameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>("game/start/" + NumberOfPlayers);
+        //        if (GameId != Guid.Empty)
+        //        {
+        //            await GetBoard();
+        //            IsBoardLocked = true;
+        //            LockedMessage = "Awaiting players...";
+        //            _popup.ShowLockedOverlay();
+        //        }
+        //    });
+        //}
 
         public bool IsBoardLocked
         {

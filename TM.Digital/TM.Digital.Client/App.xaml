@@ -4,12 +4,14 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                
                 <ResourceDictionary Source="Icons.xaml" />
                 <ResourceDictionary Source="EffectTemplates.xaml" />
                 <ResourceDictionary Source="PlayerResources.xaml" />
                 <ResourceDictionary Source="BoardPlacesTemplates.xaml" />
                 <ResourceDictionary Source="CardsTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="boolToVisConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

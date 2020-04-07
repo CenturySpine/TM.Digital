@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TM.Digital.Cards;
@@ -40,16 +41,24 @@ namespace TM.Digital.Services
 
         private readonly Dictionary<Guid, GameSession> _currentSessions = new Dictionary<Guid, GameSession>();
 
-        public Guid StartGame(int numberOfPlayer)
+        public Guid CreateGame(string playerName, int numberOfPlayer)
         {
-            GameSession gs = new GameSession { Id = Guid.NewGuid() };
+            GameSession gs = new GameSession { Id = Guid.NewGuid(), Owner = playerName };
+
             _allCorporations.Shuffle();
             _allPatents.Shuffle();
+
             gs.NumberOfPlayers = numberOfPlayer;
+
             gs.Board = BoardGenerator.Instance.Original();
             gs.AvailableCorporations = new Queue<Corporation>(_allCorporations);
             gs.AvailablePatents = new Queue<Patent>(_allPatents);
+
+            
+
             gs.Players = new Dictionary<Guid, Player>();
+            gs.AddPlayer(playerName, false);
+
             _currentSessions.Add(gs.Id, gs);
 
             return gs.Id;
@@ -61,7 +70,7 @@ namespace TM.Digital.Services
             {
                 if (_currentSessions.TryGetValue(gameId, out var session))
                 {
-                    GameSetup gameSetup = session.AddPlayer(playerName, test);
+                    GameSetup gameSetup = session.CreatePlayerSetup(playerName);
                     return gameSetup;
                 }
 
@@ -119,6 +128,31 @@ namespace TM.Digital.Services
             }
 
             throw Errors.ErrorGameIdNotFound(gameId);
+        }
+
+        public GameSessions GetSessions()
+        {
+            return new GameSessions()
+            {
+                GameSessionsList = _currentSessions.Select(s => new GameSessionInformation()
+                {
+                    Owner = s.Value.Owner,
+                    GameSessionId = s.Key,
+                    NumnerOfPlayers = s.Value.NumberOfPlayers
+                })
+                    .ToList()
+            };
+        }
+
+        public bool JoinSession(Guid gameId, string playerName)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+
+
+            }
+
+            return false;
         }
     }
 }

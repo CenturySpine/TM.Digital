@@ -22,12 +22,28 @@ namespace TM.Digital.Api.Controllers
             _hubContext = hubContext;
         }
 
-        [Route("start/{numberofplayer:int}")]
-        public async Task<Guid> Start(int numberofplayer)
+        [Route("create/{playerName}/{numberofplayer:int}")]
+        public async Task<Guid> Start(string playerName, int numberofplayer)
         {
             await Task.CompletedTask;
-            return GamesService.Instance.StartGame(numberofplayer);
+            return GamesService.Instance.CreateGame(playerName, numberofplayer);
         }
+
+        [Route("sessions")]
+        public async Task<GameSessions> GetExistingSessions()
+        {
+            await Task.CompletedTask;
+            return GamesService.Instance.GetSessions();
+        }
+
+        [Route("join/{gameId}/{playername}")]
+        public async Task<bool> JoinGame(Guid gameId, string playerName)
+        {
+            await Task.CompletedTask;
+            return GamesService.Instance.JoinSession(gameId, playerName);
+        }
+
+
 
         [Route("addplayer/{gameId}/{playername}/{test}")]
         public async Task<GameSetup> AddPlayer(Guid gameId, string playername, bool test)
@@ -46,7 +62,7 @@ namespace TM.Digital.Api.Controllers
         [Route("{gameId}/play/{playerId}")]
         public async Task<ActionResult> PlayCard(Patent card, Guid gameId, Guid playerId)
         {
-             await GamesService.Instance.Play(card, gameId, playerId, _hubContext);
+            await GamesService.Instance.Play(card, gameId, playerId, _hubContext);
 
             return Ok();
         }
