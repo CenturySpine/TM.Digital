@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,6 +15,7 @@ namespace TM.Digital.Client
         public Tags Tag { get; set; }
         public int Count { get; set; }
     }
+
     public class PlayedCardToTagsCountConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -47,6 +47,7 @@ namespace TM.Digital.Client
         public DataTemplate Microbe { get; set; }
         public DataTemplate Science { get; set; }
         public DataTemplate Energy { get; set; }
+
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             if (item != null)
@@ -59,24 +60,34 @@ namespace TM.Digital.Client
 
                     case Tags.Event:
                         return Event;
+
                     case Tags.Space:
                         return Space;
+
                     case Tags.Microbe:
                         return Microbe;
+
                     case Tags.Plant:
                         return Plant;
+
                     case Tags.Animal:
                         return Animal;
+
                     case Tags.Energy:
                         return Energy;
+
                     case Tags.Jupiter:
                         return Jupiter;
+
                     case Tags.Earth:
                         return Earth;
+
                     case Tags.City:
                         return City;
+
                     case Tags.Science:
                         return Science;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -105,29 +116,40 @@ namespace TM.Digital.Client
                 {
                     case ResourceType.None:
                         break;
+
                     case ResourceType.Steel:
                         return Steel;
+
                     case ResourceType.Titanium:
                         return Titanium;
+
                     case ResourceType.Card:
                         return Card;
-                        
+
                     case ResourceType.Plant:
                         return Plant;
+
                     case ResourceType.Heat:
                         return Heat;
+
                     case ResourceType.Money:
                         return Money;
+
                     case ResourceType.Energy:
                         return Energy;
+
                     case ResourceType.Animal:
                         break;
+
                     case ResourceType.Microbe:
                         break;
+
                     case ResourceType.Fleet:
                         break;
+
                     case ResourceType.Science:
                         break;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

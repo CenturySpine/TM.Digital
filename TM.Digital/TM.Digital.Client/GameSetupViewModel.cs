@@ -49,7 +49,6 @@ namespace TM.Digital.Client
             if (obj is PatentSelector patent)
             {
                 patent.IsSelected = !patent.IsSelected;
-
             }
         }
 
@@ -64,7 +63,6 @@ namespace TM.Digital.Client
             {
                 PatentChoices.Add(new PatentSelector { Patent = gameSetupPatent });
             }
-
         }
 
         public Guid PlayerId { get; set; }

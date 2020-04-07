@@ -9,9 +9,9 @@
     <Path x:Key="card"  Data="M21.47,4.35L20.13,3.79V12.82L22.56,6.96C22.97,5.94 22.5,4.77 21.47,4.35M1.97,8.05L6.93,20C7.24,20.77 7.97,21.24 8.74,21.26C9,21.26 9.27,21.21 9.53,21.1L16.9,18.05C17.65,17.74 18.11,17 18.13,16.26C18.14,16 18.09,15.71 18,15.45L13,3.5C12.71,2.73 11.97,2.26 11.19,2.25C10.93,2.25 10.67,2.31 10.42,2.4L3.06,5.45C2.04,5.87 1.55,7.04 1.97,8.05M18.12,4.25A2,2 0 0,0 16.12,2.25H14.67L18.12,10.59" />
     <Path x:Key="flash" Data="M11 15H6L13 1V9H18L11 23V15Z" />
     <Path x:Key="currency_usd" Data="M7.07,11L7,12L7.07,13H17.35L16.5,15H7.67C8.8,17.36 11.21,19 14,19C16.23,19 18.22,17.96 19.5,16.33V19.12C18,20.3 16.07,21 14,21C10.08,21 6.75,18.5 5.5,15H2L3,13H5.05L5,12L5.05,11H2L3,9H5.5C6.75,5.5 10.08,3 14,3C16.5,3 18.8,4.04 20.43,5.71L19.57,7.75C18.29,6.08 16.27,5 14,5C11.21,5 8.8,6.64 7.67,9H19.04L18.19,11H7.07Z" />
-    <Path x:Key="radiator"  >
+    <Path x:Key="radiator">
         <Path.Data>
-            <PathGeometry Figures="M 10.775391 1.53125 L 8.7753906 6.3320312 L 10.175781 9.7304688 L 8.7753906 13.130859 L 10.476562 14.53125 L 12.476562 9.7304688 L 11.076172 6.3320312 L 12.476562 2.9316406 L 10.775391 1.53125 z M 14.976562 1.53125 L 12.976562 6.3320312 L 14.375 9.7304688 L 12.976562 13.130859 L 14.675781 14.53125 L 16.675781 9.7304688 L 15.275391 6.3320312 L 16.675781 2.9316406 L 14.976562 1.53125 z M 19.076172 1.53125 L 17.076172 6.3320312 L 18.476562 9.7304688 L 17.076172 13.130859 L 18.775391 14.53125 L 20.775391 9.7304688 L 19.375 6.3320312 L 20.775391 2.9316406 L 19.076172 1.53125 z " FillRule="NonZero"/>
+            <PathGeometry Figures="M 10.775391 1.53125 L 8.7753906 6.3320312 L 10.175781 9.7304688 L 8.7753906 13.130859 L 10.476562 14.53125 L 12.476562 9.7304688 L 11.076172 6.3320312 L 12.476562 2.9316406 L 10.775391 1.53125 z M 14.976562 1.53125 L 12.976562 6.3320312 L 14.375 9.7304688 L 12.976562 13.130859 L 14.675781 14.53125 L 16.675781 9.7304688 L 15.275391 6.3320312 L 16.675781 2.9316406 L 14.976562 1.53125 z M 19.076172 1.53125 L 17.076172 6.3320312 L 18.476562 9.7304688 L 17.076172 13.130859 L 18.775391 14.53125 L 20.775391 9.7304688 L 19.375 6.3320312 L 20.775391 2.9316406 L 19.076172 1.53125 z " FillRule="NonZero" />
         </Path.Data>
     </Path>
     <Path x:Key="thermometer_lines" Data="M17 3H21V5H17V3M17 7H21V9H17V7M17 11H21V13H17.75L17 12.1V11M21 15V17H19C19 16.31 18.9 15.63 18.71 15H21M7 3V5H3V3H7M7 7V9H3V7H7M7 11V12.1L6.25 13H3V11H7M3 15H5.29C5.1 15.63 5 16.31 5 17H3V15M15 13V5C15 3.34 13.66 2 12 2S9 3.34 9 5V13C6.79 14.66 6.34 17.79 8 20S12.79 22.66 15 21 17.66 16.21 16 14C15.72 13.62 15.38 13.28 15 13M12 4C12.55 4 13 4.45 13 5V8H11V5C11 4.45 11.45 4 12 4Z" />
@@ -35,8 +35,8 @@
     </DataTemplate>
 
     <DataTemplate x:Key="res_steel">
-        <Grid >
-            <Border BorderBrush="Black" BorderThickness="1" >
+        <Grid>
+            <Border BorderBrush="Black" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
                 </Border.Effect>
@@ -50,8 +50,8 @@
     </DataTemplate>
 
     <DataTemplate x:Key="res_titanium">
-        <Grid  >
-            <Border BorderBrush="Black" BorderThickness="1" >
+        <Grid>
+            <Border BorderBrush="Black" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
                 </Border.Effect>
@@ -65,28 +65,28 @@
     </DataTemplate>
 
     <DataTemplate x:Key="res_plant">
-        <Grid >
-            <Border BorderBrush="Black" BorderThickness="1" >
+        <Grid>
+            <Border BorderBrush="Black" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
                 </Border.Effect>
                 <Border.Background>
-                    <SolidColorBrush Color="LimeGreen"  />
+                    <SolidColorBrush Color="LimeGreen" />
                 </Border.Background>
             </Border>
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="Green" Data="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"></Path>
         </Grid>
     </DataTemplate>
-    
+
     <DataTemplate x:Key="res_energy">
-        <Grid >
-            <Border BorderBrush="Black" BorderThickness="1" >
+        <Grid>
+            <Border BorderBrush="Black" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
                 </Border.Effect>
                 <Border.Background>
-                    <SolidColorBrush Color="Purple"  />
+                    <SolidColorBrush Color="Purple" />
                 </Border.Background>
             </Border>
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2"
@@ -99,13 +99,13 @@
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="res_card">
-        <Grid >
-            <Border BorderBrush="Transparent" BorderThickness="1" >
+        <Grid>
+            <Border BorderBrush="Transparent" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
                 </Border.Effect>
                 <Border.Background>
-                    <SolidColorBrush Color="Transparent"  />
+                    <SolidColorBrush Color="Transparent" />
                 </Border.Background>
             </Border>
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="1"
@@ -114,39 +114,37 @@
     </DataTemplate>
 
     <DataTemplate x:Key="res_heat">
-        <Grid  >
-            <Border BorderBrush="Black" BorderThickness="1" >
+        <Grid>
+            <Border BorderBrush="Black" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
                 </Border.Effect>
                 <Border.Background>
-                    <SolidColorBrush Color="Red" Opacity="0.8"  />
+                    <SolidColorBrush Color="Red" Opacity="0.8" />
                 </Border.Background>
             </Border>
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
-                  Fill="Yellow" >
+                  Fill="Yellow">
                 <Path.Data>
-                    <PathGeometry Figures="M 10.775391 1.53125 L 8.7753906 6.3320312 L 10.175781 9.7304688 L 8.7753906 13.130859 L 10.476562 14.53125 L 12.476562 9.7304688 L 11.076172 6.3320312 L 12.476562 2.9316406 L 10.775391 1.53125 z M 14.976562 1.53125 L 12.976562 6.3320312 L 14.375 9.7304688 L 12.976562 13.130859 L 14.675781 14.53125 L 16.675781 9.7304688 L 15.275391 6.3320312 L 16.675781 2.9316406 L 14.976562 1.53125 z M 19.076172 1.53125 L 17.076172 6.3320312 L 18.476562 9.7304688 L 17.076172 13.130859 L 18.775391 14.53125 L 20.775391 9.7304688 L 19.375 6.3320312 L 20.775391 2.9316406 L 19.076172 1.53125 z " FillRule="NonZero"/>
+                    <PathGeometry Figures="M 10.775391 1.53125 L 8.7753906 6.3320312 L 10.175781 9.7304688 L 8.7753906 13.130859 L 10.476562 14.53125 L 12.476562 9.7304688 L 11.076172 6.3320312 L 12.476562 2.9316406 L 10.775391 1.53125 z M 14.976562 1.53125 L 12.976562 6.3320312 L 14.375 9.7304688 L 12.976562 13.130859 L 14.675781 14.53125 L 16.675781 9.7304688 L 15.275391 6.3320312 L 16.675781 2.9316406 L 14.976562 1.53125 z M 19.076172 1.53125 L 17.076172 6.3320312 L 18.476562 9.7304688 L 17.076172 13.130859 L 18.775391 14.53125 L 20.775391 9.7304688 L 19.375 6.3320312 L 20.775391 2.9316406 L 19.076172 1.53125 z " FillRule="NonZero" />
                 </Path.Data>
             </Path>
         </Grid>
     </DataTemplate>
 
-    <local:ResourceBoardTemplateSelector x:Key="resBoardSelector" 
+    <local:ResourceBoardTemplateSelector x:Key="resBoardSelector"
                                          Money="{StaticResource res_megacredits}"
                                          Steel="{StaticResource res_steel}"
                                          Titanium="{StaticResource res_titanium}"
                                          Plant="{StaticResource res_plant}"
                                          Energy="{StaticResource res_energy}"
                                          Heat="{StaticResource res_heat}"
-                                         Card="{StaticResource res_card}"
-                                         />
-
+                                         Card="{StaticResource res_card}" />
 
     <!-- tags -->
     <DataTemplate x:Key="dt_tag_animal">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="ForestGreen" Stroke="Black"/>
+            <Ellipse Fill="ForestGreen" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="DarkOliveGreen" Data="M8.35,3C9.53,2.83 10.78,4.12 11.14,5.9C11.5,7.67 10.85,9.25 9.67,9.43C8.5,9.61 7.24,8.32 6.87,6.54C6.5,4.77 7.17,3.19 8.35,3M15.5,3C16.69,3.19 17.35,4.77 17,6.54C16.62,8.32 15.37,9.61 14.19,9.43C13,9.25 12.35,7.67 12.72,5.9C13.08,4.12 14.33,2.83 15.5,3M3,7.6C4.14,7.11 5.69,8 6.5,9.55C7.26,11.13 7,12.79 5.87,13.28C4.74,13.77 3.2,12.89 2.41,11.32C1.62,9.75 1.9,8.08 3,7.6M21,7.6C22.1,8.08 22.38,9.75 21.59,11.32C20.8,12.89 19.26,13.77 18.13,13.28C17,12.79 16.74,11.13 17.5,9.55C18.31,8 19.86,7.11 21,7.6M19.33,18.38C19.37,19.32 18.65,20.36 17.79,20.75C16,21.57 13.88,19.87 11.89,19.87C9.9,19.87 7.76,21.64 6,20.75C5,20.26 4.31,18.96 4.44,17.88C4.62,16.39 6.41,15.59 7.47,14.5C8.88,13.09 9.88,10.44 11.89,10.44C13.89,10.44 14.95,13.05 16.3,14.5C17.41,15.72 19.26,16.75 19.33,18.38Z"></Path>
         </Grid>
@@ -154,7 +152,7 @@
 
     <DataTemplate x:Key="dt_tag_science">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="White" Stroke="Black"/>
+            <Ellipse Fill="White" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="Black" Data="M12,11A1,1 0 0,1 13,12A1,1 0 0,1 12,13A1,1 0 0,1 11,12A1,1 0 0,1 12,11M4.22,4.22C5.65,2.79 8.75,3.43 12,5.56C15.25,3.43 18.35,2.79 19.78,4.22C21.21,5.65 20.57,8.75 18.44,12C20.57,15.25 21.21,18.35 19.78,19.78C18.35,21.21 15.25,20.57 12,18.44C8.75,20.57 5.65,21.21 4.22,19.78C2.79,18.35 3.43,15.25 5.56,12C3.43,8.75 2.79,5.65 4.22,4.22M15.54,8.46C16.15,9.08 16.71,9.71 17.23,10.34C18.61,8.21 19.11,6.38 18.36,5.64C17.62,4.89 15.79,5.39 13.66,6.77C14.29,7.29 14.92,7.85 15.54,8.46M8.46,15.54C7.85,14.92 7.29,14.29 6.77,13.66C5.39,15.79 4.89,17.62 5.64,18.36C6.38,19.11 8.21,18.61 10.34,17.23C9.71,16.71 9.08,16.15 8.46,15.54M5.64,5.64C4.89,6.38 5.39,8.21 6.77,10.34C7.29,9.71 7.85,9.08 8.46,8.46C9.08,7.85 9.71,7.29 10.34,6.77C8.21,5.39 6.38,4.89 5.64,5.64M9.88,14.12C10.58,14.82 11.3,15.46 12,16.03C12.7,15.46 13.42,14.82 14.12,14.12C14.82,13.42 15.46,12.7 16.03,12C15.46,11.3 14.82,10.58 14.12,9.88C13.42,9.18 12.7,8.54 12,7.97C11.3,8.54 10.58,9.18 9.88,9.88C9.18,10.58 8.54,11.3 7.97,12C8.54,12.7 9.18,13.42 9.88,14.12M18.36,18.36C19.11,17.62 18.61,15.79 17.23,13.66C16.71,14.29 16.15,14.92 15.54,15.54C14.92,16.15 14.29,16.71 13.66,17.23C15.79,18.61 17.62,19.11 18.36,18.36Z"></Path>
         </Grid>
@@ -172,56 +170,56 @@
     </DataTemplate>
     <DataTemplate x:Key="dt_tag_city">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="DarkGray" Stroke="Black"/>
+            <Ellipse Fill="DarkGray" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="Black" Data="M19,15H17V13H19M19,19H17V17H19M13,7H11V5H13M13,11H11V9H13M13,15H11V13H13M13,19H11V17H13M7,11H5V9H7M7,15H5V13H7M7,19H5V17H7M15,11V5L12,2L9,5V7H3V21H21V11H15Z"></Path>
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="dt_tag_microbe">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="GreenYellow" Stroke="Black"/>
+            <Ellipse Fill="GreenYellow" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="DarkGreen" Data="M21,16C21,15.5 20.95,15.08 20.88,14.68L22.45,13.9L21.55,12.1L20.18,12.79C19.63,11.96 18.91,11.5 18.29,11.28L18.95,9.32L17.05,8.68L16.29,10.96C14.96,10.83 14.17,10.32 13.7,9.77L15.45,8.9L14.55,7.1L13,7.89C12.97,7.59 12.86,6.72 12.28,5.87L13.83,3.55L12.17,2.44L10.76,4.56C10.28,4.33 9.7,4.15 9,4.06V2H7V4.1C6.29,4.25 5.73,4.54 5.32,4.91L2.7,2.29L1.29,3.71L4.24,6.65C4,7.39 4,8 4,8H2V10H4.04C4.1,10.63 4.21,11.36 4.4,12.15L1.68,13.05L2.31,14.95L5,14.05C5.24,14.56 5.5,15.08 5.82,15.58L3.44,17.17L4.55,18.83L7.07,17.15C7.63,17.71 8.29,18.21 9.06,18.64L8.1,20.55L9.89,21.45L10.89,19.45L10.73,19.36C11.68,19.68 12.76,19.9 14,19.97V22H16V19.93C16.76,19.84 17.81,19.64 18.77,19.19L20.29,20.71L21.7,19.29L20.37,17.95C20.75,17.44 21,16.8 21,16M8.5,11A1.5,1.5 0 0,1 7,9.5A1.5,1.5 0 0,1 8.5,8A1.5,1.5 0 0,1 10,9.5A1.5,1.5 0 0,1 8.5,11M11,14A1,1 0 0,1 10,13A1,1 0 0,1 11,12A1,1 0 0,1 12,13A1,1 0 0,1 11,14M15.5,17A1.5,1.5 0 0,1 14,15.5A1.5,1.5 0 0,1 15.5,14A1.5,1.5 0 0,1 17,15.5A1.5,1.5 0 0,1 15.5,17Z"></Path>
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="dt_tag_earth">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="Transparent" Stroke="Black"/>
+            <Ellipse Fill="Transparent" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="CornflowerBlue" Data="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></Path>
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="dt_tag_jupiter">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="Transparent" Stroke="Black"/>
+            <Ellipse Fill="Transparent" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="LightGoldenrodYellow" Data="M12,12.14C11.09,10.77 10.14,9.78 9.14,9.19C8.14,8.59 7.27,8.38 6.5,8.55C5.77,8.73 5.14,9.14 4.64,9.8C4.2,10.39 4,11.06 4,11.81V12C4,12.78 4.11,13.58 4.36,14.39C4.45,14.64 4.5,14.64 4.55,14.39C4.67,13.77 4.96,13.31 5.41,13.03C5.87,12.75 6.47,12.76 7.22,13.05C7.97,13.35 8.7,14 9.42,14.95C10.7,16.67 12.2,17.72 13.92,18.09C16.14,18.41 17.81,17.7 18.94,16C19.25,15.39 19.5,14.86 19.64,14.39C19.73,14.08 19.69,14.05 19.5,14.3C19.03,14.92 18.4,15.33 17.6,15.5C16.8,15.7 15.89,15.5 14.86,15C13.83,14.43 12.88,13.5 12,12.14M16.97,8.16C15.41,5.81 13.72,4.5 11.91,4.17C10.47,3.95 8.91,4.45 7.22,5.67C7,5.83 6.9,5.91 6.91,5.93C6.93,5.95 7.06,5.89 7.31,5.77C9.81,4.55 12.22,5.83 14.53,9.61C15.03,10.45 15.55,11.11 16.1,11.58C16.65,12.05 17.16,12.33 17.65,12.42C18.13,12.5 18.57,12.5 18.96,12.38C19.35,12.25 19.7,12.05 20,11.77C20,11.17 19.91,10.5 19.69,9.8C19.19,9.92 18.74,9.88 18.35,9.68C17.96,9.5 17.5,8.97 16.97,8.16M12,2C14.75,2 17.1,3 19.05,4.95C21,6.9 22,9.25 22,12C22,14.75 21,17.1 19.05,19.05C17.1,21 14.75,22 12,22C9.25,22 6.9,21 4.95,19.05C3,17.1 2,14.75 2,12C2,9.25 3,6.9 4.95,4.95C6.9,3 9.25,2 12,2Z"></Path>
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="dt_tag_event">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="Yellow" Stroke="Black"/>
+            <Ellipse Fill="Yellow" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                       Fill="Black" Data="M10,4H14V13L17.5,9.5L19.92,11.92L12,19.84L4.08,11.92L6.5,9.5L10,13V4Z"></Path>
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="dt_tag_plant">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="LimeGreen" Stroke="Black"/>
+            <Ellipse Fill="LimeGreen" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="Green" Data="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"></Path>
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="dt_tag_energy">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="Purple" Stroke="Black"/>
+            <Ellipse Fill="Purple" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="4"
                   Fill="White" Data="M11 15H6L13 1V9H18L11 23V15Z"></Path>
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="dt_tag_space">
         <Grid Height="20" Width="20">
-            <Ellipse Fill="Black" Stroke="Black"/>
+            <Ellipse Fill="Black" Stroke="Black" />
             <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
                   Fill="Yellow" Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"></Path>
         </Grid>
@@ -239,6 +237,5 @@
                                Earth="{StaticResource dt_tag_earth}"
                                Energy="{StaticResource dt_tag_energy}"
                                Event="{StaticResource dt_tag_event}">
-
     </local:TagTemplateSelector>
 </ResourceDictionary>

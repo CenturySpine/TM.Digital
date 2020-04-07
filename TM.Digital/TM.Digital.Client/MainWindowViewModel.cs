@@ -1,18 +1,16 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.AspNetCore.SignalR.Client;
-using Newtonsoft.Json;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Transport;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TM.Digital.Client
 {
@@ -130,7 +128,6 @@ namespace TM.Digital.Client
             if (obj is BoardPlace bp)
             {
                 await TmDigitalClientRequestHandler.Instance.Post<BoardPlace>($"game/{GameId}/placetile/{CurrentPlayer.Player.PlayerId}", bp);
-
             }
         }
 
@@ -140,7 +137,6 @@ namespace TM.Digital.Client
         {
             var gameResult2 = JsonConvert.DeserializeObject<Board>(message);
             Board = gameResult2;
-
         }
 
         private void UpdateGame(string message)
@@ -228,9 +224,7 @@ namespace TM.Digital.Client
                 GameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>("game/start/" + NumberOfPlayers);
                 if (GameId != Guid.Empty)
                 {
-
                     await GetBoard();
-
                 }
             });
         }

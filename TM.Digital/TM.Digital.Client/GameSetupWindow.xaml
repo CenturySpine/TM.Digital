@@ -13,7 +13,7 @@
             <RowDefinition></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <ItemsControl ItemsSource="{Binding CorporationChoices}" >
+        <ItemsControl ItemsSource="{Binding CorporationChoices}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>
@@ -46,17 +46,16 @@
                                 <TextBlock Text="Credits" />
                                 <TextBlock Text="{Binding Corporation.StartingMoney}"></TextBlock>
                             </UniformGrid>
-                            
+
                             <ToggleButton Grid.Row="2" Content="Select" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.SelectCardCommand}"
                                           CommandParameter="{Binding}"
                                           IsChecked="{Binding IsSelected, Mode=OneWay}" />
                         </Grid>
-
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding PatentChoices}" >
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding PatentChoices}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>
@@ -94,7 +93,6 @@
                                           CommandParameter="{Binding}"
                                           IsChecked="{Binding IsSelected, Mode=OneWay}" />
                         </Grid>
-
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>-->

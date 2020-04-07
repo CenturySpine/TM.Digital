@@ -46,7 +46,6 @@ namespace TM.Digital.Client
             var window = _container.GetInstance<GameSetupWindow>();
             if (window.DataContext is GameSetupViewModel vm)
             {
-                
                 vm.Setup(gameSetup);
                 window.ShowDialog();
 
@@ -55,7 +54,5 @@ namespace TM.Digital.Client
 
             return null;
         }
-
-
     }
 }

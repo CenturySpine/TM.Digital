@@ -4,7 +4,7 @@
                     xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model"
                     xmlns:tile="clr-namespace:TM.Digital.Model.Tile;assembly=TM.Digital.Model">
     <DataTemplate DataType="{x:Type board:Board}">
-        <Grid Background="Transparent" >
+        <Grid Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
@@ -21,7 +21,7 @@
                 </ScrollViewer>
             </Border>
             <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Background="AliceBlue" Margin="1">
-                <ItemsControl  ItemsSource="{Binding Parameters}" HorizontalAlignment="Center"  >
+                <ItemsControl  ItemsSource="{Binding Parameters}" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="3"></UniformGrid>
@@ -33,23 +33,23 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type board:BoardParameter}">
-        <Grid Background="LightGoldenrodYellow" Margin="3"  >
+        <Grid Background="LightGoldenrodYellow" Margin="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock Text="{Binding Type}" HorizontalAlignment="Center"></TextBlock>
-            <Slider  HorizontalAlignment="Center" Grid.Row="1" Orientation="Vertical" 
+            <Slider  HorizontalAlignment="Center" Grid.Row="1" Orientation="Vertical"
                     TickPlacement="Both"
                     IsEnabled="False"
-                    Minimum="{Binding GlobalParameterLevel.Min}" Maximum="{Binding GlobalParameterLevel.Max}" Value="{Binding GlobalParameterLevel.Level}" 
+                    Minimum="{Binding GlobalParameterLevel.Min}" Maximum="{Binding GlobalParameterLevel.Max}" Value="{Binding GlobalParameterLevel.Level}"
                     AutoToolTipPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency="{Binding GlobalParameterLevel.Increment}" />
             <TextBlock Grid.Row="2" Text="{Binding GlobalParameterLevel.Level}" HorizontalAlignment="Center" />
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type board:BoardLine}">
-        <Grid Background="Transparent" >
+        <Grid Background="Transparent">
             <ItemsControl ItemsSource="{Binding BoardPlaces}" Margin="0,-5" HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -60,16 +60,16 @@
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type board:BoardPlace}">
-        <Button  
+        <Button
                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.SelectBoardPlace}"
                 CommandParameter="{Binding}">
             <Button.Template>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid Background="Transparent" >
+                    <Grid Background="Transparent">
 
                         <Path x:Name="placeOutline" Width="70" Height="80"
                                                     Data="M35,0 70,20 70,60 35,80 0,60 0,20 35,0"
-                                                    
+
                                                     Margin="3,0"
                                                     StrokeThickness="2">
                             <Path.Style>
@@ -108,8 +108,8 @@
                             </Path.Style>
                         </Path>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock TextAlignment="Center"  Text="{Binding Name}" VerticalAlignment="Center" 
-                                                           HorizontalAlignment="Center" 
+                            <TextBlock TextAlignment="Center"  Text="{Binding Name}" VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
                                                            FontSize="10" TextWrapping="Wrap" Margin="2">
                                 <TextBlock.Style>
                                     <Style TargetType="{x:Type TextBlock}">
@@ -133,7 +133,6 @@
                                             <DataTrigger Binding="{Binding PlacementBonus.Count}" Value="0">
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
-
                                         </Style.Triggers>
                                     </Style>
                                 </ItemsControl.Style>
@@ -145,8 +144,6 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <ContentControl Width="15" Height="15" Content="{Binding BonusType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Margin="1" />
-
-
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -158,10 +155,7 @@
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
-
             </Button.Template>
         </Button>
-
     </DataTemplate>
-
 </ResourceDictionary>

@@ -9,7 +9,7 @@
                 <Grid>
                     <Path x:Name="placeOutline" Width="70" Height="80"
                           Data="M35,0 70,20 70,60 35,80 0,60 0,20 35,0"
-                          
+
                           Margin="3,0"
                           StrokeThickness="2">
                         <Path.Style>
@@ -39,25 +39,20 @@
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.City}">
                                         <Setter Property="Data" Value="{Binding Source={StaticResource city}}" />
-                                        
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Forest}">
                                         <Setter Property="Data" Value="{Binding Source={StaticResource pine_tree}}" />
-                                        
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Ocean}">
                                         <Setter Property="Data" Value="{Binding Source={StaticResource water}}" />
-                                        
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Path.Style>
                     </Path>
                 </Grid>
-
             </Viewbox>
         </Grid>
-
     </DataTemplate>
     <DataTemplate DataType="{x:Type cards:Patent}">
         <Border BorderBrush="Black" BorderThickness="1" Margin="2"  Padding="2"
@@ -74,7 +69,7 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <Grid >
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="25" />
                     <ColumnDefinition Width="25" />
@@ -83,25 +78,24 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
                 <!-- cost and tags -->
                 <Border Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1" Opacity="0.5" CornerRadius="3">
-                    <TextBlock Text="{Binding BaseCost}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Consolas"/>
+                    <TextBlock Text="{Binding BaseCost}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Consolas" />
                 </Border>
                 <Border Grid.Row="0" Grid.Column="1" Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1" CornerRadius="3">
-                    <TextBlock Text="{Binding ModifiedCost}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Consolas"/>
+                    <TextBlock Text="{Binding ModifiedCost}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Consolas" />
                 </Border>
 
-                <ItemsControl Grid.Row="0" Grid.Column="3"    ItemsSource="{Binding Tags}" >
+                <ItemsControl Grid.Row="0" Grid.Column="3"    ItemsSource="{Binding Tags}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <ContentControl   Content="{Binding}" ContentTemplateSelector="{StaticResource tagTemplateSelector}" Margin="1"/>
-
+                            <ContentControl   Content="{Binding}" ContentTemplateSelector="{StaticResource tagTemplateSelector}" Margin="1" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     <ItemsControl.ItemsPanel>
@@ -115,8 +109,8 @@
                 <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Text="{Binding Name}" TextAlignment="Center" FontWeight="Bold" Margin="2" VerticalAlignment="Center" />
 
                 <!--Effects-->
-                <ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"   ItemsSource="{Binding ResourcesEffects}" HorizontalAlignment="Center"/>
-                <ItemsControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" ItemsSource="{Binding BoardEffects}" HorizontalAlignment="Center"/>
+                <ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"   ItemsSource="{Binding ResourcesEffects}" HorizontalAlignment="Center" />
+                <ItemsControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" ItemsSource="{Binding BoardEffects}" HorizontalAlignment="Center" />
                 <ItemsControl Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" ItemsSource="{Binding TileEffects}" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -161,7 +155,6 @@
                                           CommandParameter="{Binding}"
                                           IsChecked="{Binding IsSelected, Mode=OneWay}" />
             </Grid>
-
         </Border>
     </DataTemplate>
 </ResourceDictionary>

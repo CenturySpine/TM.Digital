@@ -66,9 +66,6 @@
                 </Border.Style>
                 <ContentControl Width="20" Height="20" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Margin="1" />
             </Border>
-
         </Grid>
     </DataTemplate>
-
-  
 </ResourceDictionary>
