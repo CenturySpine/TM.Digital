@@ -23,10 +23,7 @@
                 <TextBlock Text="Players" Margin="2"></TextBlock>
                 <TextBox Text="{Binding NumberOfPlayers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"></TextBox>
             </UniformGrid>
-            <!--<UniformGrid Columns="2">
-                <TextBlock Text="Server's address"  Margin="2" />
-                <TextBox Margin="2" Text="{Binding Server}"></TextBox>
-            </UniformGrid>-->
+           
             <Button Command="{Binding StartGameCommand}" Content="Create new game" Margin="2" Padding="2"></Button>
 
             <TextBlock Text="{Binding GameId}" Margin="2"></TextBlock>
@@ -62,6 +59,19 @@
         </Grid>
 
 
+        <ContentControl Grid.Row="0" Grid.RowSpan="3" Content="{Binding MenuVm}">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding MenuVm.IsVisible}" Value="true">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+
         <Grid Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed">
             <Grid.Background>
                 <SolidColorBrush Color="White" Opacity="0.5" />
@@ -75,5 +85,6 @@
                            FontSize="25" FontWeight="Bold"></TextBlock>
             </Border>
         </Grid>
+
     </Grid>
 </Window>

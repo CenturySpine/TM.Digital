@@ -15,6 +15,7 @@ namespace TM.Digital.Client
 {
     public class MainWindowViewModel : NotifierBase
     {
+        public MainMenuViewModel MenuVm { get; }
         private readonly PopupService _popup;
 
         private Board _board;
@@ -25,10 +26,43 @@ namespace TM.Digital.Client
         private HubConnection connection;
         private bool _isBoardLocked;
         private string _lockedMessage;
+        private bool _isGameOwner;
 
-        public MainWindowViewModel(PopupService popup)
+        public MainWindowViewModel(PopupService popup, MainMenuViewModel menuVm)
         {
+            MenuVm = menuVm;
+
             _popup = popup;
+
+            MenuVm.IsVisible = true;
+            MenuVm.GameStarted += MenuVm_GameCreated;
+            MenuVm.GameJoined += MenuVm_GameJoined;
+        }
+
+        private async void MenuVm_GameJoined(Player joindPlayer)
+        {
+            IsGameOwner = false;
+            await GetBoard();
+            IsBoardLocked = true;
+            LockedMessage = "....Waiting for game owner to start game...";
+            _popup.ShowLockedOverlay();
+        }
+
+        private async void MenuVm_GameCreated(GameSessionInformation gameSessionInformation)
+        {
+
+            IsGameOwner = true;//TODO enable game start
+            await GetBoard();
+            IsBoardLocked = true;
+            LockedMessage = "Awaiting players...";
+            _popup.ShowLockedOverlay();
+
+        }
+
+        public bool IsGameOwner
+        {
+            get => _isGameOwner;
+            set { _isGameOwner = value; OnPropertyChanged(nameof(IsGameOwner)); }
         }
 
         public RelayCommand AddPlayerCommand { get; set; }
@@ -69,14 +103,13 @@ namespace TM.Digital.Client
             set { _server = value; OnPropertyChanged(nameof(Server)); }
         }
 
-        public RelayCommand StartGameCommand { get; set; }
+
 
         public async Task Initialize()
         {
             await Task.CompletedTask;
             OtherPlayers = new List<Player>();
             Refresh = new RelayCommand(ExecuteRefresh);
-            StartGameCommand = new RelayCommand(ExecuteStartGame, CanExecuteStartGame);
             AddPlayerCommand = new RelayCommand(ExecuteAddPlayer, CanExecuteAddPlayer);
             SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
             SelectBoardPlace = new RelayCommand(ExecuteSelectBoardPlace, CanExecuteSelectBoardPlace);
@@ -169,10 +202,7 @@ namespace TM.Digital.Client
             return GameId != Guid.Empty && !string.IsNullOrEmpty(PlayerName);
         }
 
-        private bool CanExecuteStartGame(object arg)
-        {
-            return  /*&& !string.IsNullOrEmpty(Server)*/  NumberOfPlayers > 0 && NumberOfPlayers <= 5;
-        }
+
 
         public RelayCommand SelectCardCommand { get; set; }
 
@@ -206,20 +236,20 @@ namespace TM.Digital.Client
             await GetBoard();
         }
 
-        private void ExecuteStartGame(object obj)
-        {
-            CallErrorHandler.Handle(async () =>
-            {
-                GameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>("game/start/" + NumberOfPlayers);
-                if (GameId != Guid.Empty)
-                {
-                    await GetBoard();
-                    IsBoardLocked = true;
-                    LockedMessage = "Awaiting players...";
-                    _popup.ShowLockedOverlay();
-                }
-            });
-        }
+        //private void ExecuteStartGame(object obj)
+        //{
+        //    CallErrorHandler.Handle(async () =>
+        //    {
+        //        GameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>("game/start/" + NumberOfPlayers);
+        //        if (GameId != Guid.Empty)
+        //        {
+        //            await GetBoard();
+        //            IsBoardLocked = true;
+        //            LockedMessage = "Awaiting players...";
+        //            _popup.ShowLockedOverlay();
+        //        }
+        //    });
+        //}
 
         public bool IsBoardLocked
         {
@@ -230,7 +260,7 @@ namespace TM.Digital.Client
         public string LockedMessage
         {
             get => _lockedMessage;
-            private set { _lockedMessage = value;OnPropertyChanged(nameof(LockedMessage)); }
+            private set { _lockedMessage = value; OnPropertyChanged(nameof(LockedMessage)); }
         }
 
         private async Task GetBoard()

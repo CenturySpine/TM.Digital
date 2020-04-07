@@ -11,7 +11,6 @@ namespace TM.Digital.Services
 
         public Board Original()
         {
-            int index = 0;
             var board = new Board
             {
                 Parameters = new List<BoardParameter>

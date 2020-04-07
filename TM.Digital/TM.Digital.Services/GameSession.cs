@@ -18,14 +18,16 @@ namespace TM.Digital.Services
 {
     internal class GameSession
     {
+        public string OwnerName { get; set; }
         public Guid Id { get; set; }
         public int NumberOfPlayers { get; set; }
         public Board Board { get; set; }
         public Queue<Corporation> AvailableCorporations { get; set; }
         public Queue<Patent> AvailablePatents { get; set; }
         public Dictionary<Guid, Player> Players { get; set; }
+        public Guid OwnerId { get; set; }
 
-        public GameSetup AddPlayer(string playerName, bool test)
+        public Player AddPlayer(string playerName, bool test)
         {
             var player = new Player
             {
@@ -45,25 +47,44 @@ namespace TM.Digital.Services
                 TerraformationLevel = 20,
             };
             Players.Add(player.PlayerId, player);
-            GameSetup gs = new GameSetup
+
+            return player;
+            //return CreatePlayerSetup(player);
+        }
+
+        public GameSetup CreatePlayerSetup(string player)
+        {
+            var playerObj = Players.FirstOrDefault(p => p.Value.Name.Equals(player));
+
+            if (playerObj.Value != null)
             {
-                PlayerId = player.PlayerId,
-                Corporations = new List<Corporation>(),
-                Patents = new List<Patent>(),
-                GameId = this.Id
-            };
-            for (int i = 0; i < 2; i++)
-            {
-                gs.Corporations.Add(AvailableCorporations.Dequeue());
+
+
+                GameSetup gs = new GameSetup
+                {
+                    PlayerId = playerObj.Value.PlayerId,
+                    Corporations = new List<Corporation>(),
+                    Patents = new List<Patent>(),
+                    GameId = this.Id
+                };
+
+
+                for (int i = 0; i < 2; i++)
+                {
+                    gs.Corporations.Add(AvailableCorporations.Dequeue());
+                }
+
+                while (AvailablePatents.Count > 0)
+                {
+                    gs.Patents.Add(AvailablePatents.Dequeue());
+                }
+
+
+                return gs;
+
             }
 
-            while (AvailablePatents.Count>0)
-            {
-                gs.Patents.Add(AvailablePatents.Dequeue());
-            }
-
-
-            return gs;
+            return null;
         }
 
         public Player SetupPlayer(GameSetupSelection selection)
@@ -94,7 +115,7 @@ namespace TM.Digital.Services
                 var choices = CardPlayHandler.Play(card, player, Board);
                 if (choices != null)
                 {
-                    
+
 
                     if (choices.TileEffects != null && choices.TileEffects.Any())
                     {
@@ -107,7 +128,7 @@ namespace TM.Digital.Services
                                     Logger.Log(player.Name, $"Effect {PendingTileEffect.Type}... Getting board available spaces...");
 
                                     var choiceBoard = BoardHandler.GetPlacesChoices(PendingTileEffect, b);
-                                    Logger.Log(player.Name, $"Found {choiceBoard.BoardLines.SelectMany(r=>r.BoardPlaces).Where(p=>p.CanBeChosed).Count()} available places. Sending choices to player");
+                                    Logger.Log(player.Name, $"Found {choiceBoard.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => p.CanBeChosed).Count()} available places. Sending choices to player");
                                     await hubContext.Clients.All.SendAsync("PlaceTile", $"{p.PlayerId}", JsonSerializer.Serialize(choiceBoard));
 
                                 });
@@ -178,7 +199,7 @@ namespace TM.Digital.Services
         {
             if (PendingTileEffect != null)
             {
-                
+
                 if (Players.TryGetValue(playerId, out var player))
                 {
                     Logger.Log(player.Name, $"Placing tile '{PendingTileEffect.Type}' on place '{place.Index}'");

@@ -4,12 +4,15 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Common.xaml" />
                 <ResourceDictionary Source="Icons.xaml" />
                 <ResourceDictionary Source="EffectTemplates.xaml" />
                 <ResourceDictionary Source="PlayerResources.xaml" />
                 <ResourceDictionary Source="BoardPlacesTemplates.xaml" />
                 <ResourceDictionary Source="CardsTemplates.xaml" />
+                <ResourceDictionary Source="GameMenuResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -20,6 +20,7 @@ namespace TM.Digital.Client
 
             ctn.Register<GameSetupWindow>(Lifestyle.Transient);
             ctn.Register<GameSetupViewModel>(Lifestyle.Transient);
+            ctn.Register<MainMenuViewModel>(Lifestyle.Singleton);
 
             ctn.Register<PopupService>(Lifestyle.Singleton);
 
