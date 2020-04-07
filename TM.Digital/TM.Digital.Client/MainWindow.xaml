@@ -23,11 +23,12 @@
                 <TextBlock Text="Players" Margin="2"></TextBlock>
                 <TextBox Text="{Binding NumberOfPlayers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"></TextBox>
             </UniformGrid>
-            <UniformGrid Columns="2">
+            <!--<UniformGrid Columns="2">
                 <TextBlock Text="Server's address"  Margin="2" />
                 <TextBox Margin="2" Text="{Binding Server}"></TextBox>
-            </UniformGrid>
-            <Button Command="{Binding StartGameCommand}" Content="Start Game" Margin="2" Padding="2"></Button>
+            </UniformGrid>-->
+            <Button Command="{Binding StartGameCommand}" Content="Create new game" Margin="2" Padding="2"></Button>
+            
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="2">
