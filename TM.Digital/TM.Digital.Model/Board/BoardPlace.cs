@@ -50,7 +50,7 @@ namespace TM.Digital.Model.Board
 
         public override string ToString()
         {
-            return $"{nameof(X)}: {X}, {nameof(Y)}: {Y}";
+            return $"({nameof(X)}: {X}, {nameof(Y)}: {Y})";
         }
     }
 }

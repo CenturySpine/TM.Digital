@@ -56,10 +56,12 @@ namespace TM.Digital.Services
             {
                 gs.Corporations.Add(AvailableCorporations.Dequeue());
             }
-            for (int i = 0; i < 10; i++)
+
+            while (AvailablePatents.Count>0)
             {
                 gs.Patents.Add(AvailablePatents.Dequeue());
             }
+
 
             return gs;
         }

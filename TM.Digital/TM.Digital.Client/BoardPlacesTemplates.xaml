@@ -13,21 +13,21 @@
 
             <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1"  Background="AliceBlue" Margin="1">
 
-<ItemsControl  ItemsSource="{Binding IsolatedPlaces}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-</Border>
+                <ItemsControl  ItemsSource="{Binding IsolatedPlaces}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
             <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1"  Background="AliceBlue" Margin="1" Padding="2">
-<ScrollViewer>
-<ItemsControl  ItemsSource="{Binding BoardLines}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-</ScrollViewer>
+                <ScrollViewer>
+                    <ItemsControl  ItemsSource="{Binding BoardLines}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </ScrollViewer>
             </Border>
             <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Background="AliceBlue" Margin="1">
-            <ItemsControl  ItemsSource="{Binding Parameters}" HorizontalAlignment="Center"  >
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="3"></UniformGrid>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+                <ItemsControl  ItemsSource="{Binding Parameters}" HorizontalAlignment="Center"  >
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3"></UniformGrid>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </Border>
         </Grid>
     </DataTemplate>
@@ -89,9 +89,9 @@
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding PlayedTile}" Value="{x:Null}" />
-                                                <Condition Binding="{Binding CanBeChosed}" Value="true" />
+                                                <Condition Binding="{Binding CanBeChosed}" Value="false" />
                                             </MultiDataTrigger.Conditions>
-                                            <Setter Property="Stroke" Value="Red"></Setter>
+                                            <Setter Property="Opacity" Value="0.2"></Setter>
                                         </MultiDataTrigger>
 
                                         <DataTrigger Binding="{Binding PlayedTile.Type}" Value="{x:Static tile:TileType.City}">
@@ -133,7 +133,7 @@
                                             <DataTrigger Binding="{Binding PlacementBonus.Count}" Value="0">
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
-                                            
+
                                         </Style.Triggers>
                                     </Style>
                                 </ItemsControl.Style>
@@ -144,31 +144,9 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Path Width="15" Height="15" Stretch="Uniform" Margin="1">
-                                            <Path.Style>
-                                                <Style TargetType="{x:Type Path}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding BonusType}" Value="{x:Static resources:ResourceType.Card}">
-                                                            <Setter Property="Data" Value="{Binding Source={StaticResource card}, Path=Data}" />
-                                                            <Setter Property="Fill" Value="Black" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding BonusType}" Value="{x:Static resources:ResourceType.Titanium}">
-                                                            <Setter Property="Data" Value="{Binding Source={StaticResource starbox}, Path=Data}" />
-                                                            <Setter Property="Fill" Value="Black" />
-                                                            <Setter Property="Stroke" Value="Yellow" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding BonusType}" Value="{x:Static resources:ResourceType.Plant}">
-                                                            <Setter Property="Data" Value="{Binding Source={StaticResource leaf}, Path=Data}" />
-                                                            <Setter Property="Fill" Value="Green" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding BonusType}" Value="{x:Static resources:ResourceType.Steel}">
-                                                            <Setter Property="Data" Value="{Binding Source={StaticResource hammer}, Path=Data}" />
-                                                            <Setter Property="Fill" Value="Maroon" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Path.Style>
-                                        </Path>
+                                        <ContentControl Width="15" Height="15" Content="{Binding BonusType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Margin="1" />
+
+
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

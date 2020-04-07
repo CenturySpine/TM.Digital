@@ -54,46 +54,51 @@ namespace TM.Digital.Services
         {
 
             var currentLine = board.BoardLines.FirstOrDefault(l => l.BoardPlaces.FirstOrDefault(p => p.Index.Equals(space.Index)) != null);
-            int linePlaceCount = currentLine.BoardPlaces.Count;
-            int upperLinePlaceCount = currentLine.Index > 0 ? board.BoardLines[currentLine.Index - 1].BoardPlaces.Count() : 0;
-            int lowerLinePlaceCount = currentLine.Index < board.BoardLines.Count ? board.BoardLines[currentLine.Index + 1].BoardPlaces.Count() : 0;
+            //int linePlaceCount = currentLine.BoardPlaces.Count;
+            //int upperLinePlaceCount = currentLine.Index > 0 ? board.BoardLines[currentLine.Index - 1].BoardPlaces.Count() : 0;
+            //int lowerLinePlaceCount = currentLine.Index < board.BoardLines.Count ? board.BoardLines[currentLine.Index + 1].BoardPlaces.Count() : 0;
 
             var surr = new PlaceCoordinates[]
             {
-                //upper surroundings
+                //upper left surroundings
                 new PlaceCoordinates
                 {
                     X = space.Index.X - 1,
-                    Y = space.Index.Y -((upperLinePlaceCount<linePlaceCount)?1:0)
-                },
-                new PlaceCoordinates()
-                    {
-                        X = space.Index.X - 1,
-                        Y = space.Index.Y +((upperLinePlaceCount>linePlaceCount)?1:0)
-                },
-
-                //same line surroundings
-                new PlaceCoordinates
-                {
-                    X = space.Index.X ,
                     Y = space.Index.Y -1
                 },
+
+                //middle left surroundings
                 new PlaceCoordinates()
-                {
-                    X = space.Index.X ,
-                    Y = space.Index.Y +1
+                    {
+                        X = space.Index.X ,
+                        Y = space.Index.Y -1
                 },
 
-                //bottom surroundings
+                //bottom left surroundings
                 new PlaceCoordinates
                 {
                     X = space.Index.X+1 ,
-                    Y = space.Index.Y -((lowerLinePlaceCount>linePlaceCount)?0:1)
+                    Y = space.Index.Y -1
                 },
+
+                //upper right surroundings
+                new PlaceCoordinates()
+                {
+                    X = space.Index.X-1 ,
+                    Y = space.Index.Y 
+                },
+
+                //middle right surroundings
+                new PlaceCoordinates
+                {
+                    X = space.Index.X ,
+                    Y = space.Index.Y+1
+                },
+                //bottom right surroundings
                 new PlaceCoordinates()
                 {
                     X = space.Index.X+1 ,
-                    Y = space.Index.Y +((lowerLinePlaceCount>linePlaceCount)?1:0)
+                    Y = space.Index.Y 
                 },
 
 
@@ -206,7 +211,7 @@ namespace TM.Digital.Services
                 var surroundingTiles = board.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => surroundings.Contains(p.Index)).ToList();
                 var playedOcenTiles = surroundingTiles
                     .Where(t => t.PlayedTile != null && t.PlayedTile.Type == TileType.Ocean).ToList();
-                Logger.Log(playerId.Name, $"Found {playedOcenTiles.Count} ocean tiles...");
+                Logger.Log(playerId.Name, $"Found {playedOcenTiles.Count} ocean tiles... {string.Join(',',playedOcenTiles.Select(t=>t.Index.ToString()))}");
                 var playerResource = playerId.Resources.First(r => r.ResourceType == ResourceType.Money);
                 playerResource.UnitCount += playedOcenTiles.Count * 2;
                 Logger.Log(playerId.Name, $"Money units increased by {playedOcenTiles.Count * 2}");

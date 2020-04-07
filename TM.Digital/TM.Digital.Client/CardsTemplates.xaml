@@ -79,26 +79,45 @@
                     <ColumnDefinition Width="25" />
                     <ColumnDefinition Width="25" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <Border Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1" Opacity="0.5">
-                    <TextBlock Text="{Binding BaseCost}" VerticalAlignment="Center" />
+                <!-- cost and tags -->
+                <Border Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1" Opacity="0.5" CornerRadius="3">
+                    <TextBlock Text="{Binding BaseCost}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Consolas"/>
                 </Border>
-                <Border Grid.Row="0" Grid.Column="1" Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1">
-                    <TextBlock Text="{Binding ModifiedCost}" VerticalAlignment="Center" />
+                <Border Grid.Row="0" Grid.Column="1" Margin="1" Background="Yellow" Padding="2" BorderBrush="Black" BorderThickness="1" CornerRadius="3">
+                    <TextBlock Text="{Binding ModifiedCost}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Consolas"/>
                 </Border>
 
-                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Name}" VerticalAlignment="Center" />
+                <ItemsControl Grid.Row="0" Grid.Column="3"    ItemsSource="{Binding Tags}" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl   Content="{Binding}" ContentTemplateSelector="{StaticResource tagTemplateSelector}" Margin="1"/>
 
-                <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"   ItemsSource="{Binding ResourcesEffects}" />
-                <ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding BoardEffects}" />
-                <ItemsControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding TileEffects}">
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <!--name -->
+                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Text="{Binding Name}" TextAlignment="Center" FontWeight="Bold" Margin="2" VerticalAlignment="Center" />
+
+                <!--Effects-->
+                <ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"   ItemsSource="{Binding ResourcesEffects}" HorizontalAlignment="Center"/>
+                <ItemsControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" ItemsSource="{Binding BoardEffects}" HorizontalAlignment="Center"/>
+                <ItemsControl Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" ItemsSource="{Binding TileEffects}" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"></StackPanel>

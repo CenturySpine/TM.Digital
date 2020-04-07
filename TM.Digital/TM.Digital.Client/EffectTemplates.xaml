@@ -42,7 +42,7 @@
                     <Setter Property="Background" Value="LightGray"></Setter>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ResourceKind}" Value="{x:Static resources:ResourceKind.Production}">
-                            <Setter Property="Background" Value="Chocolate"></Setter>
+                            <Setter Property="Background" Value="SandyBrown"></Setter>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -64,87 +64,11 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <Path Width="15" Height="15" Stretch="Uniform" Margin="1">
-                    <Path.Style>
-                        <Style TargetType="{x:Type Path}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Card}">
-                                    <Setter Property="Data" Value="{Binding Source={StaticResource card}, Path=Data}" />
-                                    <Setter Property="Fill" Value="Black" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Titanium}">
-                                    <Setter Property="Data" Value="{Binding Source={StaticResource starbox}, Path=Data}" />
-                                    <Setter Property="Fill" Value="Black" />
-                                    <Setter Property="Stroke" Value="Yellow" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Plant}">
-                                    <Setter Property="Data" Value="{Binding Source={StaticResource leaf}, Path=Data}" />
-                                    <Setter Property="Fill" Value="Green" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Steel}">
-                                    <Setter Property="Data" Value="{Binding Source={StaticResource hammer}, Path=Data}" />
-                                    <Setter Property="Fill" Value="DarkGoldenrod" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Energy}">
-                                    <Setter Property="Data" Value="{Binding Source={StaticResource flash}, Path=Data}" />
-                                    <Setter Property="Fill" Value="Purple" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Money}">
-                                    <Setter Property="Data" Value="{Binding Source={StaticResource currency_usd}, Path=Data}" />
-                                    <Setter Property="Fill" Value="Black" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Heat}">
-                                    <Setter Property="Data" Value="{Binding Source={StaticResource radiator}, Path=Data}" />
-                                    <Setter Property="Fill" Value="Red" />
-                                </DataTrigger>
-
-                            </Style.Triggers>
-                        </Style>
-                    </Path.Style>
-                </Path>
+                <ContentControl Width="20" Height="20" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Margin="1" />
             </Border>
 
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type resources:ResourceType}">
-        <Path Width="15" Height="15" Stretch="Uniform" Margin="1">
-            <Path.Style>
-                <Style TargetType="{x:Type Path}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding .}" Value="{x:Static resources:ResourceType.Card}">
-                            <Setter Property="Data" Value="{Binding Source={StaticResource card}, Path=Data}" />
-                            <Setter Property="Fill" Value="Black" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding .}" Value="{x:Static resources:ResourceType.Titanium}">
-                            <Setter Property="Data" Value="{Binding Source={StaticResource starbox}, Path=Data}" />
-                            <Setter Property="Fill" Value="Black" />
-                            <Setter Property="Stroke" Value="Yellow" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding .}" Value="{x:Static resources:ResourceType.Plant}">
-                            <Setter Property="Data" Value="{Binding Source={StaticResource leaf}, Path=Data}" />
-                            <Setter Property="Fill" Value="Green" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding .}" Value="{x:Static resources:ResourceType.Steel}">
-                            <Setter Property="Data" Value="{Binding Source={StaticResource hammer}, Path=Data}" />
-                            <Setter Property="Fill" Value="DarkGoldenrod" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding .}" Value="{x:Static resources:ResourceType.Energy}">
-                            <Setter Property="Data" Value="{Binding Source={StaticResource flash}, Path=Data}" />
-                            <Setter Property="Fill" Value="Purple" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding .}" Value="{x:Static resources:ResourceType.Money}">
-                            <Setter Property="Data" Value="{Binding Source={StaticResource currency_usd}, Path=Data}" />
-                            <Setter Property="Fill" Value="Black" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding .}" Value="{x:Static resources:ResourceType.Heat}">
-                            <Setter Property="Data" Value="{Binding Source={StaticResource radiator}, Path=Data}" />
-                            <Setter Property="Fill" Value="Red" />
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                </Style>
-            </Path.Style>
-        </Path>
-    </DataTemplate>
+  
 </ResourceDictionary>
