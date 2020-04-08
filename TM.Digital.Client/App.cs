@@ -23,11 +23,10 @@ namespace TM.Digital.Client
             ctn.Register<MainWindowViewModel>(Lifestyle.Singleton);
             ctn.Register<MainWindow>(Lifestyle.Transient);
 
-            
             ctn.Register<GameSetupViewModel>(Lifestyle.Transient);
             ctn.Register<MainMenuViewModel>(Lifestyle.Singleton);
             ctn.Register<WaitingGameScreenViewModel>(Lifestyle.Singleton);
-            ctn.Register<IApiProxy,ApiProxy>(Lifestyle.Singleton);
+            ctn.Register<IApiProxy, ApiProxy>(Lifestyle.Singleton);
 
             //ctn.Register<PopupService>(Lifestyle.Singleton);
 

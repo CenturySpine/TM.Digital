@@ -48,7 +48,7 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <ContentControl  Content="{Binding ResourceType}" Width="25" Height="25" ContentTemplateSelector="{StaticResource resBoardSelector}" 
+                                    <ContentControl  Content="{Binding ResourceType}" Width="25" Height="25" ContentTemplateSelector="{StaticResource resBoardSelector}"
                                                      Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Margin="5" VerticalAlignment="Center" />
 
                                     <Grid Grid.Row="1"  Grid.Column="0" Background="SandyBrown" Margin="2" Width="50" Height="25">

@@ -7,38 +7,6 @@ using TM.Digital.Model.Game;
 
 namespace TM.Digital.Client.Screens.HandSetup
 {
-    public abstract class GameBoardBaseViewModel : NotifierBase
-    {
-        public GameBoardBaseViewModel()
-        {
-            SelectCardCommand = new RelayCommand(ExecuteSelectCorporation, CanExecuteSelectCard);
-        }
-
-        protected abstract bool CanExecuteSelectCard(object arg);
-
-        protected abstract void ExecuteSelectCorporation(object obj);
-
-        public RelayCommand SelectCardCommand { get; set; }
-    }
-
-    public class GameBoardViewModel : GameBoardBaseViewModel
-    {
-        protected override bool CanExecuteSelectCard(object obj)
-        {
-            if (obj is PatentSelector patent)
-            {
-                return patent.Patent.CanBePlayed;
-            }
-
-            return false;
-        }
-
-        protected override void ExecuteSelectCorporation(object obj)
-        {
-            //TODO
-        }
-    }
-
     public class GameSetupViewModel : GameBoardBaseViewModel
     {
         private bool _isVisible;
@@ -56,7 +24,6 @@ namespace TM.Digital.Client.Screens.HandSetup
 
         protected override bool CanExecuteSelectCard(object obj)
         {
-
             return true;
         }
 
@@ -82,7 +49,6 @@ namespace TM.Digital.Client.Screens.HandSetup
         public ObservableCollection<CorporationSelector> CorporationChoices { get; set; }
         public ObservableCollection<PatentSelector> PatentChoices { get; set; }
 
-        
         protected override void ExecuteSelectCorporation(object obj)
         {
             if (obj is CorporationSelector select)

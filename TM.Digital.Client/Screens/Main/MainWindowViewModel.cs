@@ -1,16 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR.Client;
-using Newtonsoft.Json;
 using TM.Digital.Client.Screens.HandSetup;
 using TM.Digital.Client.Screens.Menu;
 using TM.Digital.Client.Screens.Wait;
 using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model;
 using TM.Digital.Model.Board;
-using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Transport;
@@ -22,7 +21,7 @@ namespace TM.Digital.Client.Screens.Main
         public WaitingGameScreenViewModel WaitVm { get; }
         private Board _board;
         private PlayerSelector _currentPlayer;
-        
+
         private bool _isBoardLocked;
 
         private string _playerName;
@@ -52,8 +51,6 @@ namespace TM.Digital.Client.Screens.Main
             get => _currentPlayer;
             set { _currentPlayer = value; OnPropertyChanged(nameof(CurrentPlayer)); }
         }
-
-
 
         public bool IsBoardLocked
         {
@@ -187,7 +184,6 @@ namespace TM.Digital.Client.Screens.Main
         //    return false;
         //}
 
-
         private async void ExecuteRefresh(object obj)
         {
             await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
@@ -229,7 +225,6 @@ namespace TM.Digital.Client.Screens.Main
             IsBoardLocked = true;
             WaitVm.PlayerId = gameSessionInformation.OwnerId;
             WaitVm.Open("Awaiting players...");
-
         }
 
         private async void MenuVm_GameJoined(Player joindPlayer)

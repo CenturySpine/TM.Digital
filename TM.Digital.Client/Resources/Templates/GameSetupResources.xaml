@@ -26,7 +26,6 @@
                         <StackPanel Orientation="Horizontal"></StackPanel>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-
             </ItemsControl>
             <Button Grid.Row="2" Content="Validate" Command="{Binding CloseCommand}" HorizontalAlignment="Center" Padding="20" FontSize="20" Margin="20"></Button>
         </Grid>

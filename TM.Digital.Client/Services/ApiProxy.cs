@@ -20,13 +20,12 @@ namespace TM.Digital.Client.Services
 
         public async Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers)
         {
-            return await TmDigitalClientRequestHandler.Instance.Request<GameSessionInformation>($"game/create/{playerName}/{numberOfPlayers}" );
+            return await TmDigitalClientRequestHandler.Instance.Request<GameSessionInformation>($"game/create/{playerName}/{numberOfPlayers}");
         }
 
         public async Task<bool> StartGame(Guid sessionGameSessionId)
         {
             return await TmDigitalClientRequestHandler.Instance.Request<bool>($"game/start/{sessionGameSessionId}");
-
         }
     }
 }

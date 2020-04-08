@@ -10,7 +10,7 @@ namespace TM.Digital.Client.Screens.Wait
     public class WaitingGameScreenViewModel : NotifierBase
     {
         private readonly IApiProxy _apiCaller;
-        
+
         private string _initialMessage;
         private bool _isOwner;
         private Guid _playerId;
@@ -42,8 +42,6 @@ namespace TM.Digital.Client.Screens.Wait
             {
                 MessageBox.Show("Can't start game...");
             }
-            
-            
         }
 
         public RelayCommand StartGameCommand { get; set; }
@@ -81,7 +79,9 @@ namespace TM.Digital.Client.Screens.Wait
         public bool IsVisible
         {
             get { return _isVisible; }
-            set { _isVisible = value;
+            set
+            {
+                _isVisible = value;
                 OnPropertyChanged(nameof(IsVisible));
             }
         }
@@ -95,7 +95,9 @@ namespace TM.Digital.Client.Screens.Wait
         public GameSessionInformation Session
         {
             get { return _session; }
-            set { _session = value;
+            set
+            {
+                _session = value;
                 OnPropertyChanged(nameof(Session));
             }
         }

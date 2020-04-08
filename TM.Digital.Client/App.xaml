@@ -10,11 +10,10 @@
                 <ResourceDictionary Source="Resources/Templates/PlayerResources.xaml" />
                 <ResourceDictionary Source="Resources/Templates/BoardPlacesTemplates.xaml" />
                 <ResourceDictionary Source="Resources/Templates/CardsTemplates.xaml" />
-                <ResourceDictionary Source="Screens/Menu/GameMenuResources.xaml" />
-                <ResourceDictionary Source="Screens/Wait/WaitScreenResources.xaml" />
-                <ResourceDictionary Source="Screens/HandSetup/GameSetupResources.xaml"/>
+                <ResourceDictionary Source="Resources/Templates/GameMenuResources.xaml" />
+                <ResourceDictionary Source="Resources/Templates/WaitScreenResources.xaml" />
+                <ResourceDictionary Source="Resources/Templates/GameSetupResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

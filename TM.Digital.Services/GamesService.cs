@@ -74,27 +74,6 @@ namespace TM.Digital.Services
                 };
         }
 
-        //public GameSetup AddPlayer(Guid gameId, string playerName, bool test)
-        //{
-        //    try
-        //    {
-        //        if (_currentSessions.TryGetValue(gameId, out var session))
-        //        {
-        //            GameSetup gameSetup = session.CreatePlayerSetup(playerName);
-        //            return gameSetup;
-        //        }
-
-        //        throw Errors.ErrorGameIdNotFound(gameId);
-        //    }
-        //    catch (Exception e)
-        //    {
-
-        //        Logger.Log("ERROR", e.ToString());
-        //    }
-
-        //    return null;
-        //}
-
         public Player SetupPlayer(GameSetupSelection selection)
         {
             try

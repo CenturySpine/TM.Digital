@@ -39,7 +39,7 @@ namespace TM.Digital.Api.Controllers
         [Route("join/{gameId}/{playername}")]
         public async Task<Player> JoinGame(Guid gameId, string playerName)
         {
-            
+
             return await GamesService.Instance.JoinSession(gameId, playerName, _hubContext);
         }
         [Route("start/{gameId}")]
@@ -47,14 +47,6 @@ namespace TM.Digital.Api.Controllers
         {
             return await GamesService.Instance.StartGame(gameId, _hubContext);
         }
-
-
-        //[Route("addplayer/{gameId}/{playername}/{test}")]
-        //public async Task<GameSetup> AddPlayer(Guid gameId, string playername, bool test)
-        //{
-        //    await Task.CompletedTask;
-        //    return GamesService.Instance.AddPlayer(gameId, playername, test);
-        //}
 
         [Route("addplayer/setupplayer")]
         public async Task<Player> SetupPlayer(GameSetupSelection selection)
