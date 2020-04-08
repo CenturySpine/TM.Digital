@@ -2,9 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:TM.Digital.Client"        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:main="clr-namespace:TM.Digital.Client.Screens.Main"
+                    xmlns:converters="clr-namespace:TM.Digital.Client.Resources.Converters"
+                    xmlns:resources="clr-namespace:TM.Digital.Client.Resources"
                     mc:Ignorable="d">
 
-    <DataTemplate DataType="{x:Type local:PlayerSelector}">
+    <DataTemplate DataType="{x:Type main:PlayerSelector}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -13,7 +16,7 @@
 
             <Grid>
                 <Grid.Resources>
-                    <local:PlayedCardToTagsCountConverter x:Key="tagConverter" />
+                    <converters:PlayedCardToTagsCountConverter x:Key="tagConverter" />
                 </Grid.Resources>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -34,7 +37,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border BorderBrush="DarkGray" BorderThickness="1" Margin="1">
+                            <Border BorderBrush="DarkGray" BorderThickness="1" Margin="1" Padding="10,5">
                                 <Grid Margin="2">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
@@ -44,12 +47,14 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <ContentControl  Content="{Binding ResourceType}" Width="25" Height="25" ContentTemplateSelector="{StaticResource resBoardSelector}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="2" VerticalAlignment="Center"></ContentControl>
 
-                                    <Grid Grid.Row="0"  Grid.Column="1" Background="SandyBrown" Margin="2">
+                                    <ContentControl  Content="{Binding ResourceType}" Width="25" Height="25" ContentTemplateSelector="{StaticResource resBoardSelector}"
+                                                     Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Margin="5" VerticalAlignment="Center" />
+
+                                    <Grid Grid.Row="1"  Grid.Column="0" Background="SandyBrown" Margin="2" Width="50" Height="25">
                                         <TextBlock Text="{Binding Production}" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2" />
                                     </Grid>
-                                    <Grid Grid.Row="1"  Grid.Column="1" Background="LightGray" VerticalAlignment="Center" Margin="2">
+                                    <Grid Grid.Row="1"  Grid.Column="1" Background="LightGray" VerticalAlignment="Center" Margin="2" Width="50" Height="25">
                                         <TextBlock Text="{Binding UnitCount}"  FontWeight="Bold" HorizontalAlignment="Center" Margin="2" />
                                     </Grid>
                                 </Grid>
@@ -61,7 +66,7 @@
                 <ItemsControl Grid.Row="2" ItemsSource="{Binding Player.PlayedCards, Converter={StaticResource tagConverter}}" Margin="5">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border d:DataContext="{d:DesignInstance {x:Type local:TagsCount}}" Padding="1" CornerRadius="2" BorderBrush="Black" BorderThickness="1" Margin="1">
+                            <Border d:DataContext="{d:DesignInstance {x:Type resources:TagsCount}}" Padding="1" CornerRadius="2" BorderBrush="Black" BorderThickness="1" Margin="1">
                                 <Grid  Margin="1">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />

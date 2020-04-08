@@ -9,9 +9,9 @@ namespace TM.Digital.Model.Board
 
         public List<BoardPlace> IsolatedPlaces { get; set; }
 
-        public List<BoardParameter> Parameters { get; set; } 
+        public List<BoardParameter> Parameters { get; set; }
 
-
+        public int Generation { get; set; }
 
     }
 }

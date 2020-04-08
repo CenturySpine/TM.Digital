@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:TM.Digital.Client"
                     xmlns:cards="clr-namespace:TM.Digital.Model.Cards;assembly=TM.Digital.Model"
-                    xmlns:tile="clr-namespace:TM.Digital.Model.Tile;assembly=TM.Digital.Model">
+                    xmlns:tile="clr-namespace:TM.Digital.Model.Tile;assembly=TM.Digital.Model"
+                    xmlns:handSetup="clr-namespace:TM.Digital.Client.Screens.HandSetup">
     <DataTemplate DataType="{x:Type tile:TileEffect}">
         <Grid>
             <Viewbox Height="30" Width="30">
@@ -122,7 +123,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:PatentSelector}">
+    <DataTemplate DataType="{x:Type handSetup:PatentSelector}">
         <Border BorderBrush="Black" BorderThickness="1"  Margin="2" Width="150" Height="300" Padding="2">
             <Border.Style>
                 <Style TargetType="{x:Type Border}">
@@ -151,7 +152,41 @@
                 </Grid.RowDefinitions>
                 <ContentControl Content="{Binding Patent}"></ContentControl>
 
-                <ToggleButton Grid.Row="1" Content="Select" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.SelectCardCommand}"
+                <ToggleButton Grid.Row="1" Content="Select" Command="{Binding DataContext.SelectCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                          CommandParameter="{Binding}"
+                                          IsChecked="{Binding IsSelected, Mode=OneWay}" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type handSetup:CorporationSelector}">
+        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="2" Width="300" Height="150" Padding="10">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="Background" Value="White"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                            <Setter Property="Background" Value="LightGray"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <UniformGrid Columns="2">
+                    <TextBlock Text="Name" />
+                    <TextBlock Text="{Binding Corporation.Name}"></TextBlock>
+                </UniformGrid>
+                <UniformGrid Grid.Row="1" Columns="2">
+                    <TextBlock Text="Credits" />
+                    <TextBlock Text="{Binding Corporation.StartingMoney}"></TextBlock>
+                </UniformGrid>
+
+                <ToggleButton Grid.Row="2" Content="Select" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.SelectCardCommand}"
                                           CommandParameter="{Binding}"
                                           IsChecked="{Binding IsSelected, Mode=OneWay}" />
             </Grid>

@@ -1,14 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
+using TM.Digital.Client.Screens.Main;
+using TM.Digital.Client.Services;
+using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 
-namespace TM.Digital.Client
+namespace TM.Digital.Client.Screens.Menu
 {
-    public delegate void GameCreatedEventHandler(GameSessionInformation gameId);
-
-    public delegate void GameJoinSuccessEventHandler(Player joindPlayer);
-
     public sealed class MainMenuViewModel : NotifierBase
     {
         private readonly IApiProxy _apiCaller;

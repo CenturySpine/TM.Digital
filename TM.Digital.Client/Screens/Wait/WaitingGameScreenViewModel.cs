@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Windows;
+using TM.Digital.Client.Services;
+using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model.Game;
 
-namespace TM.Digital.Client
+namespace TM.Digital.Client.Screens.Wait
 {
     public class WaitingGameScreenViewModel : NotifierBase
     {
         private readonly IApiProxy _apiCaller;
-        
+
         private string _initialMessage;
         private bool _isOwner;
         private Guid _playerId;
@@ -29,11 +30,18 @@ namespace TM.Digital.Client
             return IsOwner;
         }
 
-        private void ExecuteStartGame(object obj)
+        private async void ExecuteStartGame(object obj)
         {
-            IsVisible = false;
-            IncommingMessages.Clear();
-            InitialMessage = string.Empty;
+            if (await _apiCaller.StartGame(Session.GameSessionId))
+            {
+                IsVisible = false;
+                IncommingMessages.Clear();
+                InitialMessage = string.Empty;
+            }
+            else
+            {
+                MessageBox.Show("Can't start game...");
+            }
         }
 
         public RelayCommand StartGameCommand { get; set; }
@@ -71,7 +79,9 @@ namespace TM.Digital.Client
         public bool IsVisible
         {
             get { return _isVisible; }
-            set { _isVisible = value;
+            set
+            {
+                _isVisible = value;
                 OnPropertyChanged(nameof(IsVisible));
             }
         }
@@ -85,7 +95,9 @@ namespace TM.Digital.Client
         public GameSessionInformation Session
         {
             get { return _session; }
-            set { _session = value;
+            set
+            {
+                _session = value;
                 OnPropertyChanged(nameof(Session));
             }
         }

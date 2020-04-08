@@ -4,43 +4,41 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
+using TM.Digital.Client.Screens.HandSetup;
+using TM.Digital.Client.Screens.Menu;
+using TM.Digital.Client.Screens.Wait;
+using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model;
 using TM.Digital.Model.Board;
-using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Transport;
 
-namespace TM.Digital.Client
+namespace TM.Digital.Client.Screens.Main
 {
     public class MainWindowViewModel : NotifierBase
     {
-        private readonly PopupService _popup;
         public WaitingGameScreenViewModel WaitVm { get; }
         private Board _board;
         private PlayerSelector _currentPlayer;
-        private Guid _gameId;
+
         private bool _isBoardLocked;
-        private bool _isGameOwner;
-        private string _lockedMessage;
+
         private string _playerName;
         private string _server;
         private HubConnection connection;
+        private GameSetupViewModel _gameSetupVm;
 
-        public MainWindowViewModel(PopupService popup, MainMenuViewModel menuVm, WaitingGameScreenViewModel waitVm)
+        public MainWindowViewModel(MainMenuViewModel menuVm, WaitingGameScreenViewModel waitVm)
         {
             MenuVm = menuVm;
 
-            _popup = popup;
             WaitVm = waitVm;
 
             MenuVm.IsVisible = true;
             MenuVm.GameStarted += MenuVm_GameCreated;
             MenuVm.GameJoined += MenuVm_GameJoined;
         }
-
-        public RelayCommand AddPlayerCommand { get; set; }
 
         public Board Board
         {
@@ -54,33 +52,13 @@ namespace TM.Digital.Client
             set { _currentPlayer = value; OnPropertyChanged(nameof(CurrentPlayer)); }
         }
 
-        public Guid GameId
-        {
-            get => _gameId;
-            set { _gameId = value; OnPropertyChanged(nameof(GameId)); }
-        }
-
         public bool IsBoardLocked
         {
             get => _isBoardLocked;
             set { _isBoardLocked = value; OnPropertyChanged(nameof(IsBoardLocked)); }
         }
 
-        //public bool IsGameOwner
-        //{
-        //    get => _isGameOwner;
-        //    set { _isGameOwner = value; OnPropertyChanged(nameof(IsGameOwner)); }
-        //}
-
-
-        //public string LockedMessage
-        //{
-        //    get => _lockedMessage;
-        //    private set { _lockedMessage = value; OnPropertyChanged(nameof(LockedMessage)); }
-        //}
-
         public MainMenuViewModel MenuVm { get; }
-
 
         public List<Player> OtherPlayers { get; set; }
 
@@ -107,9 +85,14 @@ namespace TM.Digital.Client
             await Task.CompletedTask;
             OtherPlayers = new List<Player>();
             Refresh = new RelayCommand(ExecuteRefresh);
-            AddPlayerCommand = new RelayCommand(ExecuteAddPlayer, CanExecuteAddPlayer);
-            SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
+
+            //SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
             SelectBoardPlace = new RelayCommand(ExecuteSelectBoardPlace, CanExecuteSelectBoardPlace);
+            await ConnectToHub();
+        }
+
+        private async Task ConnectToHub()
+        {
             connection = new HubConnectionBuilder()
                 .WithUrl(@"http://localhost:50154/ClientNotificationHub")
                 .WithAutomaticReconnect()
@@ -138,11 +121,48 @@ namespace TM.Digital.Client
                     WaitVm.IncommingMessages.Add($"Player '{message}' joined the game");
                 }
             });
+
+            connection.On<string, string>(ServerPushMethods.SetupChoice, (user, message) =>
+            {
+                if (Guid.Parse(user) != WaitVm.PlayerId)
+                {
+                    Setup(message);
+                }
+            });
         }
 
-        private bool CanExecuteAddPlayer(object arg)
+        private void Setup(string message)
         {
-            return GameId != Guid.Empty && !string.IsNullOrEmpty(PlayerName);
+            var gameResult2 = JsonConvert.DeserializeObject<GameSetup>(message);
+            WaitVm.IsVisible = false;
+            GameSetupVm = new GameSetupViewModel();
+            GameSetupVm.Setupcompleted += GameSetupVm_Setupcompleted;
+            GameSetupVm.Setup(gameResult2, true);
+        }
+
+        private async void GameSetupVm_Setupcompleted(GameSetupViewModel vm)
+        {
+            GameSetupVm.Setupcompleted -= GameSetupVm_Setupcompleted;
+            if (GameSetupVm.CorporationChoices.Any())
+            {
+                var gSetup = new GameSetupSelection
+                {
+                    Corporation = GameSetupVm.CorporationChoices.First(c => c.IsSelected).Corporation,
+                    BoughtCards = GameSetupVm.PatentChoices.Where(p => p.IsSelected).Select(p => p.Patent).ToList(),
+                    PlayerId = GameSetupVm.PlayerId,
+                    GameId = vm.GameId,
+                };
+                var player = await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>("game/addplayer/setupplayer", gSetup);
+
+                CurrentPlayer = new PlayerSelector(player);
+            }
+            WaitVm.Open("Waiting for other players to finish their setup");
+        }
+
+        public GameSetupViewModel GameSetupVm
+        {
+            get => _gameSetupVm;
+            set { _gameSetupVm = value; OnPropertyChanged(nameof(GameSetupVm)); }
         }
 
         private bool CanExecuteSelectBoardPlace(object arg)
@@ -155,38 +175,14 @@ namespace TM.Digital.Client
             return false;
         }
 
-        private bool CanExecuteSelectCard(object obj)
-        {
-            if (obj is PatentSelector patent)
-            {
-                return patent.Patent.CanBePlayed;
-            }
-            return false;
-        }
-
-        private void ExecuteAddPlayer(object obj)
-        {
-            CallErrorHandler.Handle(async () =>
-            {
-                var gameSetup =
-                    await TmDigitalClientRequestHandler.Instance.Request<GameSetup>($"game/addplayer/{GameId}/" + PlayerName + "/" + true);
-
-                var result = _popup.ShowGameSetup(gameSetup);
-
-                //if (result.CorporationChoices.Any())
-                {
-                    var player = await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>("game/addplayer/setupplayer", new GameSetupSelection
-                    {
-                        Corporation = result.CorporationChoices.First(c => c.IsSelected).Corporation,
-                        BoughtCards = result.PatentChoices.Where(p => p.IsSelected).Select(p => p.Patent).ToList(),
-                        PlayerId = result.PlayerId,
-                        GameId = GameId,
-                    });
-
-                    CurrentPlayer = new PlayerSelector(player);
-                }
-            });
-        }
+        //private bool CanExecuteSelectCard(object obj)
+        //{
+        //    if (obj is PatentSelector patent)
+        //    {
+        //        return patent.Patent.CanBePlayed;
+        //    }
+        //    return false;
+        //}
 
         private async void ExecuteRefresh(object obj)
         {
@@ -196,22 +192,22 @@ namespace TM.Digital.Client
 
         private async void ExecuteSelectBoardPlace(object obj)
         {
-            if (obj is BoardPlace bp)
-            {
-                await TmDigitalClientRequestHandler.Instance.Post<BoardPlace>($"game/{GameId}/placetile/{CurrentPlayer.Player.PlayerId}", bp);
-            }
+            //if (obj is BoardPlace bp)
+            //{
+            //    await TmDigitalClientRequestHandler.Instance.Post<BoardPlace>($"game/{GameId}/placetile/{CurrentPlayer.Player.PlayerId}", bp);
+            //}
         }
 
-        private async void ExecuteSelectCard(object obj)
-        {
-            if (obj is PatentSelector patent)
-            {
-                if (!patent.Patent.CanBePlayed)
-                    return;
+        //private async void ExecuteSelectCard(object obj)
+        //{
+        //    if (obj is PatentSelector patent)
+        //    {
+        //        if (!patent.Patent.CanBePlayed)
+        //            return;
 
-                await TmDigitalClientRequestHandler.Instance.Post<Patent>($"game/{GameId}/play/{CurrentPlayer.Player.PlayerId}", patent.Patent);
-            }
-        }
+        //        await TmDigitalClientRequestHandler.Instance.Post<Patent>($"game/{GameId}/play/{CurrentPlayer.Player.PlayerId}", patent.Patent);
+        //    }
+        //}
 
         private async Task GetBoard()
         {
@@ -229,9 +225,6 @@ namespace TM.Digital.Client
             IsBoardLocked = true;
             WaitVm.PlayerId = gameSessionInformation.OwnerId;
             WaitVm.Open("Awaiting players...");
-
-            //LockedMessage = "Awaiting players...";
-            //_popup.ShowLockedOverlay();
         }
 
         private async void MenuVm_GameJoined(Player joindPlayer)
@@ -243,13 +236,6 @@ namespace TM.Digital.Client
 
             WaitVm.PlayerId = joindPlayer.PlayerId;
             WaitVm.Open("....Waiting for game owner to start game...");
-
-
-            //IsGameOwner = false;
-            //await GetBoard();
-            //IsBoardLocked = true;
-            //LockedMessage = "....Waiting for game owner to start game...";
-            //_popup.ShowLockedOverlay();
         }
 
         private void ShowTilesPlacement(string message)
@@ -260,29 +246,12 @@ namespace TM.Digital.Client
 
         private void UpdateGame(string message)
         {
-
             var gameResult2 = JsonConvert.DeserializeObject<Game>(message);
 
             //update game with result
             Board = gameResult2.Board;
             CurrentPlayer = new PlayerSelector(gameResult2.AllPlayers.First(p => p.PlayerId == CurrentPlayer.Player.PlayerId));
             //TODO update other players
-        }
-    }
-
-    internal static class CallErrorHandler
-    {
-        internal static void Handle(Action a)
-        {
-            try
-            {
-                a();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-                Console.WriteLine(e);
-            }
         }
     }
 }

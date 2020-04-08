@@ -2,19 +2,35 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model.Game;
 
-namespace TM.Digital.Client
+namespace TM.Digital.Client.Screens.HandSetup
 {
-    public class GameSetupViewModel : ClosableViewModel
+    public class GameSetupViewModel : GameBoardBaseViewModel
     {
+        private bool _isVisible;
+        private bool _isInitialSetup;
+
         public GameSetupViewModel()
         {
-            SelectCardCommand = new RelayCommand(ExecuteSelectCorporation);
+            SelectCardCommand = new RelayCommand(ExecuteSelectCorporation, CanExecuteSelectCard);
             CloseCommand = new RelayCommand(ExecuteClose, CanExecuteClose);
-            ;
             CorporationChoices = new ObservableCollection<CorporationSelector>();
             PatentChoices = new ObservableCollection<PatentSelector>();
+        }
+
+        public event SetupCompletedEventHandler Setupcompleted;
+
+        protected override bool CanExecuteSelectCard(object obj)
+        {
+            return true;
+        }
+
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set { _isVisible = value; OnPropertyChanged(nameof(IsVisible)); }
         }
 
         private bool CanExecuteClose(object arg)
@@ -24,7 +40,8 @@ namespace TM.Digital.Client
 
         private void ExecuteClose(object obj)
         {
-            OnClosed();
+            IsVisible = false;
+            OnSetupCompleted(this);
         }
 
         public RelayCommand CloseCommand { get; set; }
@@ -32,9 +49,7 @@ namespace TM.Digital.Client
         public ObservableCollection<CorporationSelector> CorporationChoices { get; set; }
         public ObservableCollection<PatentSelector> PatentChoices { get; set; }
 
-        public RelayCommand SelectCardCommand { get; set; }
-
-        private void ExecuteSelectCorporation(object obj)
+        protected override void ExecuteSelectCorporation(object obj)
         {
             if (obj is CorporationSelector select)
             {
@@ -52,9 +67,11 @@ namespace TM.Digital.Client
             }
         }
 
-        public void Setup(GameSetup gameSetup)
+        public void Setup(GameSetup gameSetup, bool isInitialSetup)
         {
+            IsInitialSetup = isInitialSetup;
             PlayerId = gameSetup.PlayerId;
+            GameId = gameSetup.GameId;
             foreach (var gameSetupCorporation in gameSetup.Corporations)
             {
                 CorporationChoices.Add(new CorporationSelector { Corporation = gameSetupCorporation });
@@ -63,8 +80,23 @@ namespace TM.Digital.Client
             {
                 PatentChoices.Add(new PatentSelector { Patent = gameSetupPatent });
             }
+
+            IsVisible = true;
+        }
+
+        public Guid GameId { get; set; }
+
+        public bool IsInitialSetup
+        {
+            get => _isInitialSetup;
+            set { _isInitialSetup = value; OnPropertyChanged(nameof(IsInitialSetup)); }
         }
 
         public Guid PlayerId { get; set; }
+
+        protected virtual void OnSetupCompleted(GameSetupViewModel vm)
+        {
+            Setupcompleted?.Invoke(vm);
+        }
     }
 }

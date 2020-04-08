@@ -46,11 +46,13 @@ namespace TM.Digital.Transport
             var result = await _client.PostAsync(uri, content);
             result.EnsureSuccessStatusCode();
             string json = await result.Content.ReadAsStringAsync();
-            return System.Text.Json.JsonSerializer.Deserialize<TOut>(json, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
+            if (!string.IsNullOrEmpty(json))
+                return System.Text.Json.JsonSerializer.Deserialize<TOut>(json, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
             
+            return default;
 
         }
     }
