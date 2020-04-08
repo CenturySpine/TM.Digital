@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 
@@ -18,5 +19,7 @@ namespace TM.Digital.Model.Player
         public int RemainingActions { get; set; }
         public int TotalActions { get; set; }
         public bool IsReady { get; set; }
+
+        public string Color { get; set; }
     }
 }

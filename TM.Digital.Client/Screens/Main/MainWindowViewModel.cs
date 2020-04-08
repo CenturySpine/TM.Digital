@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using TM.Digital.Client.Screens.HandSetup;
 using TM.Digital.Client.Screens.Menu;
 using TM.Digital.Client.Screens.Wait;
@@ -129,6 +130,22 @@ namespace TM.Digital.Client.Screens.Main
                     Setup(message);
                 }
             });
+            connection.On<string, string>(ServerPushMethods.Playing, (user, message) =>
+            {
+                if (Guid.Parse(user) != WaitVm.PlayerId)
+                {
+                    WaitVm.IsVisible = false;
+                    IsBoardLocked = true;
+                    MessageBox.Show($"It's player's '{user}' turn !");
+                }
+                else
+                {
+                    WaitVm.IsVisible = false;
+                    IsBoardLocked = false;
+                    MessageBox.Show("It's your turn");
+                }
+            });
+            
         }
 
         private void Setup(string message)
@@ -136,13 +153,13 @@ namespace TM.Digital.Client.Screens.Main
             var gameResult2 = JsonConvert.DeserializeObject<GameSetup>(message);
             WaitVm.IsVisible = false;
             GameSetupVm = new GameSetupViewModel();
-            GameSetupVm.Setupcompleted += GameSetupVm_Setupcompleted;
+            GameSetupVm.Setupcompleted += GameSetupVm_SetupCompleted;
             GameSetupVm.Setup(gameResult2, true);
         }
 
-        private async void GameSetupVm_Setupcompleted(GameSetupViewModel vm)
+        private async void GameSetupVm_SetupCompleted(GameSetupViewModel vm)
         {
-            GameSetupVm.Setupcompleted -= GameSetupVm_Setupcompleted;
+            GameSetupVm.Setupcompleted -= GameSetupVm_SetupCompleted;
             if (GameSetupVm.CorporationChoices.Any())
             {
                 var gSetup = new GameSetupSelection
@@ -152,11 +169,26 @@ namespace TM.Digital.Client.Screens.Main
                     PlayerId = GameSetupVm.PlayerId,
                     GameId = vm.GameId,
                 };
+                GameId = vm.GameId;
                 var player = await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>("game/addplayer/setupplayer", gSetup);
 
                 CurrentPlayer = new PlayerSelector(player);
+                CurrentPlayer.PlayerSkipped += CurrentPlayer_PlayerSkipped;
+                CurrentPlayer.PlyerPassed += CurrentPlayer_PlyerPassed;
             }
             WaitVm.Open("Waiting for other players to finish their setup");
+        }
+
+        public Guid GameId { get; set; }
+
+        private async void CurrentPlayer_PlyerPassed(Guid playerid)
+        {
+            await TmDigitalClientRequestHandler.Instance.Request<bool>($"game/{GameId}/pass/{playerid}");
+        }
+
+        private async void CurrentPlayer_PlayerSkipped(Guid playerid)
+        {
+            await TmDigitalClientRequestHandler.Instance.Request<bool>($"game/{GameId}/skip/{playerid}");
         }
 
         public GameSetupViewModel GameSetupVm

@@ -23,11 +23,20 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <UniformGrid  Margin="5" Columns="4">
+                <UniformGrid  Margin="5" Columns="4" Rows="2">
+                    
                     <TextBlock Text="NT" Margin="2"></TextBlock>
                     <TextBlock Text="{Binding Player.TerraformationLevel}" Margin="2" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
+                    
                     <TextBlock Text="Corp" Margin="2"></TextBlock>
                     <TextBlock Text="{Binding Player.Corporation.Name}" Margin="2" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
+                    
+                    <Button Content="Pass" Command="{Binding PassCommand}" Margin="2" Padding="5"/>
+                    
+                    <Button Content="Skip" Command="{Binding SkipCommand}" Margin="2" Padding="5"/>
+
+                    <TextBlock Text="Actions"></TextBlock>
+                    <TextBlock Text="{Binding Player.RemainingActions}"></TextBlock>
                 </UniformGrid>
                 <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Player.Resources}" VerticalAlignment="Top" Margin="5">
                     <ItemsControl.ItemsPanel>

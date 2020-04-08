@@ -1,71 +1,38 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
-using TM.Digital.Cards;
 using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
-using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Transport.Hubs.Hubs;
-
 
 namespace TM.Digital.Services
 {
     public class GamesService
     {
-
         public static GamesService Instance { get; } = new GamesService();
-
-        private readonly List<Corporation> _allCorporations = new List<Corporation>
-        {
-            CorporationsFactory.Arklight(),CorporationsFactory.CheungShingMars(),CorporationsFactory.InterPlanetaryCinematics(), CorporationsFactory.Teractor(), CorporationsFactory.PhobLog(),
-        };
-
-        private readonly List<Patent> _allPatents = new List<Patent>
-        {
-            PatentFactory.BubbleCity(),
-            PatentFactory.FusionEnergy(),
-            PatentFactory.GiantAsteroid(),
-            PatentFactory.IdleGazLiberation(),
-            PatentFactory.SolarWindEnergy(),
-            PatentFactory.ThreeDimensionalHomePrinting(),
-            PatentFactory.ToundraAgriculture(),
-            PatentFactory.AdvancedAlliages(),
-            PatentFactory.Comet(),
-            PatentFactory.ProtectedValley(),
-            PatentFactory.GiantIceAsteroid()
-        };
 
         private readonly Dictionary<Guid, GameSession> _currentSessions = new Dictionary<Guid, GameSession>();
 
-        public GameSessionInformation CreateGame(string playerName, int numberOfPlayer)
+        public async Task<GameSessionInformation> CreateGame(string playerName, int numberOfPlayer)
         {
-            GameSession gs = new GameSession { Id = Guid.NewGuid(), OwnerName = playerName };
+            GameSession gs = new GameSession { Id = Guid.NewGuid(), OwnerName = playerName, Players = new Dictionary<Guid, Player>() };
 
-            _allCorporations.Shuffle();
-            _allPatents.Shuffle();
+            await gs.Initialize();
 
             gs.NumberOfPlayers = numberOfPlayer;
 
-            gs.Board = BoardGenerator.Instance.Original();
-            gs.AvailableCorporations = new Queue<Corporation>(_allCorporations);
-            gs.AvailablePatents = new Queue<Patent>(_allPatents);
-
-
-
-            gs.Players = new Dictionary<Guid, Player>();
             var owner = gs.AddPlayer(playerName, false);
 
             gs.OwnerId = owner.PlayerId;
             _currentSessions.Add(gs.Id, gs);
 
             return
-                new GameSessionInformation()
+                new GameSessionInformation
                 {
                     Owner = gs.OwnerName,
                     OwnerId = gs.OwnerId,
@@ -74,21 +41,19 @@ namespace TM.Digital.Services
                 };
         }
 
-        public Player SetupPlayer(GameSetupSelection selection)
+        public async Task<Player> SetupPlayer(GameSetupSelection selection, IHubContext<ClientNotificationHub> hubContext)
         {
             try
             {
                 if (_currentSessions.TryGetValue(selection.GameId, out var session))
                 {
-                    Player gameSetup = session.SetupPlayer(selection);
-                    return gameSetup;
+                    return await session.SetupPlayer(selection, hubContext);
                 }
 
                 throw Errors.ErrorGameIdNotFound(selection.GameId);
             }
             catch (Exception e)
             {
-
                 Logger.Log("ERROR", e.ToString());
             }
 
@@ -99,7 +64,6 @@ namespace TM.Digital.Services
         {
             if (_currentSessions.TryGetValue(gameId, out var session))
             {
-
                 await session.PlayCard(card, playerId, hubContext);
                 return;
             }
@@ -111,7 +75,6 @@ namespace TM.Digital.Services
         {
             if (_currentSessions.TryGetValue(gameId, out var session))
             {
-
                 await session.PlaceTile(place, playerId, hubContext);
                 return;
             }
@@ -121,9 +84,9 @@ namespace TM.Digital.Services
 
         public GameSessions GetSessions()
         {
-            return new GameSessions()
+            return new GameSessions
             {
-                GameSessionsList = _currentSessions.Select(s => new GameSessionInformation()
+                GameSessionsList = _currentSessions.Select(s => new GameSessionInformation
                 {
                     Owner = s.Value.OwnerName,
                     OwnerId = s.Value.OwnerId,
@@ -142,7 +105,6 @@ namespace TM.Digital.Services
                 if (session.Players.Count == session.NumberOfPlayers)
                     return null;
 
-
                 var player = session.AddPlayer(playerName, false);
                 if (player != null)
                 {
@@ -156,10 +118,29 @@ namespace TM.Digital.Services
 
         public async Task<bool> StartGame(Guid gameId, IHubContext<ClientNotificationHub> hubContext)
         {
-
             if (_currentSessions.TryGetValue(gameId, out var session))
             {
-               return await session.Start(hubContext);
+                return await session.Start(hubContext);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> Skip(Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+                return await session.Skip(playerId,hubContext);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> Pass(Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+                return await session.Pass(playerId, hubContext);
             }
 
             return false;

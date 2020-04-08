@@ -68,8 +68,8 @@ namespace TM.Digital.Services
                 },
 
                 //middle left surroundings
-                new PlaceCoordinates()
-                    {
+                new PlaceCoordinates
+                {
                         X = space.Index.X ,
                         Y = space.Index.Y -1
                 },
@@ -82,7 +82,7 @@ namespace TM.Digital.Services
                 },
 
                 //upper right surroundings
-                new PlaceCoordinates()
+                new PlaceCoordinates
                 {
                     X = space.Index.X-1 ,
                     Y = space.Index.Y 
@@ -95,7 +95,7 @@ namespace TM.Digital.Services
                     Y = space.Index.Y+1
                 },
                 //bottom right surroundings
-                new PlaceCoordinates()
+                new PlaceCoordinates
                 {
                     X = space.Index.X+1 ,
                     Y = space.Index.Y 
@@ -165,7 +165,7 @@ namespace TM.Digital.Services
         }
 
         public static void PlaceTileOnBoard(BoardPlace place, Model.Player.Player playerId, TileEffect pendingTileEffect,
-            Model.Board.Board board, Queue<Patent> availablePatents)
+            Model.Board.Board board, CardDrawer cardDrawer)
         {
             var allPlaces = board.BoardLines.SelectMany(l => l.BoardPlaces).ToList();
             var targetTile = allPlaces.FirstOrDefault(p => p.Index.Equals(place.Index));
@@ -197,7 +197,7 @@ namespace TM.Digital.Services
                             {
                                 for (int i = 0; i < bonus.Count(); i++)
                                 {
-                                    playerId.HandCards.Add(availablePatents.Dequeue());
+                                    playerId.HandCards.Add(cardDrawer.DrawPatent());
                                     Logger.Log(playerId.Name, $"Drawing 1 card from deck");
                                 }
                             }
