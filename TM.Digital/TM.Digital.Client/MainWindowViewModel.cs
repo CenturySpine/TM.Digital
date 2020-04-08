@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
@@ -15,54 +16,28 @@ namespace TM.Digital.Client
 {
     public class MainWindowViewModel : NotifierBase
     {
-        public MainMenuViewModel MenuVm { get; }
         private readonly PopupService _popup;
-
+        public WaitingGameScreenViewModel WaitVm { get; }
         private Board _board;
+        private PlayerSelector _currentPlayer;
         private Guid _gameId;
+        private bool _isBoardLocked;
+        private bool _isGameOwner;
+        private string _lockedMessage;
         private string _playerName;
         private string _server;
-        private PlayerSelector _currentPlayer;
         private HubConnection connection;
-        private bool _isBoardLocked;
-        private string _lockedMessage;
-        private bool _isGameOwner;
 
-        public MainWindowViewModel(PopupService popup, MainMenuViewModel menuVm)
+        public MainWindowViewModel(PopupService popup, MainMenuViewModel menuVm, WaitingGameScreenViewModel waitVm)
         {
             MenuVm = menuVm;
 
             _popup = popup;
+            WaitVm = waitVm;
 
             MenuVm.IsVisible = true;
             MenuVm.GameStarted += MenuVm_GameCreated;
             MenuVm.GameJoined += MenuVm_GameJoined;
-        }
-
-        private async void MenuVm_GameJoined(Player joindPlayer)
-        {
-            IsGameOwner = false;
-            await GetBoard();
-            IsBoardLocked = true;
-            LockedMessage = "....Waiting for game owner to start game...";
-            _popup.ShowLockedOverlay();
-        }
-
-        private async void MenuVm_GameCreated(GameSessionInformation gameSessionInformation)
-        {
-
-            IsGameOwner = true;//TODO enable game start
-            await GetBoard();
-            IsBoardLocked = true;
-            LockedMessage = "Awaiting players...";
-            _popup.ShowLockedOverlay();
-
-        }
-
-        public bool IsGameOwner
-        {
-            get => _isGameOwner;
-            set { _isGameOwner = value; OnPropertyChanged(nameof(IsGameOwner)); }
         }
 
         public RelayCommand AddPlayerCommand { get; set; }
@@ -85,7 +60,27 @@ namespace TM.Digital.Client
             set { _gameId = value; OnPropertyChanged(nameof(GameId)); }
         }
 
-        public int NumberOfPlayers { get; set; } = 2;
+        public bool IsBoardLocked
+        {
+            get => _isBoardLocked;
+            set { _isBoardLocked = value; OnPropertyChanged(nameof(IsBoardLocked)); }
+        }
+
+        //public bool IsGameOwner
+        //{
+        //    get => _isGameOwner;
+        //    set { _isGameOwner = value; OnPropertyChanged(nameof(IsGameOwner)); }
+        //}
+
+
+        //public string LockedMessage
+        //{
+        //    get => _lockedMessage;
+        //    private set { _lockedMessage = value; OnPropertyChanged(nameof(LockedMessage)); }
+        //}
+
+        public MainMenuViewModel MenuVm { get; }
+
 
         public List<Player> OtherPlayers { get; set; }
 
@@ -97,13 +92,15 @@ namespace TM.Digital.Client
 
         public RelayCommand Refresh { get; set; }
 
+        public RelayCommand SelectBoardPlace { get; set; }
+
+        public RelayCommand SelectCardCommand { get; set; }
+
         public string Server
         {
             get => _server;
             set { _server = value; OnPropertyChanged(nameof(Server)); }
         }
-
-
 
         public async Task Initialize()
         {
@@ -119,20 +116,33 @@ namespace TM.Digital.Client
                 .Build();
 
             await connection.StartAsync();
-            connection.On<string, string>("ReceiveGameUpdate", (user, message) =>
+            connection.On<string, string>(ServerPushMethods.RecieveGameUpdate, (user, message) =>
             {
                 if (user == "PlayResult")
                 {
                     UpdateGame(message);
                 }
             });
-            connection.On<string, string>("PlaceTile", (user, message) =>
+            connection.On<string, string>(ServerPushMethods.PlaceTileRequest, (user, message) =>
             {
                 if (Guid.Parse(user) == CurrentPlayer.Player.PlayerId)
                 {
                     ShowTilesPlacement(message);
                 }
             });
+            connection.On<string, string>(ServerPushMethods.PlayerJoined, (user, message) =>
+            {
+                if (Guid.Parse(user) != WaitVm.PlayerId)
+                {
+                    //display message
+                    WaitVm.IncommingMessages.Add($"Player '{message}' joined the game");
+                }
+            });
+        }
+
+        private bool CanExecuteAddPlayer(object arg)
+        {
+            return GameId != Guid.Empty && !string.IsNullOrEmpty(PlayerName);
         }
 
         private bool CanExecuteSelectBoardPlace(object arg)
@@ -145,49 +155,6 @@ namespace TM.Digital.Client
             return false;
         }
 
-        private async void ExecuteSelectBoardPlace(object obj)
-        {
-            if (obj is BoardPlace bp)
-            {
-                await TmDigitalClientRequestHandler.Instance.Post<BoardPlace>($"game/{GameId}/placetile/{CurrentPlayer.Player.PlayerId}", bp);
-            }
-        }
-
-        public RelayCommand SelectBoardPlace { get; set; }
-
-        private void ShowTilesPlacement(string message)
-        {
-            var gameResult2 = JsonConvert.DeserializeObject<Board>(message);
-            Board = gameResult2;
-        }
-
-        private void UpdateGame(string message)
-        {
-            //var gameResult = JsonSerializer.Deserialize<Game>(message, new JsonSerializerOptions
-            //{
-            //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-
-            //});
-
-            var gameResult2 = JsonConvert.DeserializeObject<Game>(message);
-
-            //update game with result
-            Board = gameResult2.Board;
-            CurrentPlayer = new PlayerSelector(gameResult2.AllPlayers.First(p => p.PlayerId == CurrentPlayer.Player.PlayerId));
-            //TODO update other players
-        }
-
-        private async void ExecuteSelectCard(object obj)
-        {
-            if (obj is PatentSelector patent)
-            {
-                if (!patent.Patent.CanBePlayed)
-                    return;
-
-                await TmDigitalClientRequestHandler.Instance.Post<Patent>($"game/{GameId}/play/{CurrentPlayer.Player.PlayerId}", patent.Patent);
-            }
-        }
-
         private bool CanExecuteSelectCard(object obj)
         {
             if (obj is PatentSelector patent)
@@ -196,15 +163,6 @@ namespace TM.Digital.Client
             }
             return false;
         }
-
-        private bool CanExecuteAddPlayer(object arg)
-        {
-            return GameId != Guid.Empty && !string.IsNullOrEmpty(PlayerName);
-        }
-
-
-
-        public RelayCommand SelectCardCommand { get; set; }
 
         private void ExecuteAddPlayer(object obj)
         {
@@ -236,36 +194,79 @@ namespace TM.Digital.Client
             await GetBoard();
         }
 
-        //private void ExecuteStartGame(object obj)
-        //{
-        //    CallErrorHandler.Handle(async () =>
-        //    {
-        //        GameId = await TmDigitalClientRequestHandler.Instance.Request<Guid>("game/start/" + NumberOfPlayers);
-        //        if (GameId != Guid.Empty)
-        //        {
-        //            await GetBoard();
-        //            IsBoardLocked = true;
-        //            LockedMessage = "Awaiting players...";
-        //            _popup.ShowLockedOverlay();
-        //        }
-        //    });
-        //}
-
-        public bool IsBoardLocked
+        private async void ExecuteSelectBoardPlace(object obj)
         {
-            get => _isBoardLocked;
-            set { _isBoardLocked = value; OnPropertyChanged(nameof(IsBoardLocked)); }
+            if (obj is BoardPlace bp)
+            {
+                await TmDigitalClientRequestHandler.Instance.Post<BoardPlace>($"game/{GameId}/placetile/{CurrentPlayer.Player.PlayerId}", bp);
+            }
         }
 
-        public string LockedMessage
+        private async void ExecuteSelectCard(object obj)
         {
-            get => _lockedMessage;
-            private set { _lockedMessage = value; OnPropertyChanged(nameof(LockedMessage)); }
+            if (obj is PatentSelector patent)
+            {
+                if (!patent.Patent.CanBePlayed)
+                    return;
+
+                await TmDigitalClientRequestHandler.Instance.Post<Patent>($"game/{GameId}/play/{CurrentPlayer.Player.PlayerId}", patent.Patent);
+            }
         }
 
         private async Task GetBoard()
         {
             Board = await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
+        }
+
+        private async void MenuVm_GameCreated(GameSessionInformation gameSessionInformation)
+        {
+            //IsGameOwner = true;//TODO enable game start
+            await GetBoard();
+
+            WaitVm.Session = gameSessionInformation;
+            WaitVm.IsOwner = true;
+
+            IsBoardLocked = true;
+            WaitVm.PlayerId = gameSessionInformation.OwnerId;
+            WaitVm.Open("Awaiting players...");
+
+            //LockedMessage = "Awaiting players...";
+            //_popup.ShowLockedOverlay();
+        }
+
+        private async void MenuVm_GameJoined(Player joindPlayer)
+        {
+            await GetBoard();
+            WaitVm.IsOwner = false;
+
+            IsBoardLocked = true;
+
+            WaitVm.PlayerId = joindPlayer.PlayerId;
+            WaitVm.Open("....Waiting for game owner to start game...");
+
+
+            //IsGameOwner = false;
+            //await GetBoard();
+            //IsBoardLocked = true;
+            //LockedMessage = "....Waiting for game owner to start game...";
+            //_popup.ShowLockedOverlay();
+        }
+
+        private void ShowTilesPlacement(string message)
+        {
+            var gameResult2 = JsonConvert.DeserializeObject<Board>(message);
+            Board = gameResult2;
+        }
+
+        private void UpdateGame(string message)
+        {
+
+            var gameResult2 = JsonConvert.DeserializeObject<Game>(message);
+
+            //update game with result
+            Board = gameResult2.Board;
+            CurrentPlayer = new PlayerSelector(gameResult2.AllPlayers.First(p => p.PlayerId == CurrentPlayer.Player.PlayerId));
+            //TODO update other players
         }
     }
 

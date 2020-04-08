@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TM.Digital.Cards;
+using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
@@ -153,7 +155,7 @@ namespace TM.Digital.Services
             };
         }
 
-        public Player JoinSession(Guid gameId, string playerName)
+        public async Task<Player> JoinSession(Guid gameId, string playerName, IHubContext<ClientNotificationHub> hubContext)
         {
             if (_currentSessions.TryGetValue(gameId, out var session))
             {
@@ -161,8 +163,13 @@ namespace TM.Digital.Services
                 if (session.Players.Count == session.NumberOfPlayers)
                     return null;
 
-                
-                return session.AddPlayer(playerName, false);
+
+                var player = session.AddPlayer(playerName, false);
+                if (player != null)
+                {
+                    await hubContext.Clients.All.SendAsync(ServerPushMethods.PlayerJoined, player.PlayerId, playerName);
+                    return player;
+                }
             }
 
             return null;

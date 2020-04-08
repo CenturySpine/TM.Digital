@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="BoardPlacesTemplates.xaml" />
                 <ResourceDictionary Source="CardsTemplates.xaml" />
                 <ResourceDictionary Source="GameMenuResources.xaml" />
+                <ResourceDictionary Source="WaitScreenResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
             
         </ResourceDictionary>
