@@ -32,12 +32,12 @@ namespace TM.Digital.Client
 
         public void ShowLockedOverlay()
         {
-            if (Application.Current.MainWindow != null)
-            {
-                var root = (Grid) Application.Current.MainWindow.Content;
+            //if (Application.Current.MainWindow != null)
+            //{
+            //    var root = (Grid) Application.Current.MainWindow.Content;
 
-                if (root.Children[^1] is FrameworkElement overlay) overlay.Visibility = Visibility.Visible;
-            }
+            //    if (root.Children[^1] is FrameworkElement overlay) overlay.Visibility = Visibility.Visible;
+            //}
         }
 
         public void RemoveLockedMessage()

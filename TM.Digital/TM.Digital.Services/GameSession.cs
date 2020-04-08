@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
@@ -129,7 +130,8 @@ namespace TM.Digital.Services
 
                                     var choiceBoard = BoardHandler.GetPlacesChoices(PendingTileEffect, b);
                                     Logger.Log(player.Name, $"Found {choiceBoard.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => p.CanBeChosed).Count()} available places. Sending choices to player");
-                                    await hubContext.Clients.All.SendAsync("PlaceTile", $"{p.PlayerId}", JsonSerializer.Serialize(choiceBoard));
+                                    
+                                    await hubContext.Clients.All.SendAsync(ServerPushMethods.PlaceTileRequest, $"{p.PlayerId}", JsonSerializer.Serialize(choiceBoard));
 
                                 });
                         }
@@ -188,7 +190,7 @@ namespace TM.Digital.Services
                     Board = Board,
                     AllPlayers = Players.Select(p => p.Value).ToList(),
                 };
-                await hubContext.Clients.All.SendAsync("ReceiveGameUpdate", "PlayResult", JsonSerializer.Serialize(game));
+                await hubContext.Clients.All.SendAsync(ServerPushMethods.RecieveGameUpdate, "PlayResult", JsonSerializer.Serialize(game));
 
 
 

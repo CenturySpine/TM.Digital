@@ -39,8 +39,8 @@ namespace TM.Digital.Api.Controllers
         [Route("join/{gameId}/{playername}")]
         public async Task<Player> JoinGame(Guid gameId, string playerName)
         {
-            await Task.CompletedTask;
-            return GamesService.Instance.JoinSession(gameId, playerName);
+            
+            return await GamesService.Instance.JoinSession(gameId, playerName, _hubContext);
         }
 
 
