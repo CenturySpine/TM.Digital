@@ -3,20 +3,24 @@
                     xmlns:local="clr-namespace:TM.Digital.Client"
                     xmlns:handSetup="clr-namespace:TM.Digital.Client.Screens.HandSetup">
     <DataTemplate DataType="{x:Type handSetup:GameSetupViewModel}">
+
         <Grid>
+            <Grid.Background>
+                <SolidColorBrush Color="White" Opacity="0.8" />
+            </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
-            <ItemsControl ItemsSource="{Binding CorporationChoices}" Visibility="{Binding IsInitialSetup, Converter={StaticResource boolToVisConverter}}">
+            <ItemsControl ItemsSource="{Binding CorporationChoices}" Visibility="{Binding IsInitialSetup, Converter={StaticResource boolToVisConverter}}" HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"></StackPanel>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
-            <ItemsControl Grid.Row="1" ItemsSource="{Binding PatentChoices}">
+            <ItemsControl Grid.Row="1" ItemsSource="{Binding PatentChoices}" HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"></StackPanel>
@@ -24,7 +28,7 @@
                 </ItemsControl.ItemsPanel>
 
             </ItemsControl>
-            <Button Grid.Row="2" Content="Validate" Command="{Binding CloseCommand}"></Button>
+            <Button Grid.Row="2" Content="Validate" Command="{Binding CloseCommand}" HorizontalAlignment="Center" Padding="20" FontSize="20" Margin="20"></Button>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

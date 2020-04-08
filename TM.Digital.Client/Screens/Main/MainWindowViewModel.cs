@@ -22,7 +22,7 @@ namespace TM.Digital.Client.Screens.Main
         public WaitingGameScreenViewModel WaitVm { get; }
         private Board _board;
         private PlayerSelector _currentPlayer;
-        private Guid _gameId;
+        
         private bool _isBoardLocked;
 
         private string _playerName;
@@ -53,11 +53,7 @@ namespace TM.Digital.Client.Screens.Main
             set { _currentPlayer = value; OnPropertyChanged(nameof(CurrentPlayer)); }
         }
 
-        public Guid GameId
-        {
-            get => _gameId;
-            set { _gameId = value; OnPropertyChanged(nameof(GameId)); }
-        }
+
 
         public bool IsBoardLocked
         {
@@ -93,7 +89,7 @@ namespace TM.Digital.Client.Screens.Main
             OtherPlayers = new List<Player>();
             Refresh = new RelayCommand(ExecuteRefresh);
 
-            SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
+            //SelectCardCommand = new RelayCommand(ExecuteSelectCard, CanExecuteSelectCard);
             SelectBoardPlace = new RelayCommand(ExecuteSelectBoardPlace, CanExecuteSelectBoardPlace);
             await ConnectToHub();
         }
@@ -141,6 +137,7 @@ namespace TM.Digital.Client.Screens.Main
         private void Setup(string message)
         {
             var gameResult2 = JsonConvert.DeserializeObject<GameSetup>(message);
+            WaitVm.IsVisible = false;
             GameSetupVm = new GameSetupViewModel();
             GameSetupVm.Setupcompleted += GameSetupVm_Setupcompleted;
             GameSetupVm.Setup(gameResult2, true);
@@ -151,14 +148,14 @@ namespace TM.Digital.Client.Screens.Main
             GameSetupVm.Setupcompleted -= GameSetupVm_Setupcompleted;
             if (GameSetupVm.CorporationChoices.Any())
             {
-                var player = await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>(
-                    "game/addplayer/setupplayer", new GameSetupSelection
-                    {
-                        Corporation = GameSetupVm.CorporationChoices.First(c => c.IsSelected).Corporation,
-                        BoughtCards = GameSetupVm.PatentChoices.Where(p => p.IsSelected).Select(p => p.Patent).ToList(),
-                        PlayerId = GameSetupVm.PlayerId,
-                        GameId = GameId,
-                    });
+                var gSetup = new GameSetupSelection
+                {
+                    Corporation = GameSetupVm.CorporationChoices.First(c => c.IsSelected).Corporation,
+                    BoughtCards = GameSetupVm.PatentChoices.Where(p => p.IsSelected).Select(p => p.Patent).ToList(),
+                    PlayerId = GameSetupVm.PlayerId,
+                    GameId = vm.GameId,
+                };
+                var player = await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>("game/addplayer/setupplayer", gSetup);
 
                 CurrentPlayer = new PlayerSelector(player);
             }
@@ -181,14 +178,14 @@ namespace TM.Digital.Client.Screens.Main
             return false;
         }
 
-        private bool CanExecuteSelectCard(object obj)
-        {
-            if (obj is PatentSelector patent)
-            {
-                return patent.Patent.CanBePlayed;
-            }
-            return false;
-        }
+        //private bool CanExecuteSelectCard(object obj)
+        //{
+        //    if (obj is PatentSelector patent)
+        //    {
+        //        return patent.Patent.CanBePlayed;
+        //    }
+        //    return false;
+        //}
 
 
         private async void ExecuteRefresh(object obj)
@@ -199,22 +196,22 @@ namespace TM.Digital.Client.Screens.Main
 
         private async void ExecuteSelectBoardPlace(object obj)
         {
-            if (obj is BoardPlace bp)
-            {
-                await TmDigitalClientRequestHandler.Instance.Post<BoardPlace>($"game/{GameId}/placetile/{CurrentPlayer.Player.PlayerId}", bp);
-            }
+            //if (obj is BoardPlace bp)
+            //{
+            //    await TmDigitalClientRequestHandler.Instance.Post<BoardPlace>($"game/{GameId}/placetile/{CurrentPlayer.Player.PlayerId}", bp);
+            //}
         }
 
-        private async void ExecuteSelectCard(object obj)
-        {
-            if (obj is PatentSelector patent)
-            {
-                if (!patent.Patent.CanBePlayed)
-                    return;
+        //private async void ExecuteSelectCard(object obj)
+        //{
+        //    if (obj is PatentSelector patent)
+        //    {
+        //        if (!patent.Patent.CanBePlayed)
+        //            return;
 
-                await TmDigitalClientRequestHandler.Instance.Post<Patent>($"game/{GameId}/play/{CurrentPlayer.Player.PlayerId}", patent.Patent);
-            }
-        }
+        //        await TmDigitalClientRequestHandler.Instance.Post<Patent>($"game/{GameId}/play/{CurrentPlayer.Player.PlayerId}", patent.Patent);
+        //    }
+        //}
 
         private async Task GetBoard()
         {

@@ -7,21 +7,58 @@ using TM.Digital.Model.Game;
 
 namespace TM.Digital.Client.Screens.HandSetup
 {
-    public class GameSetupViewModel : NotifierBase
+    public abstract class GameBoardBaseViewModel : NotifierBase
+    {
+        public GameBoardBaseViewModel()
+        {
+            SelectCardCommand = new RelayCommand(ExecuteSelectCorporation, CanExecuteSelectCard);
+        }
+
+        protected abstract bool CanExecuteSelectCard(object arg);
+
+        protected abstract void ExecuteSelectCorporation(object obj);
+
+        public RelayCommand SelectCardCommand { get; set; }
+    }
+
+    public class GameBoardViewModel : GameBoardBaseViewModel
+    {
+        protected override bool CanExecuteSelectCard(object obj)
+        {
+            if (obj is PatentSelector patent)
+            {
+                return patent.Patent.CanBePlayed;
+            }
+
+            return false;
+        }
+
+        protected override void ExecuteSelectCorporation(object obj)
+        {
+            //TODO
+        }
+    }
+
+    public class GameSetupViewModel : GameBoardBaseViewModel
     {
         private bool _isVisible;
         private bool _isInitialSetup;
 
         public GameSetupViewModel()
         {
-            SelectCardCommand = new RelayCommand(ExecuteSelectCorporation);
+            SelectCardCommand = new RelayCommand(ExecuteSelectCorporation, CanExecuteSelectCard);
             CloseCommand = new RelayCommand(ExecuteClose, CanExecuteClose);
-            ;
             CorporationChoices = new ObservableCollection<CorporationSelector>();
             PatentChoices = new ObservableCollection<PatentSelector>();
         }
 
-        public event SeyupCompletedEventHandler Setupcompleted;
+        public event SetupCompletedEventHandler Setupcompleted;
+
+        protected override bool CanExecuteSelectCard(object obj)
+        {
+
+            return true;
+        }
 
         public bool IsVisible
         {
@@ -37,7 +74,7 @@ namespace TM.Digital.Client.Screens.HandSetup
         private void ExecuteClose(object obj)
         {
             IsVisible = false;
-            OnSetupcompleted(this);
+            OnSetupCompleted(this);
         }
 
         public RelayCommand CloseCommand { get; set; }
@@ -45,9 +82,8 @@ namespace TM.Digital.Client.Screens.HandSetup
         public ObservableCollection<CorporationSelector> CorporationChoices { get; set; }
         public ObservableCollection<PatentSelector> PatentChoices { get; set; }
 
-        public RelayCommand SelectCardCommand { get; set; }
-
-        private void ExecuteSelectCorporation(object obj)
+        
+        protected override void ExecuteSelectCorporation(object obj)
         {
             if (obj is CorporationSelector select)
             {
@@ -69,6 +105,7 @@ namespace TM.Digital.Client.Screens.HandSetup
         {
             IsInitialSetup = isInitialSetup;
             PlayerId = gameSetup.PlayerId;
+            GameId = gameSetup.GameId;
             foreach (var gameSetupCorporation in gameSetup.Corporations)
             {
                 CorporationChoices.Add(new CorporationSelector { Corporation = gameSetupCorporation });
@@ -81,6 +118,8 @@ namespace TM.Digital.Client.Screens.HandSetup
             IsVisible = true;
         }
 
+        public Guid GameId { get; set; }
+
         public bool IsInitialSetup
         {
             get => _isInitialSetup;
@@ -89,7 +128,7 @@ namespace TM.Digital.Client.Screens.HandSetup
 
         public Guid PlayerId { get; set; }
 
-        protected virtual void OnSetupcompleted(GameSetupViewModel vm)
+        protected virtual void OnSetupCompleted(GameSetupViewModel vm)
         {
             Setupcompleted?.Invoke(vm);
         }

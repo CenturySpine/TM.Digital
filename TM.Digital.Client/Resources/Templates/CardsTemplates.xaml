@@ -152,7 +152,7 @@
                 </Grid.RowDefinitions>
                 <ContentControl Content="{Binding Patent}"></ContentControl>
 
-                <ToggleButton Grid.Row="1" Content="Select" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.SelectCardCommand}"
+                <ToggleButton Grid.Row="1" Content="Select" Command="{Binding DataContext.SelectCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
                                           CommandParameter="{Binding}"
                                           IsChecked="{Binding IsSelected, Mode=OneWay}" />
             </Grid>
@@ -160,7 +160,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type handSetup:CorporationSelector}">
-        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="2" Width="150" Height="300" Padding="10">
+        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="2" Width="300" Height="150" Padding="10">
             <Border.Style>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="Background" Value="White"></Setter>
