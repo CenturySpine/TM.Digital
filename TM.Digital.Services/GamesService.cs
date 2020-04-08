@@ -74,26 +74,26 @@ namespace TM.Digital.Services
                 };
         }
 
-        public GameSetup AddPlayer(Guid gameId, string playerName, bool test)
-        {
-            try
-            {
-                if (_currentSessions.TryGetValue(gameId, out var session))
-                {
-                    GameSetup gameSetup = session.CreatePlayerSetup(playerName);
-                    return gameSetup;
-                }
+        //public GameSetup AddPlayer(Guid gameId, string playerName, bool test)
+        //{
+        //    try
+        //    {
+        //        if (_currentSessions.TryGetValue(gameId, out var session))
+        //        {
+        //            GameSetup gameSetup = session.CreatePlayerSetup(playerName);
+        //            return gameSetup;
+        //        }
 
-                throw Errors.ErrorGameIdNotFound(gameId);
-            }
-            catch (Exception e)
-            {
+        //        throw Errors.ErrorGameIdNotFound(gameId);
+        //    }
+        //    catch (Exception e)
+        //    {
 
-                Logger.Log("ERROR", e.ToString());
-            }
+        //        Logger.Log("ERROR", e.ToString());
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         public Player SetupPlayer(GameSetupSelection selection)
         {
@@ -173,6 +173,17 @@ namespace TM.Digital.Services
             }
 
             return null;
+        }
+
+        public async Task<bool> StartGame(Guid gameId, IHubContext<ClientNotificationHub> hubContext)
+        {
+
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+               return await session.Start(hubContext);
+            }
+
+            return false;
         }
     }
 }

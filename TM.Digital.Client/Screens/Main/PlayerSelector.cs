@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using TM.Digital.Client.Screens.HandSetup;
 using TM.Digital.Model.Player;
 
-namespace TM.Digital.Client
+namespace TM.Digital.Client.Screens.Main
 {
     public class PlayerSelector
     {

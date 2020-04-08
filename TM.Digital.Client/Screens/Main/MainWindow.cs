@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace TM.Digital.Client
+namespace TM.Digital.Client.Screens.Main
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

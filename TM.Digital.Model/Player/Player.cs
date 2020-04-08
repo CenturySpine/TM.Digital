@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
-using TM.Digital.Model.Resources;
 
 namespace TM.Digital.Model.Player
 {
@@ -16,5 +15,8 @@ namespace TM.Digital.Model.Player
 
         public List<Patent> HandCards { get; set; }
         public List<Patent> PlayedCards { get; set; }
+        public int RemainingActions { get; set; }
+        public int TotalActions { get; set; }
+        public bool IsReady { get; set; }
     }
 }

@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model.Game;
 
-namespace TM.Digital.Client
+namespace TM.Digital.Client.Screens.HandSetup
 {
-    public class GameSetupViewModel : ClosableViewModel
+    public class GameSetupViewModel : NotifierBase
     {
+        private bool _isVisible;
+        private bool _isInitialSetup;
+
         public GameSetupViewModel()
         {
             SelectCardCommand = new RelayCommand(ExecuteSelectCorporation);
@@ -17,6 +21,14 @@ namespace TM.Digital.Client
             PatentChoices = new ObservableCollection<PatentSelector>();
         }
 
+        public event SeyupCompletedEventHandler Setupcompleted;
+
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set { _isVisible = value; OnPropertyChanged(nameof(IsVisible)); }
+        }
+
         private bool CanExecuteClose(object arg)
         {
             return CorporationChoices.Count(c => c.IsSelected) == 1;
@@ -24,7 +36,8 @@ namespace TM.Digital.Client
 
         private void ExecuteClose(object obj)
         {
-            OnClosed();
+            IsVisible = false;
+            OnSetupcompleted(this);
         }
 
         public RelayCommand CloseCommand { get; set; }
@@ -52,8 +65,9 @@ namespace TM.Digital.Client
             }
         }
 
-        public void Setup(GameSetup gameSetup)
+        public void Setup(GameSetup gameSetup, bool isInitialSetup)
         {
+            IsInitialSetup = isInitialSetup;
             PlayerId = gameSetup.PlayerId;
             foreach (var gameSetupCorporation in gameSetup.Corporations)
             {
@@ -63,8 +77,21 @@ namespace TM.Digital.Client
             {
                 PatentChoices.Add(new PatentSelector { Patent = gameSetupPatent });
             }
+
+            IsVisible = true;
+        }
+
+        public bool IsInitialSetup
+        {
+            get => _isInitialSetup;
+            set { _isInitialSetup = value; OnPropertyChanged(nameof(IsInitialSetup)); }
         }
 
         public Guid PlayerId { get; set; }
+
+        protected virtual void OnSetupcompleted(GameSetupViewModel vm)
+        {
+            Setupcompleted?.Invoke(vm);
+        }
     }
 }

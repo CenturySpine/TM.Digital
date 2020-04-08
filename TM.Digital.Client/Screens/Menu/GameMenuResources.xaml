@@ -3,8 +3,9 @@
                     xmlns:local="clr-namespace:TM.Digital.Client"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:menu="clr-namespace:TM.Digital.Client.Screens.Menu"
                     mc:Ignorable="d">
-    <DataTemplate DataType="{x:Type local:MainMenuViewModel}">
+    <DataTemplate DataType="{x:Type menu:MainMenuViewModel}">
         <Border >
 
             <Border.Background>

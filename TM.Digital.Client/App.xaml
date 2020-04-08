@@ -4,14 +4,15 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Common.xaml" />
-                <ResourceDictionary Source="Icons.xaml" />
-                <ResourceDictionary Source="EffectTemplates.xaml" />
-                <ResourceDictionary Source="PlayerResources.xaml" />
-                <ResourceDictionary Source="BoardPlacesTemplates.xaml" />
-                <ResourceDictionary Source="CardsTemplates.xaml" />
-                <ResourceDictionary Source="GameMenuResources.xaml" />
-                <ResourceDictionary Source="WaitScreenResources.xaml" />
+                <ResourceDictionary Source="Resources/Common.xaml" />
+                <ResourceDictionary Source="Resources/Icons.xaml" />
+                <ResourceDictionary Source="Resources/Templates/EffectTemplates.xaml" />
+                <ResourceDictionary Source="Resources/Templates/PlayerResources.xaml" />
+                <ResourceDictionary Source="Resources/Templates/BoardPlacesTemplates.xaml" />
+                <ResourceDictionary Source="Resources/Templates/CardsTemplates.xaml" />
+                <ResourceDictionary Source="Screens/Menu/GameMenuResources.xaml" />
+                <ResourceDictionary Source="Screens/Wait/WaitScreenResources.xaml" />
+                <ResourceDictionary Source="Screens/HandSetup/GameSetupResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             
         </ResourceDictionary>

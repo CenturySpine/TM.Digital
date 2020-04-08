@@ -3,9 +3,10 @@
                     xmlns:local="clr-namespace:TM.Digital.Client"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:wait="clr-namespace:TM.Digital.Client.Screens.Wait"
                     mc:Ignorable="d">
 
-    <DataTemplate DataType="{x:Type local:WaitingGameScreenViewModel}">
+    <DataTemplate DataType="{x:Type wait:WaitingGameScreenViewModel}">
         
             <Grid Grid.Row="0" >
                 <Grid.RowDefinitions>
