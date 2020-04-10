@@ -23,9 +23,10 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
+
                 <UniformGrid  Margin="5" Columns="4" Rows="2">
                     
-                    <TextBlock Text="NT" Margin="2"></TextBlock>
+                    <TextBlock Text="{Binding Player.Name}" Margin="2"></TextBlock>
                     <TextBlock Text="{Binding Player.TerraformationLevel}" Margin="2" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
                     
                     <TextBlock Text="Corp" Margin="2"></TextBlock>
@@ -38,6 +39,7 @@
                     <TextBlock Text="Actions"></TextBlock>
                     <TextBlock Text="{Binding Player.RemainingActions}"></TextBlock>
                 </UniformGrid>
+
                 <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Player.Resources}" VerticalAlignment="Top" Margin="5">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

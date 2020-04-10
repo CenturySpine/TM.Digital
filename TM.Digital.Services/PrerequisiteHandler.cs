@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
+using TM.Digital.Services.Common;
 
 namespace TM.Digital.Services
 {
     public static class PrerequisiteHandler
     {
-        public static void CanPlayCards(Model.Board.Board board, Model.Player.Player player)
+        public static async Task CanPlayCards(Model.Board.Board board, Model.Player.Player player)
         {
-            Logger.Log(player.Name, $"Updating players '{player.Name}' cards playability...");
+            await Logger.Log(player.Name, $"Updating players '{player.Name}' cards playability...");
             foreach (var playerHandCard in player.HandCards)
             {
                 playerHandCard.CanBePlayed = CanPlayCard(playerHandCard, board, player);

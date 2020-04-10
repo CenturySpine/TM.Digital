@@ -8,6 +8,8 @@ using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
+using TM.Digital.Services.Common;
+using TM.Digital.Transport.Hubs;
 using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Services
@@ -54,7 +56,7 @@ namespace TM.Digital.Services
             }
             catch (Exception e)
             {
-                Logger.Log("ERROR", e.ToString());
+                await Logger.Log("ERROR", e.ToString());
             }
 
             return null;

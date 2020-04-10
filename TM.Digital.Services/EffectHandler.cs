@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
+using TM.Digital.Services.Common;
 
 namespace TM.Digital.Services
 {
     public static class EffectHandler
     {
-        public static void HandleResourceEffect(Model.Player.Player player, ResourceEffect effect)
+        public static async Task HandleResourceEffect(Model.Player.Player player, ResourceEffect effect)
         {
             if (effect.EffectDestination == EffectDestination.Self)
             {
@@ -32,14 +34,14 @@ namespace TM.Digital.Services
                         {
                             resource.Production = 0;
                         }
-                        Logger.Log(player.Name, $"Resource {resource.ResourceType} Production modified for {effect.Amount}, new value {resource.Production}");
+                        await Logger.Log(player.Name, $"Resource {resource.ResourceType} Production modified for {effect.Amount}, new value {resource.Production}");
                     }
                     else
                     {
                         resource.UnitCount += effect.Amount;
                         
                         if (resource.UnitCount < 0) resource.UnitCount = 0;
-                        Logger.Log(player.Name, $"Resource {resource.ResourceType} Unit modified for {effect.Amount}, new value {resource.UnitCount}");
+                        await Logger.Log(player.Name, $"Resource {resource.ResourceType} Unit modified for {effect.Amount}, new value {resource.UnitCount}");
                     }
                 }
             }
@@ -49,21 +51,21 @@ namespace TM.Digital.Services
             }
         }
 
-        public static void HandleInitialPatentBuy(Model.Player.Player player, List<Patent> selectionBoughtCards,
+        public static async Task HandleInitialPatentBuy(Model.Player.Player player, List<Patent> selectionBoughtCards,
             Corporation selectionCorporation)
         {
             var playersMoney = player.Resources.First(r => r.ResourceType == ResourceType.Money);
             playersMoney.UnitCount = selectionCorporation.StartingMoney;
-            Logger.Log(player.Name, $"Initial money count {selectionCorporation.StartingMoney}");
+            await Logger.Log(player.Name, $"Initial money count {selectionCorporation.StartingMoney}");
             foreach (var selectionBoughtCard in selectionBoughtCards)
             {
                 playersMoney.UnitCount -= 3;
                 player.HandCards.Add(selectionBoughtCard);
-                Logger.Log(player.Name, $"Buying patent '{selectionBoughtCard.Name}', remaining money {playersMoney.UnitCount}");
+                await Logger.Log(player.Name, $"Buying patent '{selectionBoughtCard.Name}', remaining money {playersMoney.UnitCount}");
             }
         }
 
-        public static void CheckCardsReductions(Model.Player.Player player)
+        public static async Task CheckCardsReductions(Model.Player.Player player)
         {
             
 
@@ -77,12 +79,12 @@ namespace TM.Digital.Services
                     .ToList();
                 if (reductionForCard.Any())
                 {
-                    Logger.Log(player.Name, $"Updating players '{player.Name}' cards costs...");
+                    await Logger.Log(player.Name, $"Updating players '{player.Name}' cards costs...");
                     foreach (var tagEffect in reductionForCard)
                     {
                         playerHandCard.ModifiedCost = playerHandCard.BaseCost + tagEffect.EffectValue;
                         if (playerHandCard.ModifiedCost < 0) playerHandCard.ModifiedCost = 0;
-                        Logger.Log(player.Name, $"New card '{playerHandCard.Name}' cost => {playerHandCard.ModifiedCost}");
+                        await Logger.Log(player.Name, $"New card '{playerHandCard.Name}' cost => {playerHandCard.ModifiedCost}");
                     }
                 }
                 else

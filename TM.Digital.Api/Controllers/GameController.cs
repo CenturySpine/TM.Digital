@@ -7,6 +7,7 @@ using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Services;
+using TM.Digital.Services.Common;
 using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Api.Controllers
@@ -19,11 +20,12 @@ namespace TM.Digital.Api.Controllers
 
         public GameController(IHubContext<ClientNotificationHub> hubContext)
         {
+            Logger.HubContext = hubContext;
             _hubContext = hubContext;
         }
 
         [Route("create/{playerName}/{numberofplayer:int}")]
-        public async Task<GameSessionInformation> Start(string playerName, int numberofplayer)
+        public async Task<GameSessionInformation> CreateGame(string playerName, int numberofplayer)
         {
             return await GamesService.Instance.CreateGame(playerName, numberofplayer);
         }
