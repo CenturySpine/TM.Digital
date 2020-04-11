@@ -61,8 +61,9 @@ namespace TM.Digital.Services
         {
             DiscardPile.Shuffle();
 
-            DiscardPile.Clear();
             AvailablePatents = new Queue<Patent>(DiscardPile);
+            DiscardPile.Clear();
+
         }
     }
 }

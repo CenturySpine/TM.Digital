@@ -14,7 +14,7 @@ using TM.Digital.Services;
 namespace TM.Digital.UnitTests.Prerequisites
 {
     [TestClass]
-    public class PatentCostTests
+    public class PatentCostTests: TestPatentCheckClassAbase
     {
         private PatentCostPrerequisite _target;
 
@@ -192,6 +192,11 @@ namespace TM.Digital.UnitTests.Prerequisites
             Assert.IsTrue(canPlay);
         }
 
+
+    }
+
+    public class TestPatentCheckClassAbase
+    {
         public static Patent NewPatent()
         {
             return new Patent()
