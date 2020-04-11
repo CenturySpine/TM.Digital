@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using TM.Digital.Client.Screens.HandSetup;
 using TM.Digital.Client.Screens.Menu;
 using TM.Digital.Client.Screens.Wait;
@@ -32,6 +33,7 @@ namespace TM.Digital.Client.Screens.Main
         private HubConnection connection;
         private GameSetupViewModel _gameSetupVm;
         private ObservableCollection<string> _logs;
+        private RelayCommand _selectBoardPlace;
 
         public MainWindowViewModel(MainMenuViewModel menuVm, WaitingGameScreenViewModel waitVm)
         {
@@ -74,7 +76,11 @@ namespace TM.Digital.Client.Screens.Main
 
         public RelayCommand Refresh { get; set; }
 
-        public RelayCommand SelectBoardPlace { get; set; }
+        public RelayCommand SelectBoardPlace
+        {
+            get => _selectBoardPlace;
+            set { _selectBoardPlace = value;OnPropertyChanged(nameof(SelectBoardPlace)); }
+        }
 
         public RelayCommand SelectCardCommand { get; set; }
 
@@ -174,19 +180,19 @@ namespace TM.Digital.Client.Screens.Main
             WaitVm.IsVisible = false;
             GameSetupVm = new GameSetupViewModel();
             GameSetupVm.Setupcompleted += GameSetupVm_SetupCompleted;
-            GameSetupVm.Setup(gameResult2, true);
+            GameSetupVm.Setup(gameResult2, gameResult2.IsInitialSetup);
         }
 
         private async void GameSetupVm_SetupCompleted(GameSetupViewModel vm)
         {
             WaitVm.Open("Waiting for other players to finish their setup");
             GameSetupVm.Setupcompleted -= GameSetupVm_SetupCompleted;
-            if (GameSetupVm.CorporationChoices.Any())
+            if (GameSetupVm.CorporationChoices.Any() || !vm.IsInitialSetup)
             {
 
                 var gSetup = new GameSetupSelection
                 {
-                    Corporation = GameSetupVm.CorporationChoices.First(c => c.IsSelected).Corporation,
+                    Corporation = GameSetupVm.CorporationChoices.FirstOrDefault(c => c.IsSelected)?.Corporation,
                     BoughtCards = GameSetupVm.PatentChoices.Where(p => p.IsSelected).Select(p => p.Patent).ToList(),
                     PlayerId = GameSetupVm.PlayerId,
                     GameId = vm.GameId,
@@ -295,6 +301,7 @@ namespace TM.Digital.Client.Screens.Main
         {
             var gameResult2 = JsonConvert.DeserializeObject<Board>(message);
             Board = gameResult2;
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private void UpdateGame(string message)

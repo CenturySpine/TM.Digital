@@ -13,26 +13,9 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="{Binding Level}" Margin="3" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
 
-            <Path Grid.Column="1" Width="15" Height="15" Stretch="Uniform" Margin="1">
-                <Path.Style>
-                    <Style TargetType="{x:Type Path}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding BoardLevelType}" Value="{x:Static board:BoardLevelType.Temperature}">
-                                <Setter Property="Data" Value="{Binding Source={StaticResource thermometer_lines}, Path=Data}" />
-                                <Setter Property="Fill" Value="red" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding BoardLevelType}" Value="{x:Static board:BoardLevelType.Oxygen}">
-                                <Setter Property="Data" Value="{Binding Source={StaticResource molecule_co2}, Path=Data}" />
-                                <Setter Property="Fill" Value="red" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding BoardLevelType}" Value="{x:Static board:BoardLevelType.Terraformation}">
-                                <Setter Property="Data" Value="{Binding Source={StaticResource earth}, Path=Data}" />
-                                <Setter Property="Fill" Value="red" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Path.Style>
-            </Path>
+            <ContentControl Grid.Column="1" Width="25" Height="25"  Margin="1"
+                            Content="{Binding BoardLevelType}" ContentTemplateSelector="{StaticResource globalParamTemplateSelector}"></ContentControl>
+
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type effects:ResourceEffect}">

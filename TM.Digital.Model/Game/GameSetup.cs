@@ -13,5 +13,7 @@ namespace TM.Digital.Model.Game
         public Guid PlayerId { get; set; }
 
         public List<Patent> Patents { get; set; }
+
+        public bool IsInitialSetup { get; set; }
     }
 }

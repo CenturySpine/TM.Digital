@@ -20,20 +20,16 @@ namespace TM.Digital.Client.Screens.Main
             Player = player;
             GameId = gameId;
             PatentsSelectors = new ObservableCollection<PatentSelector>(player.HandCards.Select(c => new PatentSelector { Patent = c }));
-            PassCommand = new RelayCommand(ExecutePass);
+            PassCommand = new RelayCommand(ExecutePass, CanExecutePass);
             SkipCommand = new RelayCommand(ExecuteSkip,CanExecuteSkip);
             SelectCardCommand = new RelayCommand(ExecutePlayCard, CanExecutePlayCard);
         }
-        //private async void ExecuteSelectCard(object obj)
-        //{
-        //    if (obj is PatentSelector patent)
-        //    {
-        //        if (!patent.Patent.CanBePlayed)
-        //            return;
 
-        //        await TmDigitalClientRequestHandler.Instance.Post<Patent>($"game/{GameId}/play/{CurrentPlayer.Player.PlayerId}", patent.Patent);
-        //    }
-        //}
+        private bool CanExecutePass(object arg)
+        {
+            return Player.RemainingActions == 0 || Player.RemainingActions == 2 ;
+        }
+
         private async void ExecutePlayCard(object obj)
         {
             if (obj is PatentSelector patent)

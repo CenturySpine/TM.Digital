@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Model.Resources;
 
 namespace TM.Digital.Model.Player
 {
@@ -21,5 +22,9 @@ namespace TM.Digital.Model.Player
         public bool IsReady { get; set; }
 
         public string Color { get; set; }
+    
+
     }
+
+
 }

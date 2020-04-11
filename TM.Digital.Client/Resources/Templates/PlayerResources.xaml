@@ -22,18 +22,19 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <UniformGrid  Margin="5" Columns="4" Rows="2">
-                    
+
                     <TextBlock Text="{Binding Player.Name}" Margin="2"></TextBlock>
                     <TextBlock Text="{Binding Player.TerraformationLevel}" Margin="2" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
-                    
+
                     <TextBlock Text="Corp" Margin="2"></TextBlock>
                     <TextBlock Text="{Binding Player.Corporation.Name}" Margin="2" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
-                    
+
                     <Button Content="Pass" Command="{Binding PassCommand}" Margin="2" Padding="5"/>
-                    
+
                     <Button Content="Skip" Command="{Binding SkipCommand}" Margin="2" Padding="5"/>
 
                     <TextBlock Text="Actions"></TextBlock>
@@ -59,9 +60,22 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
+                                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0">
                                     <ContentControl  Content="{Binding ResourceType}" Width="25" Height="25" ContentTemplateSelector="{StaticResource resBoardSelector}"
-                                                     Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Margin="5" VerticalAlignment="Center" />
-
+                                                    Margin="5" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding MoneyValueModifier, StringFormat='{} + {0}'}" VerticalAlignment="Center" Margin="2">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding MoneyValueModifier}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    </StackPanel>
                                     <Grid Grid.Row="1"  Grid.Column="0" Background="SandyBrown" Margin="2" Width="50" Height="25">
                                         <TextBlock Text="{Binding Production}" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2" />
                                     </Grid>
@@ -95,6 +109,8 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
+
+
             </Grid>
 
             <ScrollViewer  Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">

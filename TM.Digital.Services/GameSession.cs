@@ -8,16 +8,47 @@ using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
-using TM.Digital.Transport.Hubs;
 using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Services
 {
+
+    public static class ModelFactory
+    {
+
+        public static Player NewPlayer(string name, bool test)
+        {
+            return new Player
+            {
+                IsReady = false,
+                TotalActions = 2,
+                RemainingActions = 0,
+                PlayerId = Guid.NewGuid(),
+                Name = name,
+                Resources = new List<ResourceHandler>
+                {
+                    new ResourceHandler {ResourceType = ResourceType.Money,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Steel,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Titanium,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Plant,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Energy,UnitCount = test?20:0,Production = test?5:0},
+                    new ResourceHandler {ResourceType = ResourceType.Heat,UnitCount = test?20:0,Production = test?5:0}
+                },
+                HandCards = new List<Patent>(),
+                PlayedCards = new List<Patent>(),
+                Corporation = new Corporation(),
+                TerraformationLevel = 20,
+
+            };
+        }
+    }
+
     internal class GameSession
     {
         private class PlayersTracking
@@ -26,7 +57,6 @@ namespace TM.Digital.Services
 
             public Guid AddOrderedPlayers(HashSet<Guid> order)
             {
-
                 _initialOrder = new HashSet<Guid>(order);
                 _remaining = new HashSet<Guid>(_initialOrder);
                 return _remaining.First();
@@ -68,6 +98,19 @@ namespace TM.Digital.Services
             {
                 _remaining.Remove(player);
             }
+
+            public void NewGeneration()
+            {
+                var previousturnorder = _initialOrder.ToList();
+                var first = previousturnorder.First();
+                previousturnorder.Remove(first);
+
+                previousturnorder.Insert(previousturnorder.Count > 1 ? previousturnorder.Count - 1 : 0, first);
+
+                _initialOrder = previousturnorder.ToHashSet();
+
+                _remaining = new HashSet<Guid>(_initialOrder);
+            }
         }
 
         private static TileEffect PendingTileEffect;
@@ -90,7 +133,6 @@ namespace TM.Digital.Services
 
             Board = BoardGenerator.Instance.Original();
             PlayerTack = new PlayersTracking();
-
         }
 
         private PlayersTracking PlayerTack { get; set; }
@@ -98,7 +140,6 @@ namespace TM.Digital.Services
         private async Task RandomizePlayers()
         {
             await Logger.Log("na", "Randomizing players...");
-
 
             HashSet<Guid> ordered = new HashSet<Guid>();
             while (ordered.Count != Players.Count)
@@ -116,26 +157,7 @@ namespace TM.Digital.Services
 
         public Player AddPlayer(string playerName, bool test)
         {
-            var player = new Player
-            {
-                IsReady = false,
-                TotalActions = 2,
-                RemainingActions = 0,
-                PlayerId = Guid.NewGuid(),
-                Name = playerName,
-                Resources = new List<ResourceHandler>
-                {
-                    new ResourceHandler {ResourceType = ResourceType.Money,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Steel,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Titanium,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Plant,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Energy,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Heat,UnitCount = test?20:0,Production = test?5:0}
-                },
-                HandCards = new List<Patent>(),
-                PlayedCards = new List<Patent>(),
-                TerraformationLevel = 20,
-            };
+            var player = ModelFactory.NewPlayer(playerName, test);
             Players.Add(player.PlayerId, player);
 
             return player;
@@ -218,34 +240,31 @@ namespace TM.Digital.Services
                         action.Invoke(player, Board);
                     });
                 }
-                //EffectHandler.CheckCardsReductions(player);
-                //PrerequisiteHandler.CanPlayCards(Board, player);
             }
 
-            //await _hubContext.Clients.All.SendAsync("ReceiveGameUpdate", "PlayResult", JsonSerializer.Serialize(playResult));
 
-            //return new Game
-            //{
-            //    Board = Board,
-            //    AllPlayers = Players.Select(p => p.Value).ToList(),
-            //};
         }
 
         public async Task<Player> SetupPlayer(GameSetupSelection selection, IHubContext<ClientNotificationHub> hubContext)
         {
             if (Players.TryGetValue(selection.PlayerId, out var player))
             {
-                await Logger.Log(player.Name, $"Receiving player setup. chosen corporation = '{selection.Corporation.Name}'");
-                foreach (var corporationEffect in selection.Corporation.ResourcesEffects)
+                if (selection.Corporation != null)
                 {
-                    await EffectHandler.HandleResourceEffect(player, corporationEffect);
+                    await Logger.Log(player.Name, $"Receiving player setup. chosen corporation = '{selection.Corporation.Name}'");
+                    player.Corporation = selection.Corporation;
+                    foreach (var corporationEffect in selection.Corporation.ResourcesEffects)
+                    {
+                        await EffectHandler.HandleResourceEffect(player, corporationEffect);
+                    }
                 }
+
 
                 await Logger.Log(player.Name, $"Patent bought : {selection.BoughtCards.Count}");
 
                 await EffectHandler.HandleInitialPatentBuy(player, selection.BoughtCards, selection.Corporation);
 
-                player.Corporation = selection.Corporation;
+                
 
                 await EffectHandler.CheckCardsReductions(player);
                 await PrerequisiteHandler.CanPlayCards(Board, player);
@@ -277,11 +296,35 @@ namespace TM.Digital.Services
                 {
                     //TODO next generation
                     await Logger.Log("na", $"GENERATION IS OVER...");
+                    await StartNewGeneration(hubContext);
                 }
                 return true;
             }
 
             return false;
+        }
+
+        private async Task StartNewGeneration(IHubContext<ClientNotificationHub> hubContext)
+        {
+            Board.Generation++;
+            foreach (var player in Players)
+            {
+                foreach (var resourceHandler in player.Value.Resources)
+                {
+                    if (resourceHandler.ResourceType == ResourceType.Money)
+                    {
+                        resourceHandler.UnitCount += (resourceHandler.Production + player.Value.TerraformationLevel);
+                    }
+                    else
+                    {
+                        resourceHandler.UnitCount += resourceHandler.Production;
+                    }
+                }
+            }
+
+            PlayerTack.NewGeneration();
+            await SendSetup(hubContext, false);
+            await UpdateGame(hubContext);
         }
 
         private async Task SendPleyrsPlaying(IHubContext<ClientNotificationHub> hubContext, Guid playing)
@@ -315,8 +358,6 @@ namespace TM.Digital.Services
                 var playing = await PlayerTack.PickNextPlayer();
 
                 await SendPleyrsPlaying(hubContext, playing);
-                //await UpdateGame(hubContext);
-                //await hubContext.Clients.All.SendAsync(ServerPushMethods.Playing, playing, string.Empty);
             }
         }
 
@@ -325,12 +366,7 @@ namespace TM.Digital.Services
             try
             {
                 await Logger.Log("na", "Starting game");
-                foreach (var player in Players)
-                {
-                    var setup = CreatePlayerSetup(player.Key);
-                    await Logger.Log(player.Value.Name, "Sending game setup...");
-                    await hubContext.Clients.All.SendAsync(ServerPushMethods.SetupChoice, player.Key, JsonSerializer.Serialize(setup));
-                }
+                await SendSetup(hubContext, true);
                 await RandomizePlayers();
             }
             catch (Exception e)
@@ -341,7 +377,18 @@ namespace TM.Digital.Services
             return true;
         }
 
-        private GameSetup CreatePlayerSetup(Guid player)
+        private async Task SendSetup(IHubContext<ClientNotificationHub> hubContext, bool isInitialSetup)
+        {
+            foreach (var player in Players)
+            {
+                var setup = CreatePlayerSetup(player.Key, isInitialSetup);
+                await Logger.Log(player.Value.Name, "Sending game setup...");
+                await hubContext.Clients.All.SendAsync(ServerPushMethods.SetupChoice, player.Key,
+                    JsonSerializer.Serialize(setup));
+            }
+        }
+
+        private GameSetup CreatePlayerSetup(Guid player, bool isInitialSetup)
         {
             if (Players.TryGetValue(player, out var playerObj))
             {
@@ -350,15 +397,19 @@ namespace TM.Digital.Services
                     PlayerId = playerObj.PlayerId,
                     Corporations = new List<Corporation>(),
                     Patents = new List<Patent>(),
-                    GameId = this.Id
+                    GameId = this.Id,
+                    IsInitialSetup = isInitialSetup
                 };
 
-                for (int i = 0; i < 2; i++)
+                if (isInitialSetup)
                 {
-                    gs.Corporations.Add(_cardDrawer.DrawCorporation());
+                    for (int i = 0; i < 2; i++)
+                    {
+                        gs.Corporations.Add(_cardDrawer.DrawCorporation());
+                    }
                 }
 
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < (isInitialSetup ? 4 : 2); i++)
                 {
                     gs.Patents.Add(_cardDrawer.DrawPatent());
                 }

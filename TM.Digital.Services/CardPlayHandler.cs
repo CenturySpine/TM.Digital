@@ -5,6 +5,7 @@ using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
+using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
 
@@ -16,6 +17,7 @@ namespace TM.Digital.Services
         {
             await Logger.Log(player.Name, $"Player '{player.Name}' playing card '{card.Name}'");
 
+            player.Resources.First(r => r.ResourceType == ResourceType.Money).UnitCount -= card.ModifiedCost;
             Choices ch = new Choices();
             player.HandCards.Remove(card);
             player.PlayedCards.Add(card);

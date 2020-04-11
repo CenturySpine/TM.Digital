@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Effects;
+using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Services.Common;
 
@@ -21,7 +22,7 @@ namespace TM.Digital.Services
                 {
                     if (effect.ResourceKind == ResourceKind.Production)
                     {
-                        
+
                         resource.Production += effect.Amount;
 
                         //never go below -5 for money production
@@ -39,7 +40,7 @@ namespace TM.Digital.Services
                     else
                     {
                         resource.UnitCount += effect.Amount;
-                        
+
                         if (resource.UnitCount < 0) resource.UnitCount = 0;
                         await Logger.Log(player.Name, $"Resource {resource.ResourceType} Unit modified for {effect.Amount}, new value {resource.UnitCount}");
                     }
@@ -55,8 +56,12 @@ namespace TM.Digital.Services
             Corporation selectionCorporation)
         {
             var playersMoney = player.Resources.First(r => r.ResourceType == ResourceType.Money);
-            playersMoney.UnitCount = selectionCorporation.StartingMoney;
-            await Logger.Log(player.Name, $"Initial money count {selectionCorporation.StartingMoney}");
+            if (selectionCorporation != null)
+            {
+                playersMoney.UnitCount = selectionCorporation.StartingMoney;
+                await Logger.Log(player.Name, $"Initial money count {selectionCorporation.StartingMoney}");
+            }
+
             foreach (var selectionBoughtCard in selectionBoughtCards)
             {
                 playersMoney.UnitCount -= 3;
@@ -65,9 +70,23 @@ namespace TM.Digital.Services
             }
         }
 
+        public static async Task EvaluateResourceModifiers(Player player)
+        {
+            await Task.CompletedTask;
+            var allCards = player.PlayedCards.Concat(new List<Card> { player.Corporation }).ToList();
+
+            var titaniumModifier = 3 + allCards.Where(r => r.TitaniumValueModifier > 0).Sum(t => t.TitaniumValueModifier);
+            var steelModifier = 2 + allCards.Where(r => r.SteelValueModifier > 0).Sum(t => t.SteelValueModifier);
+
+            player.Resources.First(r => r.ResourceType == ResourceType.Steel).MoneyValueModifier = steelModifier;
+            player.Resources.First(r => r.ResourceType == ResourceType.Titanium).MoneyValueModifier = titaniumModifier;
+
+
+
+        }
         public static async Task CheckCardsReductions(Model.Player.Player player)
         {
-            
+            await EvaluateResourceModifiers(player);
 
             var reductions = player.PlayedCards.Concat(new List<Card> { player.Corporation })
                 .SelectMany(c => c.TagEffects).Where(te => te.TagEffectType == TagEffectType.CostAlteration)

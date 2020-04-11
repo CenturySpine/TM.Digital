@@ -35,7 +35,7 @@ namespace TM.Digital.Client.Screens.HandSetup
 
         private bool CanExecuteClose(object arg)
         {
-            return CorporationChoices.Count(c => c.IsSelected) == 1;
+            return CorporationChoices.Count(c => c.IsSelected) == 1 || !IsInitialSetup;
         }
 
         private void ExecuteClose(object obj)

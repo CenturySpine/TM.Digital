@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using TM.Digital.Model.Board;
+using TM.Digital.Model.Cards;
 using TM.Digital.Model.Resources;
+using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Client.Resources.TemplateSelectors
 {
@@ -66,4 +69,87 @@ namespace TM.Digital.Client.Resources.TemplateSelectors
             return null;
         }
     }
+    public class GolbalPArameterTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate Temprature { get; set; }
+        public DataTemplate Oxygen { get; set; }
+        public DataTemplate TerraformationLevel { get; set; }
+
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item != null)
+            {
+                BoardLevelType t = (BoardLevelType)Enum.Parse(typeof(BoardLevelType), item.ToString());
+                switch (t)
+                {
+                    case BoardLevelType.Temperature:
+                        return Temprature;
+
+                    case BoardLevelType.Oxygen:
+                        return Oxygen;
+                    case BoardLevelType.Terraformation:
+                        return TerraformationLevel;
+                    case BoardLevelType.Oceans:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return null;
+        }
+    }
+
+    public class TileTypeTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate City { get; set; }
+        public DataTemplate Ocean { get; set; }
+        public DataTemplate Forest { get; set; }
+
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item != null)
+            {
+                TileType t = (TileType)Enum.Parse(typeof(TileType), item.ToString());
+                switch (t)
+                {
+                    case TileType.City:
+                        return City;
+                    case TileType.Forest:
+                        return Forest;
+                    case TileType.Ocean:
+                        return Ocean;
+                    case TileType.NuclearZone:
+                        break;
+                    case TileType.Capital:
+                        break;
+                    case TileType.Volcano:
+                        break;
+                    case TileType.Quarry:
+                        break;
+                    case TileType.Geothermy:
+                        break;
+                    case TileType.Factory:
+                        break;
+                    case TileType.EcologicalArea:
+                        break;
+                    case TileType.Mall:
+                        break;
+                    case TileType.NoMansLand:
+                        break;
+                    case TileType.Colony:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return null;
+        }
+    }
+
+
+
 }
