@@ -21,7 +21,7 @@
                     <ItemsControl  ItemsSource="{Binding BoardLines}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </ScrollViewer>
             </Border>
-            <TextBlock Grid.Column="1" Text="{Binding Generation}" Margin="20" FontSize="20"></TextBlock>
+            <TextBlock Grid.Column="1" Text="{Binding Generation}" Margin="20" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top"></TextBlock>
             <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Background="AliceBlue" Margin="1">
                 <ItemsControl  ItemsSource="{Binding Parameters}" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
