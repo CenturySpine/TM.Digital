@@ -11,48 +11,36 @@ namespace TM.Digital.Client.Screens.Wait
     {
         private readonly IApiProxy _apiCaller;
 
+        private ObservableCollection<string> _incommingMessages;
         private string _initialMessage;
         private bool _isOwner;
-        private Guid _playerId;
-        private ObservableCollection<string> _incommingMessages;
-        private GameSessionInformation _session;
         private bool _isVisible;
-
+        private Guid _playerId;
+        private GameSessionInformation _session;
         public WaitingGameScreenViewModel(IApiProxy apiCaller)
         {
             _apiCaller = apiCaller;
             IncommingMessages = new ObservableCollection<string>();
             StartGameCommand = new RelayCommand(ExecuteStartGame, CanExecuteStartGame);
+            CheckPlayersReady = new RelayCommand(ExecuteCheckPlayerReady, CanExecutePlayersReadyCheck);
+
         }
 
-        private bool CanExecuteStartGame(object arg)
+        public RelayCommand CheckPlayersReady { get; set; }
+
+        public ObservableCollection<string> IncommingMessages
         {
-            return IsOwner;
+            get { return _incommingMessages; }
+            set { _incommingMessages = value; OnPropertyChanged(nameof(IncommingMessages)); }
         }
 
-        private async void ExecuteStartGame(object obj)
+        public string InitialMessage
         {
-            if (await _apiCaller.StartGame(Session.GameSessionId))
-            {
-                IsVisible = false;
-                IncommingMessages.Clear();
-                InitialMessage = string.Empty;
-            }
-            else
-            {
-                MessageBox.Show("Can't start game...");
-            }
-        }
-
-        public RelayCommand StartGameCommand { get; set; }
-
-        public Guid PlayerId
-        {
-            get { return _playerId; }
+            get { return _initialMessage; }
             set
             {
-                _playerId = value;
-                OnPropertyChanged(nameof(PlayerId));
+                _initialMessage = value;
+                OnPropertyChanged(nameof(InitialMessage));
             }
         }
 
@@ -66,16 +54,6 @@ namespace TM.Digital.Client.Screens.Wait
             }
         }
 
-        public string InitialMessage
-        {
-            get { return _initialMessage; }
-            set
-            {
-                _initialMessage = value;
-                OnPropertyChanged(nameof(InitialMessage));
-            }
-        }
-
         public bool IsVisible
         {
             get { return _isVisible; }
@@ -86,10 +64,14 @@ namespace TM.Digital.Client.Screens.Wait
             }
         }
 
-        public ObservableCollection<string> IncommingMessages
+        public Guid PlayerId
         {
-            get { return _incommingMessages; }
-            set { _incommingMessages = value; OnPropertyChanged(nameof(IncommingMessages)); }
+            get { return _playerId; }
+            set
+            {
+                _playerId = value;
+                OnPropertyChanged(nameof(PlayerId));
+            }
         }
 
         public GameSessionInformation Session
@@ -102,10 +84,40 @@ namespace TM.Digital.Client.Screens.Wait
             }
         }
 
+        public RelayCommand StartGameCommand { get; set; }
+
         public void Open(string awaitingPlayers)
         {
             IsVisible = true;
             InitialMessage = awaitingPlayers;
+        }
+
+        private bool CanExecutePlayersReadyCheck(object arg)
+        {
+            return IsOwner && IsVisible;
+        }
+
+        private bool CanExecuteStartGame(object arg)
+        {
+            return IsOwner;
+        }
+
+        private void ExecuteCheckPlayerReady(object obj)
+        {
+            
+        }
+        private async void ExecuteStartGame(object obj)
+        {
+            if (await _apiCaller.StartGame(Session.GameSessionId))
+            {
+                IsVisible = false;
+                IncommingMessages.Clear();
+                InitialMessage = string.Empty;
+            }
+            else
+            {
+                MessageBox.Show("Can't start game...");
+            }
         }
     }
 }

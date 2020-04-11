@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="2">
-            <Grid.Style>
+            <!--<Grid.Style>
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="IsEnabled" Value="True" />
                     <Style.Triggers>
@@ -27,14 +27,55 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Grid.Style>
+            </Grid.Style>-->
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ContentControl Grid.Row="0" Content="{Binding Board}"></ContentControl>
 
-            <ContentControl Content="{Binding CurrentPlayer}" Grid.Row="1"></ContentControl>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="0.2*"/>
+                </Grid.ColumnDefinitions>
+
+                <ContentControl  Content="{Binding Board}" >
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Setter Property="IsEnabled" Value="True" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsBoardLocked}" Value="true">
+                                    <Setter Property="IsEnabled" Value="false" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+
+                <ListBox Grid.Column="1" ItemsSource="{Binding Logs}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="Aqua">
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap"></TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+            
+
+            <ContentControl Content="{Binding CurrentPlayer}" Grid.Row="1">
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Setter Property="IsEnabled" Value="True" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsBoardLocked}" Value="true">
+                                <Setter Property="IsEnabled" Value="false" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
         </Grid>
 
         <ContentControl Grid.Row="0" Grid.RowSpan="3" Content="{Binding MenuVm}">

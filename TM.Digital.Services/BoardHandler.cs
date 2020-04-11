@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
+using TM.Digital.Services.Common;
+using TM.Digital.Transport.Hubs;
 
 namespace TM.Digital.Services
 {
@@ -68,8 +71,8 @@ namespace TM.Digital.Services
                 },
 
                 //middle left surroundings
-                new PlaceCoordinates()
-                    {
+                new PlaceCoordinates
+                {
                         X = space.Index.X ,
                         Y = space.Index.Y -1
                 },
@@ -82,7 +85,7 @@ namespace TM.Digital.Services
                 },
 
                 //upper right surroundings
-                new PlaceCoordinates()
+                new PlaceCoordinates
                 {
                     X = space.Index.X-1 ,
                     Y = space.Index.Y 
@@ -95,7 +98,7 @@ namespace TM.Digital.Services
                     Y = space.Index.Y+1
                 },
                 //bottom right surroundings
-                new PlaceCoordinates()
+                new PlaceCoordinates
                 {
                     X = space.Index.X+1 ,
                     Y = space.Index.Y 
@@ -164,8 +167,8 @@ namespace TM.Digital.Services
             return board;
         }
 
-        public static void PlaceTileOnBoard(BoardPlace place, Model.Player.Player playerId, TileEffect pendingTileEffect,
-            Model.Board.Board board, Queue<Patent> availablePatents)
+        public static async Task PlaceTileOnBoard(BoardPlace place, Model.Player.Player playerId, TileEffect pendingTileEffect,
+            Model.Board.Board board, CardDrawer cardDrawer)
         {
             var allPlaces = board.BoardLines.SelectMany(l => l.BoardPlaces).ToList();
             var targetTile = allPlaces.FirstOrDefault(p => p.Index.Equals(place.Index));
@@ -180,7 +183,7 @@ namespace TM.Digital.Services
                 //inherent tile placement bonus
                 if (targetTile.PlacementBonus.Any())
                 {
-                    Logger.Log(playerId.Name, $"Evaluating tile placement bonuses...");
+                    await Logger.Log(playerId.Name, $"Evaluating tile placement bonuses...");
 
                     var bonusGroup = targetTile.PlacementBonus.GroupBy(b => b.BonusType);
                     foreach (var bonus in bonusGroup)
@@ -189,7 +192,7 @@ namespace TM.Digital.Services
                         if (resource != null)
                         {
                             resource.UnitCount += bonus.Count();
-                            Logger.Log(playerId.Name, $"Resource '{resource.ResourceType}' bonus of {bonus.Count()} units");
+                            await Logger.Log(playerId.Name, $"Resource '{resource.ResourceType}' bonus of {bonus.Count()} units");
                         }
                         else
                         {
@@ -197,8 +200,8 @@ namespace TM.Digital.Services
                             {
                                 for (int i = 0; i < bonus.Count(); i++)
                                 {
-                                    playerId.HandCards.Add(availablePatents.Dequeue());
-                                    Logger.Log(playerId.Name, $"Drawing 1 card from deck");
+                                    playerId.HandCards.Add(cardDrawer.DrawPatent());
+                                    await Logger.Log(playerId.Name, $"Drawing 1 card from deck");
                                 }
                             }
                         }
@@ -206,26 +209,26 @@ namespace TM.Digital.Services
                 }
 
                 //bonus for placement near ocean tiles
-                Logger.Log(playerId.Name, $"Evaluating ocean tile placement bonuses...");
+                await Logger.Log(playerId.Name, $"Evaluating ocean tile placement bonuses...");
                 var surroundings = GetPlaceSurroundingsIndexes(place, board);
                 var surroundingTiles = board.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => surroundings.Contains(p.Index)).ToList();
                 var playedOcenTiles = surroundingTiles
                     .Where(t => t.PlayedTile != null && t.PlayedTile.Type == TileType.Ocean).ToList();
-                Logger.Log(playerId.Name, $"Found {playedOcenTiles.Count} ocean tiles... {string.Join(',',playedOcenTiles.Select(t=>t.Index.ToString()))}");
+                await Logger.Log(playerId.Name, $"Found {playedOcenTiles.Count} ocean tiles... {string.Join(',',playedOcenTiles.Select(t=>t.Index.ToString()))}");
                 var playerResource = playerId.Resources.First(r => r.ResourceType == ResourceType.Money);
                 playerResource.UnitCount += playedOcenTiles.Count * 2;
-                Logger.Log(playerId.Name, $"Money units increased by {playedOcenTiles.Count * 2}");
+                await Logger.Log(playerId.Name, $"Money units increased by {playedOcenTiles.Count * 2}");
 
                 //terraformation bonuses
                 if (pendingTileEffect.Type == TileType.Ocean)
                 {
-                    Logger.Log(playerId.Name, $"Ocean placed, increasing global parameter and player's terraformation level");
+                    await Logger.Log(playerId.Name, $"Ocean placed, increasing global parameter and player's terraformation level");
                     board.Parameters.First(p => p.Type == BoardLevelType.Oceans).GlobalParameterLevel.Level += 1;
                     playerId.TerraformationLevel += 1;
                 }
                 if (pendingTileEffect.Type == TileType.Forest)
                 {
-                    Logger.Log(playerId.Name, $"Forest placed, increasing global parameter and player's terraformation level");
+                    await Logger.Log(playerId.Name, $"Forest placed, increasing global parameter and player's terraformation level");
                     board.Parameters.First(p => p.Type == BoardLevelType.Oxygen).GlobalParameterLevel.Level += 1;
                     playerId.TerraformationLevel += 1;
                 }

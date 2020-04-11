@@ -1,19 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
+using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
+using TM.Digital.Services.Common;
 
 namespace TM.Digital.Services
 {
     public static class CardPlayHandler
     {
-        public static Choices Play(Patent card, Player player, Board board)
+        public static async Task<Choices> Play(Patent card, Player player, Board board)
         {
-            Logger.Log(player.Name, $"Player '{player.Name}' playing card '{card.Name}'");
+            await Logger.Log(player.Name, $"Player '{player.Name}' playing card '{card.Name}'");
 
+            player.Resources.First(r => r.ResourceType == ResourceType.Money).UnitCount -= card.ModifiedCost;
             Choices ch = new Choices();
             player.HandCards.Remove(card);
             player.PlayedCards.Add(card);
@@ -21,12 +25,12 @@ namespace TM.Digital.Services
 
             foreach (var cardResourceEffect in card.ResourcesEffects)
             {
-                EffectHandler.HandleResourceEffect(player, cardResourceEffect);
+                await EffectHandler.HandleResourceEffect(player, cardResourceEffect);
             }
 
             foreach (var boardLevelEffect in card.BoardEffects)
             {
-                BoardEffectHandler.HandleBoardEffect(boardLevelEffect, board, player);
+                await BoardEffectHandler.HandleBoardEffect(boardLevelEffect, board, player);
             }
 
             if (card.TileEffects.Any())

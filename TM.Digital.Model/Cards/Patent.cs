@@ -7,8 +7,14 @@ namespace TM.Digital.Model.Cards
         public int BaseCost { get; set; }
         public int ModifiedCost { get; set; }
 
-        public List<TagsPrerequisite> TagsPrerequisites { get; set; } = new List<TagsPrerequisite>();
-        public List<GlobalPrerequisite> GlobalPrerequisites { get; set; } = new List<GlobalPrerequisite>();
+
+        public Prerequisites Prerequisites { get; set; }
         public bool CanBePlayed { get; set; }
+    }
+
+    public class Prerequisites
+    {
+        public List<TagsPrerequisite> TagsPrerequisites { get; set; } 
+        public List<GlobalPrerequisite> GlobalPrerequisites { get; set; } 
     }
 }

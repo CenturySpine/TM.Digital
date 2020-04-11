@@ -1,24 +1,153 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:templateSelectors="clr-namespace:TM.Digital.Client.Resources.TemplateSelectors">
+                    xmlns:templateSelectors="clr-namespace:TM.Digital.Client.Resources.TemplateSelectors"
+                    xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model">
 
-    <Path x:Key="leaf"  Data="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
-    <Path x:Key="starbox"  Data="M19,3A2,2 0 0,1 21,5V19C21,20.11 20.1,21 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H19M15.58,17L14.63,12.92L17.79,10.19L13.62,9.83L12,6L10.38,9.84L6.21,10.2L9.37,12.93L8.42,17L12,14.84L15.58,17Z" />
-    <Path x:Key="hammer"  Data="M13.78 15.3L19.78 21.3L21.89 19.14L15.89 13.14L13.78 15.3M17.5 10.1C17.11 10.1 16.69 10.05 16.36 9.91L4.97 21.25L2.86 19.14L10.27 11.74L8.5 9.96L7.78 10.66L6.33 9.25V12.11L5.63 12.81L2.11 9.25L2.81 8.55H5.62L4.22 7.14L7.78 3.58C8.95 2.41 10.83 2.41 12 3.58L9.89 5.74L11.3 7.14L10.59 7.85L12.38 9.63L14.2 7.75C14.06 7.42 14 7 14 6.63C14 4.66 15.56 3.11 17.5 3.11C18.09 3.11 18.61 3.25 19.08 3.53L16.41 6.2L17.91 7.7L20.58 5.03C20.86 5.5 21 6 21 6.63C21 8.55 19.45 10.1 17.5 10.1Z" />
-    <Path x:Key="card"  Data="M21.47,4.35L20.13,3.79V12.82L22.56,6.96C22.97,5.94 22.5,4.77 21.47,4.35M1.97,8.05L6.93,20C7.24,20.77 7.97,21.24 8.74,21.26C9,21.26 9.27,21.21 9.53,21.1L16.9,18.05C17.65,17.74 18.11,17 18.13,16.26C18.14,16 18.09,15.71 18,15.45L13,3.5C12.71,2.73 11.97,2.26 11.19,2.25C10.93,2.25 10.67,2.31 10.42,2.4L3.06,5.45C2.04,5.87 1.55,7.04 1.97,8.05M18.12,4.25A2,2 0 0,0 16.12,2.25H14.67L18.12,10.59" />
-    <Path x:Key="flash" Data="M11 15H6L13 1V9H18L11 23V15Z" />
-    <Path x:Key="currency_usd" Data="M7.07,11L7,12L7.07,13H17.35L16.5,15H7.67C8.8,17.36 11.21,19 14,19C16.23,19 18.22,17.96 19.5,16.33V19.12C18,20.3 16.07,21 14,21C10.08,21 6.75,18.5 5.5,15H2L3,13H5.05L5,12L5.05,11H2L3,9H5.5C6.75,5.5 10.08,3 14,3C16.5,3 18.8,4.04 20.43,5.71L19.57,7.75C18.29,6.08 16.27,5 14,5C11.21,5 8.8,6.64 7.67,9H19.04L18.19,11H7.07Z" />
-    <Path x:Key="radiator">
-        <Path.Data>
-            <PathGeometry Figures="M 10.775391 1.53125 L 8.7753906 6.3320312 L 10.175781 9.7304688 L 8.7753906 13.130859 L 10.476562 14.53125 L 12.476562 9.7304688 L 11.076172 6.3320312 L 12.476562 2.9316406 L 10.775391 1.53125 z M 14.976562 1.53125 L 12.976562 6.3320312 L 14.375 9.7304688 L 12.976562 13.130859 L 14.675781 14.53125 L 16.675781 9.7304688 L 15.275391 6.3320312 L 16.675781 2.9316406 L 14.976562 1.53125 z M 19.076172 1.53125 L 17.076172 6.3320312 L 18.476562 9.7304688 L 17.076172 13.130859 L 18.775391 14.53125 L 20.775391 9.7304688 L 19.375 6.3320312 L 20.775391 2.9316406 L 19.076172 1.53125 z " FillRule="NonZero" />
-        </Path.Data>
-    </Path>
-    <Path x:Key="thermometer_lines" Data="M17 3H21V5H17V3M17 7H21V9H17V7M17 11H21V13H17.75L17 12.1V11M21 15V17H19C19 16.31 18.9 15.63 18.71 15H21M7 3V5H3V3H7M7 7V9H3V7H7M7 11V12.1L6.25 13H3V11H7M3 15H5.29C5.1 15.63 5 16.31 5 17H3V15M15 13V5C15 3.34 13.66 2 12 2S9 3.34 9 5V13C6.79 14.66 6.34 17.79 8 20S12.79 22.66 15 21 17.66 16.21 16 14C15.72 13.62 15.38 13.28 15 13M12 4C12.55 4 13 4.45 13 5V8H11V5C11 4.45 11.45 4 12 4Z" />
-    <Path x:Key="molecule_co2" Data="M5,7A2,2 0 0,0 3,9V15A2,2 0 0,0 5,17H8V15H5V9H8V7H5M11,7A2,2 0 0,0 9,9V15A2,2 0 0,0 11,17H13A2,2 0 0,0 15,15V9A2,2 0 0,0 13,7H11M11,9H13V15H11V9M16,10.5V12H19V13.5H17.5A1.5,1.5 0 0,0 16,15V18H20.5V16.5H17.5V15H19A1.5,1.5 0 0,0 20.5,13.5V12A1.5,1.5 0 0,0 19,10.5H16Z" />
-    <Path x:Key="earth" Data="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
-    <Path x:Key="city" Data="M19,15H17V13H19M19,19H17V17H19M13,7H11V5H13M13,11H11V9H13M13,15H11V13H13M13,19H11V17H13M7,11H5V9H7M7,15H5V13H7M7,19H5V17H7M15,11V5L12,2L9,5V7H3V21H21V11H15Z" />
-    <Path x:Key="pine_tree" Data="M10,21V18H3L8,13H5L10,8H7L12,3L17,8H14L19,13H16L21,18H14V21H10Z" />
-    <Path x:Key="water" Data="M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20Z" />
+    <Style TargetType="{x:Type Path}" x:Key="tileShape">
+        <Setter Property="Height" Value="80" />
+        <Setter Property="Width" Value="70" />
+        <Setter Property="Data" Value="M35,0 70,20 70,60 35,80 0,60 0,20 35,0" />
+        <Setter Property="Margin" Value="3,0" />
+        <Setter Property="StrokeThickness" Value="2" />
+    </Style>
+
+    <!--<Style TargetType="{x:Type Path}" x:Key="boardPlacedTileShape" BasedOn="{StaticResource tileShape}">
+        <Setter Property="Stroke" Value="Orange"></Setter>
+        <Setter Property="Fill" Value="BurlyWood"></Setter>
+        <Style.Triggers>
+
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding PlayedTile}" Value="{x:Null}" />
+                    <Condition Binding="{Binding Reserved.ReservedFor}" Value="{x:Static board:ReservedFor.Ocean}" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Stroke" Value="Blue"></Setter>
+            </MultiDataTrigger>
+
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding PlayedTile}" Value="{x:Null}" />
+                    <Condition Binding="{Binding CanBeChosed}" Value="false" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Opacity" Value="0.2"></Setter>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>-->
+
+    <!-- tile effects -->
+    <DataTemplate x:Key="tile_ocean">
+
+        <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="3">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
+            </Border.Effect>
+            <Grid>
+                <Path Style="{StaticResource tileShape}" Fill="Blue"
+                      Stretch="Uniform"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      ></Path>
+                <Path Data="M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20Z"
+                      Fill="White"
+                      
+                      Stretch="Uniform"
+                      Margin="30"
+                      ></Path>
+            </Grid>
+        </Border>
+
+    </DataTemplate>
+
+    <DataTemplate x:Key="tile_forest">
+
+        <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="3">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
+            </Border.Effect>
+            <Grid>
+                <Path Style="{StaticResource tileShape}" Fill="Green"
+                      Stretch="Uniform"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      ></Path>
+                <Path Data="M10,21V18H3L8,13H5L10,8H7L12,3L17,8H14L19,13H16L21,18H14V21H10Z" Fill="Black"
+                      Stretch="Uniform"
+                      Margin="30"
+
+                      ></Path>
+            </Grid>
+        </Border>
+
+    </DataTemplate>
+
+    <DataTemplate x:Key="tile_city">
+
+        <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="3">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
+            </Border.Effect>
+            <Grid>
+                <Path Style="{StaticResource tileShape}" Fill="DarkGray"
+                      Stretch="Uniform"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"></Path>
+                <Path Data="M19,15H17V13H19M19,19H17V17H19M13,7H11V5H13M13,11H11V9H13M13,15H11V13H13M13,19H11V17H13M7,11H5V9H7M7,15H5V13H7M7,19H5V17H7M15,11V5L12,2L9,5V7H3V21H21V11H15Z"
+                      Fill="Black"
+                      Stretch="Uniform"
+                      Margin="30"></Path>
+            </Grid>
+        </Border>
+
+    </DataTemplate>
+
+    <templateSelectors:TileTypeTemplateSelector x:Key="tileEffectTemplateSelector" 
+                                                Ocean="{StaticResource tile_ocean}"
+                                                Forest="{StaticResource tile_forest}"
+                                                City="{StaticResource tile_city}"
+                                                />
+
+    <!-- board effect -->
+    <DataTemplate x:Key="blobal_temperature">
+        <Grid>
+            <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="3">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
+                </Border.Effect>
+                <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="3"
+                      Fill="Red" Data="M17 3H21V5H17V3M17 7H21V9H17V7M17 11H21V13H17.75L17 12.1V11M21 15V17H19C19 16.31 18.9 15.63 18.71 15H21M7 3V5H3V3H7M7 7V9H3V7H7M7 11V12.1L6.25 13H3V11H7M3 15H5.29C5.1 15.63 5 16.31 5 17H3V15M15 13V5C15 3.34 13.66 2 12 2S9 3.34 9 5V13C6.79 14.66 6.34 17.79 8 20S12.79 22.66 15 21 17.66 16.21 16 14C15.72 13.62 15.38 13.28 15 13M12 4C12.55 4 13 4.45 13 5V8H11V5C11 4.45 11.45 4 12 4Z"></Path>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="blobal_oxygen">
+        <Grid>
+            <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="3">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
+                </Border.Effect>
+                <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="3"
+                      Fill="Red" Data="M5,7A2,2 0 0,0 3,9V15A2,2 0 0,0 5,17H8V15H5V9H8V7H5M11,7A2,2 0 0,0 9,9V15A2,2 0 0,0 11,17H13A2,2 0 0,0 15,15V9A2,2 0 0,0 13,7H11M11,9H13V15H11V9M16,10.5V12H19V13.5H17.5A1.5,1.5 0 0,0 16,15V18H20.5V16.5H17.5V15H19A1.5,1.5 0 0,0 20.5,13.5V12A1.5,1.5 0 0,0 19,10.5H16Z"></Path>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="blobal_nt">
+        <Grid>
+            <Border Background="Orange" BorderBrush="Black" BorderThickness="1" CornerRadius="3">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
+                </Border.Effect>
+                <Path Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="3"
+                      Fill="Red" Data="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></Path>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <templateSelectors:GolbalPArameterTemplateSelector x:Key="globalParamTemplateSelector"
+                                                       Oxygen="{StaticResource blobal_oxygen}"
+                                                       Temprature="{StaticResource blobal_temperature}"
+                                                       TerraformationLevel="{StaticResource blobal_nt}"
+                                                       ></templateSelectors:GolbalPArameterTemplateSelector>
 
     <!--Resources -->
     <DataTemplate x:Key="res_megacredits">

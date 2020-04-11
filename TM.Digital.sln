@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.UnitTests", "TM.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Transport.Hubs", "TM.Digital.Transport.Hubs\TM.Digital.Transport.Hubs.csproj", "{55B2702F-FAC1-433F-9112-BB12C6515045}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TM.Digital.Services.Common", "TM.Digital.Services.Common\TM.Digital.Services.Common.csproj", "{C4B14331-D1BF-4BC8-BC75-F4A229CF7415}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{55B2702F-FAC1-433F-9112-BB12C6515045}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55B2702F-FAC1-433F-9112-BB12C6515045}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55B2702F-FAC1-433F-9112-BB12C6515045}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4B14331-D1BF-4BC8-BC75-F4A229CF7415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4B14331-D1BF-4BC8-BC75-F4A229CF7415}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4B14331-D1BF-4BC8-BC75-F4A229CF7415}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B14331-D1BF-4BC8-BC75-F4A229CF7415}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

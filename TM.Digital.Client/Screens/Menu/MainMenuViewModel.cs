@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using TM.Digital.Client.Screens.Main;
 using TM.Digital.Client.Services;
@@ -20,6 +21,7 @@ namespace TM.Digital.Client.Screens.Menu
 
         public MainMenuViewModel(IApiProxy apiCaller)
         {
+            PlayerName = "Bruno"+DateTime.Now.Millisecond;
             _apiCaller = apiCaller;
             GameSessionInformation = new ObservableCollection<GameSessionInformation>();
 

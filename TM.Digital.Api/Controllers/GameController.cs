@@ -7,6 +7,7 @@ using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Services;
+using TM.Digital.Services.Common;
 using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Api.Controllers
@@ -19,14 +20,14 @@ namespace TM.Digital.Api.Controllers
 
         public GameController(IHubContext<ClientNotificationHub> hubContext)
         {
+            Logger.HubContext = hubContext;
             _hubContext = hubContext;
         }
 
         [Route("create/{playerName}/{numberofplayer:int}")]
-        public async Task<GameSessionInformation> Start(string playerName, int numberofplayer)
+        public async Task<GameSessionInformation> CreateGame(string playerName, int numberofplayer)
         {
-            await Task.CompletedTask;
-            return GamesService.Instance.CreateGame(playerName, numberofplayer);
+            return await GamesService.Instance.CreateGame(playerName, numberofplayer);
         }
 
         [Route("sessions")]
@@ -39,9 +40,9 @@ namespace TM.Digital.Api.Controllers
         [Route("join/{gameId}/{playername}")]
         public async Task<Player> JoinGame(Guid gameId, string playerName)
         {
-
             return await GamesService.Instance.JoinSession(gameId, playerName, _hubContext);
         }
+
         [Route("start/{gameId}")]
         public async Task<bool> Start(Guid gameId)
         {
@@ -51,8 +52,7 @@ namespace TM.Digital.Api.Controllers
         [Route("addplayer/setupplayer")]
         public async Task<Player> SetupPlayer(GameSetupSelection selection)
         {
-            await Task.CompletedTask;
-            return GamesService.Instance.SetupPlayer(selection);
+            return await GamesService.Instance.SetupPlayer(selection, _hubContext);
         }
 
         [Route("{gameId}/play/{playerId}")]
@@ -61,6 +61,18 @@ namespace TM.Digital.Api.Controllers
             await GamesService.Instance.Play(card, gameId, playerId, _hubContext);
 
             return Ok();
+        }
+
+        [Route("{gameId}/pass/{playerId}")]
+        public async Task<bool> Pass(Guid gameId, Guid playerId)
+        {
+            return await GamesService.Instance.Pass(gameId, playerId, _hubContext);
+        }
+
+        [Route("{gameId}/skip/{playerId}")]
+        public async Task<bool> Skip(Guid gameId, Guid playerId)
+        {
+            return await GamesService.Instance.Skip(gameId, playerId, _hubContext);
         }
 
         [Route("{gameId}/placetile/{playerId}")]

@@ -17,6 +17,7 @@ namespace TM.Digital.Cards
             return new Patent
             {
                 Name = "Advanced alliages",
+                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 BaseCost = 9,
                 Tags = new List<Tags> { Tags.Science },
                 TitaniumValueModifier = 1,
@@ -46,11 +47,16 @@ namespace TM.Digital.Cards
                         Number = 1,Type = TileType.City,Constrains = TilePlacementCosntrains.StandardCity
                     }
                 },
-                GlobalPrerequisites = new List<GlobalPrerequisite>
-                { new GlobalPrerequisite
-                    {
-                    IsMax = true,Parameter = BoardLevelType.Oxygen,PrerequisiteKind = PrerequisiteKind.Board,Value = 9
-                },
+                Prerequisites = new Prerequisites()
+                {
+                    TagsPrerequisites = new List<TagsPrerequisite>(),
+                    GlobalPrerequisites = new List<GlobalPrerequisite>
+                    { new GlobalPrerequisite
+                        {
+                            IsMax = true,Parameter = BoardLevelType.Oxygen,PrerequisiteKind = PrerequisiteKind.Board,Value = 9
+                        },
+
+                }
                 },
 
             };
@@ -70,8 +76,11 @@ namespace TM.Digital.Cards
                         Amount = 3,ResourceKind =ResourceKind.Production,ResourceType = ResourceType.Energy
                     },
                 },
-
-                TagsPrerequisites = new List<TagsPrerequisite> { new TagsPrerequisite { PrerequisiteKind = PrerequisiteKind.Self, Value = 2, Tag = Tags.Energy } }
+                Prerequisites = new Prerequisites()
+                {
+                    GlobalPrerequisites = new List<GlobalPrerequisite>(),
+                    TagsPrerequisites = new List<TagsPrerequisite> { new TagsPrerequisite { PrerequisiteKind = PrerequisiteKind.Self, Value = 2, Tag = Tags.Energy } }
+                }
             };
         }
 
@@ -82,6 +91,7 @@ namespace TM.Digital.Cards
                 Name = "Giant asteroid",
                 BaseCost = 27,
                 Tags = new List<Tags> { Tags.Space, Tags.Event },
+                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -107,6 +117,7 @@ namespace TM.Digital.Cards
                 Name = "Idle gaz liberation",
                 BaseCost = 14,
                 Tags = new List<Tags> { Tags.Event },
+                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 BoardEffects = new List<BoardLevelEffect> { new BoardLevelEffect { Level = 2, BoardLevelType = BoardLevelType.Terraformation } }
             };
         }
@@ -118,6 +129,7 @@ namespace TM.Digital.Cards
                 Name = "Solar wind energy",
                 BaseCost = 11,
                 Tags = new List<Tags> { Tags.Science, Tags.Space, Tags.Energy },
+                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -136,6 +148,7 @@ namespace TM.Digital.Cards
                 Name = "3D home printing",
                 BaseCost = 10,
                 Tags = new List<Tags> { Tags.Building },
+                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -155,6 +168,7 @@ namespace TM.Digital.Cards
                 Name = "Protected valley",
                 BaseCost = 23,
                 Tags = new List<Tags> { Tags.Building, Tags.Plant },
+                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -176,6 +190,7 @@ namespace TM.Digital.Cards
                 Name = "Comet",
                 BaseCost = 21,
                 Tags = new List<Tags> { Tags.Space, Tags.Event },
+                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -196,6 +211,7 @@ namespace TM.Digital.Cards
                 Name = "Giant ice asteroid",
                 BaseCost = 36,
                 Tags = new List<Tags> { Tags.Space, Tags.Event },
+                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -241,11 +257,15 @@ namespace TM.Digital.Cards
                 },
 
                 CardVictoryPoints = new StandardVictoryPoint { Points = 2 },
-                GlobalPrerequisites = new List<GlobalPrerequisite>
+                Prerequisites = new Prerequisites()
+                {
+                    TagsPrerequisites = new List<TagsPrerequisite>(),
+                    GlobalPrerequisites = new List<GlobalPrerequisite>
                 { new GlobalPrerequisite
                 {
                     Parameter = BoardLevelType.Temperature,PrerequisiteKind = PrerequisiteKind.Board,Value = -6
                 } }
+                }
             };
         }
     }

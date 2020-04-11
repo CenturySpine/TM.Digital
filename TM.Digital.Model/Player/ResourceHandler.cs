@@ -9,5 +9,7 @@ namespace TM.Digital.Model.Player
         public int UnitCount { get; set; }
         public int Production { get; set; }
 
+        public int MoneyValueModifier { get; set; }
+
     }
 }
