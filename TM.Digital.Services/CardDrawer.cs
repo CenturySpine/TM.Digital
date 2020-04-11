@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using TM.Digital.Cards;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
@@ -64,6 +66,34 @@ namespace TM.Digital.Services
             AvailablePatents = new Queue<Patent>(DiscardPile);
             DiscardPile.Clear();
 
+        }
+
+        public Corporation PickCorporation(Guid parse)
+        {
+            return _allCorporations.FirstOrDefault(c => c.Guid == parse);
+        }
+
+        public List<Patent> DispatchPatents(Dictionary<string, bool> selectionBoughtCards)
+        {
+            List<Patent> pat = new List<Patent>();
+
+            foreach (var selectionBoughtCard in selectionBoughtCards)
+            {
+                var patetn = _allPatents.FirstOrDefault(r => r.Guid == Guid.Parse(selectionBoughtCard.Key));
+                if (selectionBoughtCard.Value)
+                {
+
+                    if (patetn != null)
+                    {
+                        pat.Add(patetn);
+                    }
+                }
+                else
+                {
+                    DiscardPile.Add(patetn);
+                }
+            }
+            return pat;
         }
     }
 }

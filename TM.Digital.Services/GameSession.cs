@@ -8,49 +8,17 @@ using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
-using TM.Digital.Model.Effects;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
-using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
 using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Services
 {
-
-    public static class ModelFactory
-    {
-
-        public static Player NewPlayer(string name, bool test)
-        {
-            return new Player
-            {
-                IsReady = false,
-                TotalActions = 2,
-                RemainingActions = 0,
-                PlayerId = Guid.NewGuid(),
-                Name = name,
-                Resources = new List<ResourceHandler>
-                {
-                    new ResourceHandler {ResourceType = ResourceType.Money,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Steel,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Titanium,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Plant,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Energy,UnitCount = test?20:0,Production = test?5:0},
-                    new ResourceHandler {ResourceType = ResourceType.Heat,UnitCount = test?20:0,Production = test?5:0}
-                },
-                HandCards = new List<Patent>(),
-                PlayedCards = new List<Patent>(),
-                Corporation = new Corporation(),
-                TerraformationLevel = 20,
-
-            };
-        }
-    }
-
     internal class GameSession
     {
+        internal static readonly Guid _neutralPlayerId = Guid.Parse("{C47F5A45-601D-4ECA-B555-7D0F2AF83062}");
         private class PlayersTracking
         {
             private HashSet<Guid> _initialOrder = new HashSet<Guid>();
@@ -113,10 +81,11 @@ namespace TM.Digital.Services
             }
         }
 
-        private static TileEffect PendingTileEffect;
-        private static Queue<Action<Player, Board>> RemainingActions = new Queue<Action<Player, Board>>();
+        //private static TileEffect PendingTileEffect;
+
         private CardDrawer _cardDrawer;
         private Random _playerRandomization;
+        private ActionPlanner _actionPlanner;
 
         private Board Board { get; set; }
         public Guid Id { get; set; }
@@ -128,11 +97,19 @@ namespace TM.Digital.Services
         internal async Task Initialize()
         {
             await Logger.Log("na", "Initializing...");
+            _actionPlanner = new ActionPlanner();
+            _actionPlanner.ActionFinished += _actionPlanner_ActionFinished;
             _cardDrawer = new CardDrawer();
             _playerRandomization = new Random((int)(DateTime.Now.Millisecond / 3.5));
 
             Board = BoardGenerator.Instance.Original();
             PlayerTack = new PlayersTracking();
+        }
+
+        private async void _actionPlanner_ActionFinished(Player player)
+        {
+            await Logger.Log(player.Name, $"All actions choices done. Sending game update to all players");
+            await UpdateGame(Hubconcentrator.Hub);
         }
 
         private PlayersTracking PlayerTack { get; set; }
@@ -165,20 +142,31 @@ namespace TM.Digital.Services
 
         public async Task PlaceTile(BoardPlace place, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
-            if (PendingTileEffect != null)
+            if (Players.TryGetValue(playerId, out var player))
             {
-                if (Players.TryGetValue(playerId, out var player))
-                {
-                    await Logger.Log(player.Name, $"Placing tile '{PendingTileEffect.Type}' on place '{place.Index}'");
-                    await BoardHandler.PlaceTileOnBoard(place, player, PendingTileEffect, Board, _cardDrawer);
-                    PendingTileEffect = null;
-                    await VerifyRemainingAction(player, hubContext);
-                }
-                //TODO manage
+                await Logger.Log(player.Name, $"Placing tile '{BoardHandler.PendingTileEffect.Type}' on place '{place.Index}'");
+                await BoardHandler.PlaceTileOnBoard(place, player, BoardHandler.PendingTileEffect, Board, _cardDrawer);
+                BoardHandler.PendingTileEffect = null;
+                await _actionPlanner.Continue(player, Board);
             }
-            else
+        }
+
+        public async Task SelectActionTarget(ResourceEffectPlayerChooser place, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (Players.TryGetValue(playerId, out var player))
             {
-                //TODO manage
+
+                if (place.TargetPlayerId != Guid.Empty && place.TargetPlayerId != _neutralPlayerId)
+                {
+                    if (Players.TryGetValue(playerId, out var targetPlayer))
+                    {
+                        await Logger.Log(player.Name, $"Selected action target : {targetPlayer.Name}");
+
+                        await EffectHandler.HandleResourceEffect(targetPlayer, place.ResourceHandler);
+                    }
+                }
+
+                await _actionPlanner.Continue(player, Board);
             }
         }
 
@@ -186,85 +174,62 @@ namespace TM.Digital.Services
         {
             if (Players.TryGetValue(playerId, out var player))
             {
-                var choices = await CardPlayHandler.Play(card, player, Board);
-                if (choices != null)
+                var choices = await CardPlayHandler.Play(card, player, Board, Players.Select(r => r.Value).ToList());
+
+                foreach (var choice in choices)
                 {
-                    if (choices.TileEffects != null && choices.TileEffects.Any())
+                    _actionPlanner.Plan(choice);
+                }
+                _actionPlanner.Plan(async (p, b) =>
+                {
+                    await EffectHandler.CheckCardsReductions(p);
+                    await _actionPlanner.Continue(p, b);
+                });
+                _actionPlanner.Plan(async (p, b) =>
+                {
+                    await PrerequisiteHandler.CanPlayCards(b, p);
+                    await _actionPlanner.Continue(p, b);
+                });
+                _actionPlanner.Plan(async (p, b) =>
+                {
+                    p.RemainingActions--;
+                    if (p.RemainingActions == 0)
                     {
-                        await Logger.Log(player.Name, $"Playing card '{card.Name}' requires player '{player.Name}' to make {choices.TileEffects.Count} tile choices");
-                        foreach (var choicesTileEffect in choices.TileEffects)
-                        {
-                            RemainingActions.Enqueue(async (p, b) =>
-                                {
-                                    PendingTileEffect = choicesTileEffect;
-                                    await Logger.Log(player.Name, $"Effect {PendingTileEffect.Type}... Getting board available spaces...");
-
-                                    var choiceBoard = BoardHandler.GetPlacesChoices(PendingTileEffect, b);
-                                    await Logger.Log(player.Name, $"Found {choiceBoard.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => p.CanBeChosed).Count()} available places. Sending choices to player");
-
-                                    await hubContext.Clients.All.SendAsync(ServerPushMethods.PlaceTileRequest, $"{p.PlayerId}", JsonSerializer.Serialize(choiceBoard));
-                                });
-                        }
+                        await Logger.Log(p.Name, $"No remaining action, auto skip");
+                        //await UpdateGame(hubContext);
+                        await Skip(p.PlayerId, hubContext);
                     }
-                    RemainingActions.Enqueue(async (p, b) =>
+                    else
                     {
-                        await EffectHandler.CheckCardsReductions(p);
-                        await VerifyRemainingAction(p, hubContext);
-                    });
-                    RemainingActions.Enqueue(async (p, b) =>
-                    {
-                        await PrerequisiteHandler.CanPlayCards(b, p);
-                        await VerifyRemainingAction(p, hubContext);
-                    });
-                    RemainingActions.Enqueue(async (p, b) =>
-                    {
-                        p.RemainingActions--;
-                        if (p.RemainingActions == 0)
-                        {
-                            await Logger.Log(p.Name, $"No remaining action, auto skip");
-                            //await UpdateGame(hubContext);
-                            await Skip(p.PlayerId, hubContext);
-                        }
-                        else
-                        {
-                            await VerifyRemainingAction(p, hubContext);
-                        }
-                    });
-                }
+                        await _actionPlanner.Continue(p, b);
+                    }
+                });
+                //}
 
-                if (RemainingActions.Any())
-                {
-                    await Task.Run(() =>
-                    {
-                        var action = RemainingActions.Dequeue();
-                        action.Invoke(player, Board);
-                    });
-                }
+                await _actionPlanner.FollowPlan(player, Board);
             }
-
-
         }
 
         public async Task<Player> SetupPlayer(GameSetupSelection selection, IHubContext<ClientNotificationHub> hubContext)
         {
             if (Players.TryGetValue(selection.PlayerId, out var player))
             {
-                if (selection.Corporation != null)
+                Corporation selectedCorpo = null;
+                if (selection.Corporation != null && selection.Corporation.Any())
                 {
-                    await Logger.Log(player.Name, $"Receiving player setup. chosen corporation = '{selection.Corporation.Name}'");
-                    player.Corporation = selection.Corporation;
-                    foreach (var corporationEffect in selection.Corporation.ResourcesEffects)
+                    var selected = selection.Corporation.FirstOrDefault(t => t.Value);
+                    selectedCorpo = _cardDrawer.PickCorporation(Guid.Parse(selected.Key));
+                    await Logger.Log(player.Name, $"Receiving player setup. chosen corporation = '{selectedCorpo.Name}'");
+                    player.Corporation = selectedCorpo;
+                    foreach (var corporationEffect in selectedCorpo.ResourcesEffects)
                     {
                         await EffectHandler.HandleResourceEffect(player, corporationEffect);
                     }
                 }
 
-
                 await Logger.Log(player.Name, $"Patent bought : {selection.BoughtCards.Count}");
 
-                await EffectHandler.HandleInitialPatentBuy(player, selection.BoughtCards, selection.Corporation);
-
-                
+                await EffectHandler.HandleInitialPatentBuy(player, _cardDrawer.DispatchPatents(selection.BoughtCards), selectedCorpo);
 
                 await EffectHandler.CheckCardsReductions(player);
                 await PrerequisiteHandler.CanPlayCards(Board, player);
@@ -419,20 +384,20 @@ namespace TM.Digital.Services
             return null;
         }
 
-        private async Task VerifyRemainingAction(Player player, IHubContext<ClientNotificationHub> hubContext)
-        {
-            if (RemainingActions.Any())
-            {
-                var action = RemainingActions.Dequeue();
-                action.Invoke(player, Board);
-            }
-            else
-            {
-                await Logger.Log(player.Name, $"All actions choices done. Sending game update to all players");
+        //private async Task VerifyRemainingAction(Player player, IHubContext<ClientNotificationHub> hubContext)
+        //{
+        //    if (RemainingActions.Any())
+        //    {
+        //        var action = RemainingActions.Dequeue();
+        //        action.Invoke(player, Board);
+        //    }
+        //    else
+        //    {
+        //        await Logger.Log(player.Name, $"All actions choices done. Sending game update to all players");
 
-                await UpdateGame(hubContext);
-            }
-        }
+        //        await UpdateGame(hubContext);
+        //    }
+        //}
 
         private async Task UpdateGame(IHubContext<ClientNotificationHub> hubContext)
         {

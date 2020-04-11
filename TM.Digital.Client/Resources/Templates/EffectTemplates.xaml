@@ -3,7 +3,8 @@
                     xmlns:local="clr-namespace:TM.Digital.Client"
                     xmlns:effects="clr-namespace:TM.Digital.Model.Effects;assembly=TM.Digital.Model"
                     xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model"
-                    xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model">
+                    xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model"
+                    xmlns:actionChoice="clr-namespace:TM.Digital.Client.Screens.ActionChoice">
 
     <DataTemplate DataType="{x:Type effects:BoardLevelEffect}">
         <Grid Margin="1">
@@ -49,6 +50,56 @@
                 </Border.Style>
                 <ContentControl Width="20" Height="20" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Margin="1" />
             </Border>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type actionChoice:ActionChoiceViewModel}">
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Select target" VerticalAlignment="Center" Margin="5" 
+                       HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" />
+
+            <ListBox Grid.Row="1" ItemsSource="{Binding Chooser.ChoicesList}"
+                     HorizontalAlignment="Center"
+                     SelectedItem="{Binding SelectedChoice}"
+                     SelectionMode="Single"
+                     Margin="20"                     >
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <UniformGrid Columns="2">
+                                
+                                <TextBlock Text="{Binding TargetPlayerName}"></TextBlock>
+                            </UniformGrid>
+                            <UniformGrid Grid.Column="1" Columns="2">
+                                <TextBlock Text="Card : "></TextBlock>
+                                <TextBlock Text="{Binding CardName}"></TextBlock>
+                            </UniformGrid>
+                            <UniformGrid Grid.Column="2">
+                                <ContentControl Content="{Binding ResourceHandler}"></ContentControl>
+
+                            </UniformGrid>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button Grid.Row="2" Margin="20" Padding="10" Content="Validate" Command="{Binding ValidateResourceEffectChoiceCommand}"></Button>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

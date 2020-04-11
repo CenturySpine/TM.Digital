@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using TM.Digital.Client.Screens.ActionChoice;
 using TM.Digital.Client.Screens.HandSetup;
 using TM.Digital.Client.Screens.Menu;
 using TM.Digital.Client.Screens.Wait;
@@ -23,6 +24,7 @@ namespace TM.Digital.Client.Screens.Main
     public class MainWindowViewModel : NotifierBase
     {
         public WaitingGameScreenViewModel WaitVm { get; }
+        
         private Board _board;
         private PlayerSelector _currentPlayer;
 
@@ -34,17 +36,22 @@ namespace TM.Digital.Client.Screens.Main
         private GameSetupViewModel _gameSetupVm;
         private ObservableCollection<string> _logs;
         private RelayCommand _selectBoardPlace;
+        private ActionChoiceViewModel _actionChoiceViewModel;
 
-        public MainWindowViewModel(MainMenuViewModel menuVm, WaitingGameScreenViewModel waitVm)
+        public MainWindowViewModel(MainMenuViewModel menuVm, WaitingGameScreenViewModel waitVm, ActionChoiceViewModel actionChoice)
         {
             MenuVm = menuVm;
 
             WaitVm = waitVm;
+            ActionChoiceViewModel = actionChoice;
 
             MenuVm.IsVisible = true;
             MenuVm.GameStarted += MenuVm_GameCreated;
             MenuVm.GameJoined += MenuVm_GameJoined;
+            ActionChoiceViewModel.ChoiceSelected += ActionChoiceViewModel_ChoiceSelected;
         }
+
+
 
         public Board Board
         {
@@ -79,7 +86,7 @@ namespace TM.Digital.Client.Screens.Main
         public RelayCommand SelectBoardPlace
         {
             get => _selectBoardPlace;
-            set { _selectBoardPlace = value;OnPropertyChanged(nameof(SelectBoardPlace)); }
+            set { _selectBoardPlace = value; OnPropertyChanged(nameof(SelectBoardPlace)); }
         }
 
         public RelayCommand SelectCardCommand { get; set; }
@@ -140,7 +147,13 @@ namespace TM.Digital.Client.Screens.Main
                     Setup(message);
                 }
             });
-
+            connection.On<string, string>(ServerPushMethods.ResourceEffectForOtherPlayer, (user, message) =>
+            {
+                if (Guid.Parse(user) == WaitVm.PlayerId)
+                {
+                    DisplayResourceEffectChoice(message);
+                }
+            });
 
             connection.On<string, string>(ServerPushMethods.LogReceived, (user, message) => { AddLog(message); });
             connection.On<string, string>(ServerPushMethods.Playing, async (user, message) =>
@@ -169,6 +182,30 @@ namespace TM.Digital.Client.Screens.Main
             });
         }
 
+        private void DisplayResourceEffectChoice(string message)
+        {
+            ResourceEffectPlayerChooserList chooser = JsonConvert.DeserializeObject<ResourceEffectPlayerChooserList>(message);
+
+            ActionChoiceViewModel.Setup(chooser);
+            ActionChoiceViewModel.IsVisible = true;
+        }
+        private async void ActionChoiceViewModel_ChoiceSelected(ResourceEffectPlayerChooser choice)
+        {
+            
+            ActionChoiceViewModel.SelectedChoice = null;
+            ActionChoiceViewModel.IsVisible = false;
+            
+
+            await TmDigitalClientRequestHandler.Instance.Post<ResourceEffectPlayerChooser>($"game/{GameId}/selectactiontarget/{CurrentPlayer.Player.PlayerId}", choice);
+
+        }
+
+        public ActionChoiceViewModel ActionChoiceViewModel
+        {
+            get => _actionChoiceViewModel;
+            set { _actionChoiceViewModel = value; OnPropertyChanged(nameof(ActionChoiceViewModel)); }
+        }
+
         private void AddLog(string message)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => { Logs.Insert(0, message); }));
@@ -192,8 +229,8 @@ namespace TM.Digital.Client.Screens.Main
 
                 var gSetup = new GameSetupSelection
                 {
-                    Corporation = GameSetupVm.CorporationChoices.FirstOrDefault(c => c.IsSelected)?.Corporation,
-                    BoughtCards = GameSetupVm.PatentChoices.Where(p => p.IsSelected).Select(p => p.Patent).ToList(),
+                    Corporation = GameSetupVm.CorporationChoices.ToDictionary(k => k.Corporation.Guid.ToString(), v => v.IsSelected),
+                    BoughtCards = GameSetupVm.PatentChoices.ToDictionary(k => k.Patent.Guid.ToString(), v => v.IsSelected),
                     PlayerId = GameSetupVm.PlayerId,
                     GameId = vm.GameId,
                 };

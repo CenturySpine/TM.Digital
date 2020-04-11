@@ -116,5 +116,18 @@
                 </Style>
             </ContentControl.Style>
         </ContentControl>
+
+        <ContentControl Content="{Binding ActionChoiceViewModel}" Grid.Row="0" Grid.RowSpan="3">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActionChoiceViewModel.IsVisible}" Value="true">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
     </Grid>
 </Window>

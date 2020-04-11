@@ -236,5 +236,7 @@ namespace TM.Digital.Services
                 allPlaces.ForEach(p => p.CanBeChosed = false);
             }
         }
+
+        public static TileEffect PendingTileEffect { get; set; }
     }
 }

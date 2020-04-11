@@ -10,12 +10,12 @@ using TM.Digital.Services.Common;
 
 namespace TM.Digital.Services
 {
+    
     public static class EffectHandler
     {
         public static async Task HandleResourceEffect(Model.Player.Player player, ResourceEffect effect)
         {
-            if (effect.EffectDestination == EffectDestination.Self)
-            {
+ 
                 var resource = player.Resources.FirstOrDefault(r => r.ResourceType == effect.ResourceType);
 
                 if (resource != null)
@@ -45,11 +45,7 @@ namespace TM.Digital.Services
                         await Logger.Log(player.Name, $"Resource {resource.ResourceType} Unit modified for {effect.Amount}, new value {resource.UnitCount}");
                     }
                 }
-            }
-            else
-            {
-                //TODO
-            }
+ 
         }
 
         public static async Task HandleInitialPatentBuy(Model.Player.Player player, List<Patent> selectionBoughtCards,

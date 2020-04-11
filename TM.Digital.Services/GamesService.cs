@@ -147,5 +147,20 @@ namespace TM.Digital.Services
 
             return false;
         }
+
+        public async Task SelectActionTarget(
+            ResourceEffectPlayerChooser place, 
+            Guid gameId, 
+            Guid playerId, 
+            IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+                await session.SelectActionTarget(place, playerId, hubContext);
+                return;
+            }
+
+            throw Errors.ErrorGameIdNotFound(gameId);
+        }
     }
 }

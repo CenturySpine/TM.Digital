@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 
 namespace TM.Digital.Model.Player
@@ -26,5 +27,19 @@ namespace TM.Digital.Model.Player
 
     }
 
+    public class ResourceEffectPlayerChooserList
+    {
+        public List<ResourceEffectPlayerChooser> ChoicesList { get; set; }
+    }
+    public class ResourceEffectPlayerChooser
+    {
+        public Guid TargetPlayerId { get; set; }
+        public string TargetPlayerName { get; set; }
 
+        public ResourceEffect ResourceHandler { get; set; }
+        public int EffectValue { get; set; }
+
+        public string CardName { get; set; }
+        public Guid CardId { get; set; }
+    }
 }

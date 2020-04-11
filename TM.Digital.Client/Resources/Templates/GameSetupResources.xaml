@@ -4,23 +4,27 @@
                     xmlns:handSetup="clr-namespace:TM.Digital.Client.Screens.HandSetup">
     <DataTemplate DataType="{x:Type handSetup:GameSetupViewModel}">
 
-        <Grid>
+
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20">
+            <Grid>
             <Grid.Background>
                 <SolidColorBrush Color="White" Opacity="0.8" />
             </Grid.Background>
             <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
-            <ItemsControl ItemsSource="{Binding CorporationChoices}" Visibility="{Binding IsInitialSetup, Converter={StaticResource boolToVisConverter}}" HorizontalAlignment="Center">
+            <ItemsControl Margin="10" ItemsSource="{Binding CorporationChoices}" 
+                          Visibility="{Binding IsInitialSetup, Converter={StaticResource boolToVisConverter}}" 
+                          HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"></StackPanel>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
-            <ItemsControl Grid.Row="1" ItemsSource="{Binding PatentChoices}" HorizontalAlignment="Center">
+                <ItemsControl Margin="10" Grid.Row="1" ItemsSource="{Binding PatentChoices}" HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"></StackPanel>
@@ -28,6 +32,7 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
             <Button Grid.Row="2" Content="Validate" Command="{Binding CloseCommand}" HorizontalAlignment="Center" Padding="20" FontSize="20" Margin="20"></Button>
-        </Grid>
+            </Grid>
+        </Border>
     </DataTemplate>
 </ResourceDictionary>
