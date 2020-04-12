@@ -93,49 +93,7 @@
             <Viewbox Height="30" Width="30">
                 <Grid>
                     <ContentControl Content="{Binding Type}" ContentTemplateSelector="{StaticResource tileEffectTemplateSelector}" />
-                    <!--<Path x:Name="placeOutline" Width="70" Height="80"
-                          Data="M35,0 70,20 70,60 35,80 0,60 0,20 35,0"
 
-                          Margin="3,0"
-                          StrokeThickness="2">
-                        <Path.Style>
-                            <Style TargetType="{x:Type Path}">
-                                <Setter Property="Fill" Value="BurlyWood"></Setter>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.City}">
-                                        <Setter Property="Data" Value="{Binding Source={StaticResource city}}" />
-                                        <Setter Property="Fill" Value="DarkGray"></Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Forest}">
-                                        <Setter Property="Data" Value="{Binding Source={StaticResource pine_tree}}" />
-                                        <Setter Property="Fill" Value="Green"></Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Ocean}">
-                                        <Setter Property="Data" Value="{Binding Source={StaticResource water}}" />
-                                        <Setter Property="Fill" Value="Blue"></Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Path.Style>
-                    </Path>
-                    <Path VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Path.Style>
-                            <Style TargetType="{x:Type Path}">
-                                <Setter Property="Fill" Value="BurlyWood"></Setter>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.City}">
-                                        <Setter Property="Data" Value="{Binding Source={StaticResource city}}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Forest}">
-                                        <Setter Property="Data" Value="{Binding Source={StaticResource pine_tree}}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static tile:TileType.Ocean}">
-                                        <Setter Property="Data" Value="{Binding Source={StaticResource water}}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Path.Style>
-                    </Path>-->
                 </Grid>
             </Viewbox>
         </Grid>
@@ -149,9 +107,7 @@
                         <DataTrigger Binding="{Binding CanBePlayed}" Value="false">
                             <Setter Property="IsEnabled" Value="False"></Setter>
                         </DataTrigger>
-                        <!--<Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.5"></Setter>
-                        </Trigger>-->
+
                     </Style.Triggers>
                 </Style>
             </Border.Style>
@@ -210,6 +166,40 @@
         </Border>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type handSetup:MineralsPatentModifier}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Content="-" Command="{Binding RemoveUnitUsage}" Margin="2" FontWeight="Bold" Padding="2"/>
+            <ContentControl Margin="2" Height="20" Width="20" Grid.Column="1" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" />
+            <Button Margin="2" Grid.Column="2" Content="+" Command="{Binding AddUnitUsage}" FontWeight="Bold" Padding="2"></Button>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type handSetup:MineralsPatentModifiersSummary}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+
+                
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding ModifiedRessourceCost}" VerticalAlignment="Center" Margin="2" HorizontalAlignment="Left"></TextBlock>
+            <ItemsControl Grid.Column="1" ItemsSource="{Binding MineralsPatentModifier}" HorizontalAlignment="Right" Margin="2">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type handSetup:PatentSelector}">
         <Border BorderBrush="Black" BorderThickness="1"  Margin="2"  Height="300" Padding="2">
             <Border.Style>
@@ -233,15 +223,20 @@
             </Border.Style>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
 
-                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <ContentControl Content="{Binding Patent}"></ContentControl>
 
-                <ToggleButton Grid.Row="1" Content="Select" Command="{Binding DataContext.SelectCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                          CommandParameter="{Binding}"
-                                          IsChecked="{Binding IsSelected, Mode=OneWay}" />
+                <!-- mineral modifiers -->
+                <ContentControl Content="{Binding MineralsPatentModifiersSummary}"></ContentControl>
+
+                <ContentControl Grid.Row="1" Content="{Binding Patent}" />
+
+                <ToggleButton Grid.Row="2" Content="Select" Command="{Binding DataContext.SelectCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                              CommandParameter="{Binding}"
+                              IsChecked="{Binding IsSelected, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>

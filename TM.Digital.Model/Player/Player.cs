@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Effects;
@@ -23,6 +24,11 @@ namespace TM.Digital.Model.Player
         public bool IsReady { get; set; }
 
         public string Color { get; set; }
+
+        public ResourceHandler this[ResourceType r]
+        {
+            get { return Resources.First(h => h.ResourceType == r); }
+        }
     
 
     }

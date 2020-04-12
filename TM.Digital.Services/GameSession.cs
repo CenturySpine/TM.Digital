@@ -170,7 +170,7 @@ namespace TM.Digital.Services
             }
         }
 
-        public async Task PlayCard(Patent card, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        public async Task PlayCard(ActionPlay card, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
             if (Players.TryGetValue(playerId, out var player))
             {

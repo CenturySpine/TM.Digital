@@ -11,29 +11,6 @@
         <Setter Property="StrokeThickness" Value="2" />
     </Style>
 
-    <!--<Style TargetType="{x:Type Path}" x:Key="boardPlacedTileShape" BasedOn="{StaticResource tileShape}">
-        <Setter Property="Stroke" Value="Orange"></Setter>
-        <Setter Property="Fill" Value="BurlyWood"></Setter>
-        <Style.Triggers>
-
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding PlayedTile}" Value="{x:Null}" />
-                    <Condition Binding="{Binding Reserved.ReservedFor}" Value="{x:Static board:ReservedFor.Ocean}" />
-                </MultiDataTrigger.Conditions>
-                <Setter Property="Stroke" Value="Blue"></Setter>
-            </MultiDataTrigger>
-
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding PlayedTile}" Value="{x:Null}" />
-                    <Condition Binding="{Binding CanBeChosed}" Value="false" />
-                </MultiDataTrigger.Conditions>
-                <Setter Property="Opacity" Value="0.2"></Setter>
-            </MultiDataTrigger>
-        </Style.Triggers>
-    </Style>-->
-
     <!-- tile effects -->
     <DataTemplate x:Key="tile_ocean">
 

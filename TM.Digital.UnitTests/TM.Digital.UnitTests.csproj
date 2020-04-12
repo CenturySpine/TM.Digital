@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TM.Digital.Client\TM.Digital.Client.csproj" />
     <ProjectReference Include="..\TM.Digital.Model\TM.Digital.Model.csproj" />
     <ProjectReference Include="..\TM.Digital.Services\TM.Digital.Services.csproj" />
   </ItemGroup>

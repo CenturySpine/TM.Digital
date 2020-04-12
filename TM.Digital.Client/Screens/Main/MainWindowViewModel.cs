@@ -196,7 +196,7 @@ namespace TM.Digital.Client.Screens.Main
             ActionChoiceViewModel.IsVisible = false;
             
 
-            await TmDigitalClientRequestHandler.Instance.Post<ResourceEffectPlayerChooser>($"game/{GameId}/selectactiontarget/{CurrentPlayer.Player.PlayerId}", choice);
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/selectactiontarget/{CurrentPlayer.Player.PlayerId}", choice);
 
         }
 

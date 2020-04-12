@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
@@ -17,14 +17,40 @@ namespace TM.Digital.Services
 {
     public static class CardPlayHandler
     {
-        public static async Task<List<Action<Player, Board>>> Play(Patent card, Player player, Board board,
+        public static async Task<List<Action<Player, Board>>> Play(ActionPlay action, Player player, Board board,
             List<Player> allPlayers)
+
         {
-            List<Action<Player, Board>> currentactions = new List<Action<Player, Board>>();
+            var card = action.Patent;
+
+            List<Action<Player, Board>> currentActions = new List<Action<Player, Board>>();
+
             await Logger.Log(player.Name, $"Player '{player.Name}' playing card '{card.Name}'");
 
-            player.Resources.First(r => r.ResourceType == ResourceType.Money).UnitCount -= card.ModifiedCost;
-            //Choices ch = new Choices();
+            //Reduce cost based on mineral units played
+            var cost = card.ModifiedCost;
+            int mineralValue = 0;
+
+            //for each mineral usage sent by player
+            foreach (var actionPlayResourcesUsage in action.ResourcesUsages)
+            {
+                //calculate mineral value
+                mineralValue += 
+                    player[actionPlayResourcesUsage.ResourceType].MoneyValueModifier *//based on mineral value modifier
+                                actionPlayResourcesUsage.UnitPlayed; //multiplied by unit played
+
+                //remove resources unit played from players resources.
+                player[actionPlayResourcesUsage.ResourceType].UnitCount -= actionPlayResourcesUsage.UnitPlayed;
+            }
+
+            //calculate final patent cost
+            cost = cost - mineralValue;
+            //ensure it never goes below 0;
+            if (cost < 0) cost = 0;
+
+            //reduce money unit by the amount of the final modified patent cost
+            player[ResourceType.Money].UnitCount -= cost;
+
             player.HandCards.Remove(card);
             player.PlayedCards.Add(card);
 
@@ -37,7 +63,7 @@ namespace TM.Digital.Services
             //resources effect for others
             foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == EffectDestination.OtherPlayer))
             {
-                currentactions.Add(ResourceEffectActionChoice(cardResourceEffect, allPlayers));
+                currentActions.Add(ResourceEffectActionChoice(cardResourceEffect, allPlayers));
                 //await EffectHandler.HandleResourceEffect(player, cardResourceEffect);
             }
 
@@ -51,12 +77,11 @@ namespace TM.Digital.Services
                 await Logger.Log(player.Name, $"Playing card '{card.Name}' requires player '{player.Name}' to make {card.TileEffects.Count} tile choices");
                 foreach (var choicesTileEffect in card.TileEffects)
                 {
-                    currentactions.Add(TileEffectAction(player, choicesTileEffect, board));
-
+                    currentActions.Add(TileEffectAction(player, choicesTileEffect, board));
                 }
             }
 
-            return currentactions;
+            return currentActions;
         }
 
         private static Action<Player, Board> ResourceEffectActionChoice(ResourceEffect cardResourceEffect, List<Player> allPlayers)
@@ -74,10 +99,8 @@ namespace TM.Digital.Services
                             TargetPlayerId = target.PlayerId,
                             TargetPlayerName = target.Name,
                             ResourceHandler = cardResourceEffect,
-                            
                         };
                     }).ToList()
-                    
                 };
                 chooser.ChoicesList.Add(new ResourceEffectPlayerChooser()
                 {
@@ -95,7 +118,6 @@ namespace TM.Digital.Services
         {
             //await async (p, b) =>
             // {
-
             return new Action<Player, Board>(async (p, b) =>
             {
                 BoardHandler.PendingTileEffect = choicesTileEffect;

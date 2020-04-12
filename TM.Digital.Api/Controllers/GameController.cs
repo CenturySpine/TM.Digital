@@ -56,7 +56,7 @@ namespace TM.Digital.Api.Controllers
         }
 
         [Route("{gameId}/play/{playerId}")]
-        public async Task<ActionResult> PlayCard(Patent card, Guid gameId, Guid playerId)
+        public async Task<ActionResult> PlayCard(ActionPlay card, Guid gameId, Guid playerId)
         {
             await GamesService.Instance.Play(card, gameId, playerId, _hubContext);
 
