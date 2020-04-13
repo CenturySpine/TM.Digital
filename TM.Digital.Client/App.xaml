@@ -4,15 +4,16 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Common.xaml" />
-                <ResourceDictionary Source="Resources/Icons.xaml" />
-                <ResourceDictionary Source="Resources/Templates/EffectTemplates.xaml" />
-                <ResourceDictionary Source="Resources/Templates/PlayerResources.xaml" />
-                <ResourceDictionary Source="Resources/Templates/BoardPlacesTemplates.xaml" />
-                <ResourceDictionary Source="Resources/Templates/CardsTemplates.xaml" />
-                <ResourceDictionary Source="Resources/Templates/GameMenuResources.xaml" />
-                <ResourceDictionary Source="Resources/Templates/WaitScreenResources.xaml" />
-                <ResourceDictionary Source="Resources/Templates/GameSetupResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Common.xaml"></ResourceDictionary>
+
+                <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Icons.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Templates/EffectTemplates.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Templates/BoardPlacesTemplates.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Templates/CardsTemplates.xaml" />
+
+                <ResourceDictionary Source="Resources/LocalDataTemplates.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

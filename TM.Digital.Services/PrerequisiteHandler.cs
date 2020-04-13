@@ -22,7 +22,7 @@ namespace TM.Digital.Services
                 playerHandCard.CanBePlayed = CanPlayCard(playerHandCard, board, player);
             }
         }
-        static List<IPrerequisiteStrategy> _verifyStrategies = new List<IPrerequisiteStrategy>()
+        static readonly List<IPrerequisiteStrategy> VerifyStrategies = new List<IPrerequisiteStrategy>()
         {
             new GlobalCheckPrerequisite(),
             new PatentCostPrerequisite(),
@@ -33,7 +33,7 @@ namespace TM.Digital.Services
         };
         private static bool CanPlayCard(Patent patent, Model.Board.Board board, Model.Player.Player player)
         {
-            return _verifyStrategies.All(t => t.CanPlayCard(patent, board, player));
+            return VerifyStrategies.All(t => t.CanPlayCard(patent, board, player));
         }
 
 
@@ -82,7 +82,7 @@ namespace TM.Digital.Services
     {
         public bool CanPlayCard(Patent inputPatent, Board currentBoardState, Player patentOwner)
         {
-            var playerTagsCount = patentOwner.PlayedCards // players cards
+            var playerTagsCount = patentOwner.PlayedCards.Concat(new List<Card>{ patentOwner.Corporation }) // players cards + corporation
                 .Where(c => c.CardType != CardType.Red)//different from event/red
                 .SelectMany(c => c.Tags)//Select ALL tags
                 .GroupBy(r => r)//group selection by tag type

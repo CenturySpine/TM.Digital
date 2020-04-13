@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Data;
 using TM.Digital.Model.Cards;
 
-namespace TM.Digital.Client.Resources.Converters
+namespace TM.Digital.Ui.Resources.Resources.Converters
 {
     public class PlayedCardToTagsCountConverter : IValueConverter
     {

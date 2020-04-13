@@ -26,6 +26,7 @@ namespace TM.Digital.Model.Cards
             return Guid.GetHashCode();
         }
 
+        public string OfficialNumberTag { get; set; }
         public Guid Guid { get; set; } = Guid.NewGuid();
 
         public string Name { get; set; }
@@ -38,7 +39,9 @@ namespace TM.Digital.Model.Cards
 
         public int ResourcesCount { get; set; }
 
+        
         public StandardVictoryPoint CardVictoryPoints { get; set; }
+        
         public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
 
         public List<ResourceEffect> ResourcesEffects { get; set; } = new List<ResourceEffect>();
@@ -51,7 +54,52 @@ namespace TM.Digital.Model.Cards
 
         public List<TileEffect> TileEffects { get; set; } = new List<TileEffect>();
 
+        public List<Action> Actions { get; set; }
         public int PlantsConversionRate { get; set; }
         public int HeatConversionRate { get; set; }
     }
+
+    public class Action
+    {
+        
+
+        public ActionFrom ActionFrom { get; set; }
+
+        public ActionTo ActionTo { get; set; }
+
+        public ActionModifier ActionModifier { get; set; }
+
+    }
+
+    public class ActionModifier
+    {
+        public ActionTarget ActionTarget { get; set; }
+    }
+
+    public class ActionFrom
+    {
+        public ActionTarget ActionTarget { get; set; }
+
+        public ResourceType ResourceType { get; set; }
+        public int Amount { get; set; }
+        public ResourceKind ResourceKind { get; set; }
+    }
+
+    public class ActionTo
+    {
+        public ActionTarget ActionTarget { get; set; }
+
+        public ResourceType ResourceType { get; set; }
+        public int Amount { get; set; }
+        public ResourceKind ResourceKind { get; set; }
+    }
+
+    public enum ActionTarget
+    {
+        Self,
+        CurrentCard,
+        AnyOtherCard,
+        AnyPlayer
+    }
+
 }

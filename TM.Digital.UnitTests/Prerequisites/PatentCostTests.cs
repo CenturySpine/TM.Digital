@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TM.Digital.Cards;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
-using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
-using TM.Digital.Model.Tile;
 using TM.Digital.Services;
 
 namespace TM.Digital.UnitTests.Prerequisites
 {
     [TestClass]
-    public class PatentCostTests: TestPatentCheckClassAbase
+    public class PatentCostTests 
     {
         private PatentCostPrerequisite _target;
 
@@ -38,7 +36,7 @@ namespace TM.Digital.UnitTests.Prerequisites
             p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
                 .UnitCount = 4;
 
-            Patent card = NewPatent();
+            Patent card = PatentFactory.NewPatent();
             card.ModifiedCost = 12;
 
             var canPlay = _target.CanPlayCard(card, new Board(), p);
@@ -60,7 +58,7 @@ namespace TM.Digital.UnitTests.Prerequisites
             p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
                 .UnitCount = 4;
 
-            Patent card = NewPatent();
+            Patent card = PatentFactory.NewPatent();
             card.ModifiedCost = 12;
 
             var canPlay = _target.CanPlayCard(card, new Board(), p);
@@ -83,7 +81,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 .UnitCount = 4;
 
 
-            Patent card = NewPatent();
+            Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Building);
             card.ModifiedCost = 18;
 
@@ -107,7 +105,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 .UnitCount = 4;
 
 
-            Patent card = NewPatent();
+            Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Building);
             card.ModifiedCost = 20;
 
@@ -131,7 +129,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 .UnitCount = 3;
 
 
-            Patent card = NewPatent();
+            Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Space);
             card.ModifiedCost = 20;
 
@@ -156,7 +154,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 .UnitCount = 4;
 
 
-            Patent card = NewPatent();
+            Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Space);
             card.ModifiedCost = 20;
 
@@ -169,7 +167,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         public void TestCostWithSpaceTagsAdnTitaniumEnoughWithTitaniumModifierCard()
         {
             Player p = ModelFactory.NewPlayer("toto", false);
-            var playedPatent = NewPatent();
+            var playedPatent = PatentFactory.NewPatent();
             playedPatent.TitaniumValueModifier = 1;
             p.PlayedCards.Add(playedPatent);
 
@@ -183,7 +181,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 .UnitCount = 3;
 
 
-            Patent card = NewPatent();
+            Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Space);
             card.ModifiedCost = 20;
 
@@ -194,26 +192,4 @@ namespace TM.Digital.UnitTests.Prerequisites
 
 
     }
-
-    public class TestPatentCheckClassAbase
-    {
-        public static Patent NewPatent()
-        {
-            return new Patent()
-            {
-                BoardEffects = new List<BoardLevelEffect>(),
-                CardResourcesVictoryPoints = new ResourcesVictoryPoints(),
-                Prerequisites = new Model.Cards.Prerequisites()
-                {
-                    TagsPrerequisites = new List<TagsPrerequisite>(),
-                    GlobalPrerequisites = new List<GlobalPrerequisite>()
-                },
-                TagEffects = new List<TagEffect>(),
-                Tags = new List<Tags>(),
-                TileEffects = new List<TileEffect>()
-            };
-        }
-    }
-
-
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using TM.Digital.Cards;
 using TM.Digital.Client.Screens.Main;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Resources;
@@ -8,14 +9,14 @@ using TM.Digital.Services;
 namespace TM.Digital.UnitTests.Prerequisites
 {
     [TestClass]
-    public class PlayerSelectorTest : TestPatentCheckClassAbase
+    public class PlayerSelectorTest 
     {
         private PlayerSelector _playerSelector;
 
         [TestInitialize]
         public void Setup()
         {
-            var patent = NewPatent();
+            var patent = PatentFactory.NewPatent();
             patent.BaseCost = patent.ModifiedCost = 34;
             patent.Tags.AddRange(new[] { Tags.Space, Tags.Building });
             var player = ModelFactory.NewPlayer("test", false);
@@ -52,8 +53,8 @@ namespace TM.Digital.UnitTests.Prerequisites
             _playerSelector.Player[ResourceType.Money].UnitCount = 20;
 
 
-            _playerSelector.PatentsSelectors[0].MineralsPatentModifier[0].UnitsUsed = 3;//+9
-            _playerSelector.PatentsSelectors[0].MineralsPatentModifier[1].UnitsUsed = 3;//+6
+            _playerSelector.PatentsSelectors[0].MineralsPatentModifiersSummary.MineralsPatentModifier[0].UnitsUsed = 3;//+9
+            _playerSelector.PatentsSelectors[0].MineralsPatentModifiersSummary.MineralsPatentModifier[1].UnitsUsed = 3;//+6
             //total value should be 20 + 9 + 6 = 35
 
             var baseResult = _playerSelector.SelectCardCommand.CanExecute(_playerSelector.PatentsSelectors[0]);
@@ -66,8 +67,8 @@ namespace TM.Digital.UnitTests.Prerequisites
             _playerSelector.Player[ResourceType.Money].UnitCount = 20;
 
 
-            _playerSelector.PatentsSelectors[0].MineralsPatentModifier[0].UnitsUsed = 2;//+6
-            _playerSelector.PatentsSelectors[0].MineralsPatentModifier[1].UnitsUsed = 3;//+6
+            _playerSelector.PatentsSelectors[0].MineralsPatentModifiersSummary.MineralsPatentModifier[0].UnitsUsed = 2;//+6
+            _playerSelector.PatentsSelectors[0].MineralsPatentModifiersSummary.MineralsPatentModifier[1].UnitsUsed = 3;//+6
             //total value should be 20 + 6 + 6 = 32
 
             var baseResult = _playerSelector.SelectCardCommand.CanExecute(_playerSelector.PatentsSelectors[0]);

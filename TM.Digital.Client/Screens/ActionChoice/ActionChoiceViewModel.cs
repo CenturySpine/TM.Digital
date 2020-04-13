@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model.Player;
+using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Client.Screens.ActionChoice
 {

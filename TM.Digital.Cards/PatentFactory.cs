@@ -12,6 +12,24 @@ namespace TM.Digital.Cards
 {
     public class PatentFactory
     {
+        public static Patent NewPatent()
+        {
+            return new Patent()
+            {
+                BoardEffects = new List<BoardLevelEffect>(),
+                CardResourcesVictoryPoints = new ResourcesVictoryPoints(),
+                CardVictoryPoints = new StandardVictoryPoint(),
+
+                Prerequisites = new Model.Cards.Prerequisites()
+                {
+                    TagsPrerequisites = new List<TagsPrerequisite>(),
+                    GlobalPrerequisites = new List<GlobalPrerequisite>()
+                },
+                TagEffects = new List<TagEffect>(),
+                Tags = new List<Tags>(),
+                TileEffects = new List<TileEffect>()
+            };
+        }
         public static Patent AdvancedAlliages()
         {
             return new Patent

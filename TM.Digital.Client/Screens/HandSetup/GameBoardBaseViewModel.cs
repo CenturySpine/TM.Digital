@@ -1,4 +1,4 @@
-﻿using TM.Digital.Client.ViewModelCore;
+﻿using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Client.Screens.HandSetup
 {

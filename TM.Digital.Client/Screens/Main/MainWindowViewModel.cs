@@ -11,12 +11,12 @@ using TM.Digital.Client.Screens.ActionChoice;
 using TM.Digital.Client.Screens.HandSetup;
 using TM.Digital.Client.Screens.Menu;
 using TM.Digital.Client.Screens.Wait;
-using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Transport;
+using TM.Digital.Ui.Resources.ViewModelCore;
 using DispatcherPriority = System.Windows.Threading.DispatcherPriority;
 
 namespace TM.Digital.Client.Screens.Main

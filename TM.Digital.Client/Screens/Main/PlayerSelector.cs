@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TM.Digital.Client.Screens.HandSetup;
-using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Transport;
+using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Client.Screens.Main
 {

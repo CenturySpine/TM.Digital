@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TM.Digital.Model\TM.Digital.Model.csproj" />
     <ProjectReference Include="..\TM.Digital.Transport\TM.Digital.Transport.csproj" />
+    <ProjectReference Include="..\TM.Digital.Ui.Resources\TM.Digital.Ui.Resources.csproj" />
   </ItemGroup>
 
 </Project>

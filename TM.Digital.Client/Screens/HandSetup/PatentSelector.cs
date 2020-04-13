@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
-using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Resources;
+using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Client.Screens.HandSetup
 {

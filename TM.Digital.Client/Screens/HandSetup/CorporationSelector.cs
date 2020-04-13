@@ -1,5 +1,5 @@
-﻿using TM.Digital.Client.ViewModelCore;
-using TM.Digital.Model.Corporations;
+﻿using TM.Digital.Model.Corporations;
+using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Client.Screens.HandSetup
 {

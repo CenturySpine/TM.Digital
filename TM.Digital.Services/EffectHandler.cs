@@ -52,11 +52,11 @@ namespace TM.Digital.Services
             Corporation selectionCorporation)
         {
             var playersMoney = player.Resources.First(r => r.ResourceType == ResourceType.Money);
-            if (selectionCorporation != null)
-            {
-                playersMoney.UnitCount = selectionCorporation.StartingMoney;
-                await Logger.Log(player.Name, $"Initial money count {selectionCorporation.StartingMoney}");
-            }
+            //if (selectionCorporation != null)
+            //{
+            //    playersMoney.UnitCount = selectionCorporation.StartingMoney;
+            //    await Logger.Log(player.Name, $"Initial money count {selectionCorporation.StartingMoney}");
+            //}
 
             foreach (var selectionBoughtCard in selectionBoughtCards)
             {
