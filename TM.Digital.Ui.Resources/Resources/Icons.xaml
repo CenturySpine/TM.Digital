@@ -3,6 +3,11 @@
                     xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model"
                     xmlns:templateSelectors="clr-namespace:TM.Digital.Ui.Resources.Resources.TemplateSelectors">
 
+    <DataTemplate x:Key="dt_action">
+        <Grid>
+            <Path Fill="Red" Data="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" Stroke="Black" StrokeThickness="1" Stretch="Uniform" />
+        </Grid>
+    </DataTemplate>
     <Style TargetType="{x:Type Path}" x:Key="tileShape">
         <Setter Property="Height" Value="80" />
         <Setter Property="Width" Value="70" />
