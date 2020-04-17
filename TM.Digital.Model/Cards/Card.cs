@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using TM.Digital.Model.Board;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
@@ -26,49 +28,80 @@ namespace TM.Digital.Model.Cards
             return Guid.GetHashCode();
         }
 
-        public string OfficialNumberTag { get; set; }
         public Guid Guid { get; set; } = Guid.NewGuid();
-
         public string Name { get; set; }
-
-        public List<Tags> Tags { get; set; }
+        public string OfficialNumberTag { get; set; }
 
         public CardType CardType { get; set; }
 
+        public TagsList Tags { get; set; }
+        public List<ResourceEffect> ResourcesEffects { get; set; } = new List<ResourceEffect>();
+        public List<BoardLevelEffect> BoardEffects { get; set; } = new List<BoardLevelEffect>();
+        public TagsEffects TagEffects { get; set; } = new TagsEffects();
+        public List<TileEffect> TileEffects { get; set; } = new List<TileEffect>();
+        public TilePassiveEffects TilePassiveEffects { get; set; }
+        public List<Action> Actions { get; set; }
         public ResourceType ResourceType { get; set; }
 
         public int ResourcesCount { get; set; }
 
-        
         public StandardVictoryPoint CardVictoryPoints { get; set; }
-        
+
         public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
 
-        public List<ResourceEffect> ResourcesEffects { get; set; } = new List<ResourceEffect>();
+        public MineralModifiers MineralModifiers { get; set; }
 
-        public int TitaniumValueModifier { get; set; }
-        public int SteelValueModifier { get; set; }
-        public List<BoardLevelEffect> BoardEffects { get; set; } = new List<BoardLevelEffect>();
+        public ConversionRates ConversionRates { get; set; }
 
-        public List<TagEffect> TagEffects { get; set; } = new List<TagEffect>();
-
-        public List<TileEffect> TileEffects { get; set; } = new List<TileEffect>();
-
-        public List<Action> Actions { get; set; }
-        public int PlantsConversionRate { get; set; }
-        public int HeatConversionRate { get; set; }
+        public List<Effect> AllEffects()
+        {
+            return new List<Effect>(ResourcesEffects)
+                .Concat(new List<Effect> { MineralModifiers.SteelModifier, MineralModifiers.TitaniumModifier })
+                .Concat(new List<Effect> { ConversionRates.Heat, ConversionRates.PlantConversion })
+                .Concat(BoardEffects)
+                .Concat(TileEffects)
+                .Concat(Actions)
+                .ToList();
+        }
     }
 
-    public class Action
+    public class ConversionRates
     {
-        
+        public ConversionRate PlantConversion { get; set; }
+        public ConversionRate Heat { get; set; }
+    }
 
+    public class ConversionRate : Effect
+    {
+        public ResourceType ResourceType { get; set; }
+        public int Rate { get; set; }
+    }
+
+    public class MineralModifiers
+    {
+        public MineralModifier SteelModifier { get; set; }
+
+        public MineralModifier TitaniumModifier
+        { get; set; }
+    }
+
+    public class MineralModifier : Effect
+    {
+        public ResourceType ResourceType { get; set; }
+        public int Value { get; set; }
+    }
+
+    public class TagsEffects : List<TagEffect>
+    {
+    }
+
+    public class Action : Effect
+    {
         public ActionFrom ActionFrom { get; set; }
 
-        public ActionTo ActionTo { get; set; }
+        public List<ActionTo> ActionTo { get; set; }
 
         public ActionModifier ActionModifier { get; set; }
-
     }
 
     public class ActionModifier
@@ -90,6 +123,9 @@ namespace TM.Digital.Model.Cards
         public ActionTarget ActionTarget { get; set; }
 
         public ResourceType ResourceType { get; set; }
+
+        public BoardLevelType BoardLevelType { get; set; }
+
         public int Amount { get; set; }
         public ResourceKind ResourceKind { get; set; }
     }
@@ -99,7 +135,7 @@ namespace TM.Digital.Model.Cards
         Self,
         CurrentCard,
         AnyOtherCard,
-        AnyPlayer
+        AnyPlayer,
+        AnyOpponent
     }
-
 }

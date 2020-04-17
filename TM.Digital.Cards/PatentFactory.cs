@@ -25,8 +25,8 @@ namespace TM.Digital.Cards
                     TagsPrerequisites = new List<TagsPrerequisite>(),
                     GlobalPrerequisites = new List<GlobalPrerequisite>()
                 },
-                TagEffects = new List<TagEffect>(),
-                Tags = new List<Tags>(),
+                TagEffects = new TagsEffects(),
+                Tags = new TagsList(),
                 TileEffects = new List<TileEffect>()
             };
         }
@@ -37,9 +37,14 @@ namespace TM.Digital.Cards
                 Name = "Advanced alliages",
                 Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 BaseCost = 9,
-                Tags = new List<Tags> { Tags.Science },
-                TitaniumValueModifier = 1,
-                SteelValueModifier = 1
+                Tags = new TagsList { Tags.Science },
+                MineralModifiers = new MineralModifiers()
+                {
+                    SteelModifier = new MineralModifier() { ResourceType = ResourceType.Steel,Value = 1}
+                    ,
+                    TitaniumModifier = new MineralModifier() { ResourceType = ResourceType.Titanium, Value = 1 }
+                }
+                
             };
         }
 
@@ -49,7 +54,7 @@ namespace TM.Digital.Cards
             {
                 Name = "Bubble city",
                 BaseCost = 16,
-                Tags = new List<Tags> { Tags.Building, Tags.City },
+                Tags = new TagsList { Tags.Building, Tags.City },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -86,7 +91,7 @@ namespace TM.Digital.Cards
             {
                 Name = "Energy Fusion",
                 BaseCost = 14,
-                Tags = new List<Tags> { Tags.Energy, Tags.City },
+                Tags = new TagsList { Tags.Energy, Tags.City },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -108,7 +113,7 @@ namespace TM.Digital.Cards
             {
                 Name = "Giant asteroid",
                 BaseCost = 27,
-                Tags = new List<Tags> { Tags.Space, Tags.Event },
+                Tags = new TagsList { Tags.Space, Tags.Event },
                 Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
@@ -116,7 +121,7 @@ namespace TM.Digital.Cards
                     {
                         Amount = 4,ResourceKind =ResourceKind.Unit,ResourceType = ResourceType.Titanium
                     },
-                    new ResourceEffect {Amount = -4,ResourceKind = ResourceKind.Unit,ResourceType = ResourceType.Plant, EffectDestination = EffectDestination.OtherPlayer}
+                    new ResourceEffect {Amount = -4,ResourceKind = ResourceKind.Unit,ResourceType = ResourceType.Plant, EffectDestination = ActionTarget.AnyPlayer}
                 },
                 BoardEffects = new List<BoardLevelEffect>
                 {
@@ -134,7 +139,7 @@ namespace TM.Digital.Cards
             {
                 Name = "Idle gaz liberation",
                 BaseCost = 14,
-                Tags = new List<Tags> { Tags.Event },
+                Tags = new TagsList { Tags.Event },
                 Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 BoardEffects = new List<BoardLevelEffect> { new BoardLevelEffect { Level = 2, BoardLevelType = BoardLevelType.Terraformation } }
             };
@@ -146,7 +151,7 @@ namespace TM.Digital.Cards
             {
                 Name = "Solar wind energy",
                 BaseCost = 11,
-                Tags = new List<Tags> { Tags.Science, Tags.Space, Tags.Energy },
+                Tags = new TagsList { Tags.Science, Tags.Space, Tags.Energy },
                 Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
@@ -165,7 +170,7 @@ namespace TM.Digital.Cards
             {
                 Name = "3D home printing",
                 BaseCost = 10,
-                Tags = new List<Tags> { Tags.Building },
+                Tags = new TagsList { Tags.Building },
                 Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
@@ -185,7 +190,7 @@ namespace TM.Digital.Cards
             {
                 Name = "Protected valley",
                 BaseCost = 23,
-                Tags = new List<Tags> { Tags.Building, Tags.Plant },
+                Tags = new TagsList { Tags.Building, Tags.Plant },
                 Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
@@ -207,13 +212,13 @@ namespace TM.Digital.Cards
             {
                 Name = "Comet",
                 BaseCost = 21,
-                Tags = new List<Tags> { Tags.Space, Tags.Event },
+                Tags = new TagsList { Tags.Space, Tags.Event },
                 Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
                     {
-                        Amount = -3,ResourceKind =ResourceKind.Unit,ResourceType = ResourceType.Plant,EffectDestination = EffectDestination.OtherPlayer
+                        Amount = -3,ResourceKind =ResourceKind.Unit,ResourceType = ResourceType.Plant,EffectDestination = ActionTarget.AnyPlayer
                     },
                 },
 
@@ -228,13 +233,13 @@ namespace TM.Digital.Cards
             {
                 Name = "Giant ice asteroid",
                 BaseCost = 36,
-                Tags = new List<Tags> { Tags.Space, Tags.Event },
+                Tags = new TagsList { Tags.Space, Tags.Event },
                 Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
                     {
-                        Amount = -6,ResourceKind =ResourceKind.Unit,ResourceType = ResourceType.Plant,EffectDestination = EffectDestination.OtherPlayer
+                        Amount = -6,ResourceKind =ResourceKind.Unit,ResourceType = ResourceType.Plant,EffectDestination = ActionTarget.AnyPlayer
                     },
                 },
 
@@ -257,7 +262,7 @@ namespace TM.Digital.Cards
             {
                 Name = "Toundra agriculture",
                 BaseCost = 16,
-                Tags = new List<Tags> { Tags.Plant },
+                Tags = new TagsList { Tags.Plant },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect

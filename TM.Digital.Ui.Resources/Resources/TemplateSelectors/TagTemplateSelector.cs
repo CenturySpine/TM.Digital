@@ -20,6 +20,7 @@ namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
         public DataTemplate Microbe { get; set; }
         public DataTemplate Science { get; set; }
         public DataTemplate Energy { get; set; }
+        public DataTemplate Joker { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -28,6 +29,8 @@ namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
                 Tags t = (Tags)Enum.Parse(typeof(Tags), item.ToString());
                 switch (t)
                 {
+                    case Tags.None:
+                        return null;
                     case Tags.Building:
                         return Building;
 
@@ -60,7 +63,8 @@ namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
 
                     case Tags.Science:
                         return Science;
-
+                    case Tags.Joker:
+                        return Joker;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

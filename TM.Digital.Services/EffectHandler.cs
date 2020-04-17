@@ -10,42 +10,42 @@ using TM.Digital.Services.Common;
 
 namespace TM.Digital.Services
 {
-    
+
     public static class EffectHandler
     {
         public static async Task HandleResourceEffect(Model.Player.Player player, ResourceEffect effect)
         {
- 
-                var resource = player.Resources.FirstOrDefault(r => r.ResourceType == effect.ResourceType);
 
-                if (resource != null)
+            var resource = player.Resources.FirstOrDefault(r => r.ResourceType == effect.ResourceType);
+
+            if (resource != null)
+            {
+                if (effect.ResourceKind == ResourceKind.Production)
                 {
-                    if (effect.ResourceKind == ResourceKind.Production)
+
+                    resource.Production += effect.Amount;
+
+                    //never go below -5 for money production
+                    if (resource.ResourceType == ResourceType.Money && resource.Production < -5)
                     {
-
-                        resource.Production += effect.Amount;
-
-                        //never go below -5 for money production
-                        if (resource.ResourceType == ResourceType.Money && resource.Production < -5)
-                        {
-                            resource.Production = -5;
-                        }
-                        //never go below zero for other resources production
-                        else if (resource.ResourceType != ResourceType.Money && resource.Production < 0)
-                        {
-                            resource.Production = 0;
-                        }
-                        await Logger.Log(player.Name, $"Resource {resource.ResourceType} Production modified for {effect.Amount}, new value {resource.Production}");
+                        resource.Production = -5;
                     }
-                    else
+                    //never go below zero for other resources production
+                    else if (resource.ResourceType != ResourceType.Money && resource.Production < 0)
                     {
-                        resource.UnitCount += effect.Amount;
-
-                        if (resource.UnitCount < 0) resource.UnitCount = 0;
-                        await Logger.Log(player.Name, $"Resource {resource.ResourceType} Unit modified for {effect.Amount}, new value {resource.UnitCount}");
+                        resource.Production = 0;
                     }
+                    await Logger.Log(player.Name, $"Resource {resource.ResourceType} Production modified for {effect.Amount}, new value {resource.Production}");
                 }
- 
+                else
+                {
+                    resource.UnitCount += effect.Amount;
+
+                    if (resource.UnitCount < 0) resource.UnitCount = 0;
+                    await Logger.Log(player.Name, $"Resource {resource.ResourceType} Unit modified for {effect.Amount}, new value {resource.UnitCount}");
+                }
+            }
+
         }
 
         public static async Task HandleInitialPatentBuy(Model.Player.Player player, List<Patent> selectionBoughtCards,
@@ -90,14 +90,14 @@ namespace TM.Digital.Services
 
             foreach (var playerHandCard in player.HandCards)
             {
-                var reductionForCard = reductions.Where(r => playerHandCard.Tags.Contains(r.AffectedTag))
+                var reductionForCard = reductions.Where(r => playerHandCard.Tags.Any(t => r.AffectedTags.Contains(t)))
                     .ToList();
                 if (reductionForCard.Any())
                 {
                     await Logger.Log(player.Name, $"Updating players '{player.Name}' cards costs...");
                     foreach (var tagEffect in reductionForCard)
                     {
-                        playerHandCard.ModifiedCost = playerHandCard.BaseCost + tagEffect.EffectValue;
+                        playerHandCard.ModifiedCost = playerHandCard.BaseCost + tagEffect.ResourceEffects.Sum(r => r.Amount);
                         if (playerHandCard.ModifiedCost < 0) playerHandCard.ModifiedCost = 0;
                         await Logger.Log(player.Name, $"New card '{playerHandCard.Name}' cost => {playerHandCard.ModifiedCost}");
                     }

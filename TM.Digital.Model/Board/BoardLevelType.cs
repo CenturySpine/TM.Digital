@@ -2,7 +2,7 @@
 {
     public enum BoardLevelType
     {
-        Temperature, Oxygen,  Terraformation,
+        None,Temperature, Oxygen,  Terraformation,
         Oceans
     }
 }

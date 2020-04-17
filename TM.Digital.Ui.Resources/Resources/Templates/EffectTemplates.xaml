@@ -1,24 +1,249 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    
+
                     xmlns:effects="clr-namespace:TM.Digital.Model.Effects;assembly=TM.Digital.Model"
                     xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model"
                     xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model"
-                    >
+                    xmlns:cards="clr-namespace:TM.Digital.Model.Cards;assembly=TM.Digital.Model"
+                    xmlns:tile="clr-namespace:TM.Digital.Model.Tile;assembly=TM.Digital.Model">
 
-    <DataTemplate DataType="{x:Type effects:BoardLevelEffect}">
-        <Grid Margin="1">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="CardsPartsTemplates.xaml"></ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+    <DataTemplate x:Key="StandardModifierRightPartTemplate" DataType="{x:Type effects:EffectModifier}">
+        <Grid >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Level}" Margin="3" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-
-            <ContentControl Grid.Column="1" Width="25" Height="25"  Margin="1"
-                            Content="{Binding BoardLevelType}" ContentTemplateSelector="{StaticResource globalParamTemplateSelector}"></ContentControl>
-
+            <TextBlock Text=" / " FontWeight="Bold" VerticalAlignment="Center" />
+            <ContentControl Grid.Column="1" Content="{Binding .}"></ContentControl>
         </Grid>
     </DataTemplate>
+        <DataTemplate x:Key="StandardModifierTemplate" DataType="{x:Type effects:ResourceEffect}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ContentControl Width="20" Height="20" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Margin="1" />
+
+            <ContentControl Grid.Column="1" ContentTemplate="{StaticResource StandardModifierRightPartTemplate}" Content="{Binding EffectModifier}" >
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EffectModifier}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+            <!--<Grid Grid.Column="1">
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EffectModifier}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text=" / " FontWeight="Bold" VerticalAlignment="Center" />
+                <ContentControl Grid.Column="1" Content="{Binding EffectModifier}"></ContentControl>
+            </Grid>-->
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type effects:BoardLevelEffect}">
+        <Grid Margin="1" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Level}" Margin="3" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <ContentControl Grid.Column="1" Width="25" Height="25"  Margin="1"
+                            Content="{Binding BoardLevelType}" ContentTemplateSelector="{StaticResource globalParamTemplateSelector}" />
+
+            <ContentControl Grid.Column="2" ContentTemplate="{StaticResource StandardModifierRightPartTemplate}" Content="{Binding EffectModifier}" >
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EffectModifier}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type effects:EffectModifier}">
+
+        <Border>
+
+            <Grid>
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="{x:Type Grid}">
+                            <Setter Property="Visibility" Value="Visible"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding TagsModifier}" Value="{x:Static cards:Tags.None}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Ellipse  Height="22" Width="22">
+                        <Ellipse.Style>
+                            <Style TargetType="{x:Type Ellipse}">
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ModifierFrom}" Value="{x:Static cards:ActionTarget.AnyPlayer}">
+                                        <Setter Property="Fill" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ModifierFrom}" Value="{x:Static cards:ActionTarget.AnyOpponent}">
+                                        <Setter Property="Fill" Value="Red" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding ModifierRatio}" Margin="3" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ModifierRatio}" Value="1">
+                                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <ContentControl Grid.Column="1" Content="{Binding TagsModifier}" Height="20" Width="20"  ContentTemplateSelector="{StaticResource tagTemplateSelector}" Visibility="Visible">
+                        </ContentControl>
+                    </Grid>
+                </Grid>
+
+                <Grid>
+
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="{x:Type Grid}">
+                                <Setter Property="Visibility" Value="Visible"></Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding TileModifier}" Value="{x:Static tile:TileType.None}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding ModifierRatio}" Margin="3" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ModifierRatio}" Value="1">
+                                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <Path Grid.Column="1" Margin="0"  Stretch="Uniform" Width="25" Height="25">
+
+                                <Path.Style>
+                                    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource tileShape}">
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ModifierFrom}" Value="{x:Static cards:ActionTarget.AnyPlayer}">
+                                                <Setter Property="Fill" Value="Red" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ModifierFrom}" Value="{x:Static cards:ActionTarget.AnyOpponent}">
+                                                <Setter Property="Fill" Value="Red" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                            <Viewbox Grid.Column="1" Height="22" Width="22">
+                                <Grid>
+
+                                    <ContentControl Content="{Binding TileModifier}" ContentTemplateSelector="{StaticResource tileEffectTemplateSelector}" />
+                                </Grid>
+                            </Viewbox>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+                <TextBlock Text="*" HorizontalAlignment="Right" VerticalAlignment="Top" Foreground="Black" FontWeight="Bold" Margin="0,-6,-3,0" Padding="0" FontSize="14">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ModifierFrom}" Value="{x:Static cards:ActionTarget.AnyOtherCard}">
+                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ModifierFrom}" Value="{x:Static cards:ActionTarget.AnyOpponent}">
+                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+
+
+    <DataTemplate x:Key="CardsResourcesWithModifier" DataType="{x:Type effects:ResourceEffect}">
+        <Grid>
+
+            <ContentControl Width="20" Height="20" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Margin="1" />
+
+            <Grid VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="12" Height="12" Background="Transparent">
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EffectModifier}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Ellipse Fill="White"></Ellipse>
+                <Viewbox>
+
+                    <ContentControl  Content="{Binding EffectModifier}"></ContentControl>
+                </Viewbox>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type effects:ResourceEffect}">
         <Grid Margin="1">
             <Grid.Style>
@@ -26,32 +251,67 @@
                     <Setter Property="Background" Value="LightGray"></Setter>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ResourceKind}" Value="{x:Static resources:ResourceKind.Production}">
-                            <Setter Property="Background" Value="SandyBrown"></Setter>
+                            <Setter Property="Background" Value="SaddleBrown"></Setter>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Amount}" Margin="3" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Text="{Binding Amount}" Margin="3" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Visible"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Amount}" Value="1">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
             <Border Grid.Column="1" Padding="2">
                 <Border.Style>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="BorderThickness" Value="1"></Setter>
                         <Setter Property="BorderBrush" Value="Transparent"></Setter>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding EffectDestination}" Value="{x:Static effects:EffectDestination.OtherPlayer}">
+                            <DataTrigger Binding="{Binding EffectDestination}" Value="{x:Static cards:ActionTarget.AnyPlayer}">
                                 <Setter Property="BorderBrush" Value="Red"></Setter>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <ContentControl Width="20" Height="20" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Margin="1" />
+
+                <Grid>
+                    <ContentControl  ContentTemplate="{StaticResource StandardModifierTemplate}" Content="{Binding .}">
+                        <ContentControl.Style>
+                            <Style TargetType="{x:Type ContentControl}">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Card}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+                    <ContentControl  ContentTemplate="{StaticResource CardsResourcesWithModifier}" Content="{Binding .}">
+                        <ContentControl.Style>
+                            <Style TargetType="{x:Type ContentControl}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Card}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+                </Grid>
             </Border>
         </Grid>
     </DataTemplate>
-
-    
 </ResourceDictionary>

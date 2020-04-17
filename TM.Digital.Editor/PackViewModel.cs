@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 using TM.Digital.Model;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
@@ -22,13 +24,27 @@ namespace TM.Digital.Editor
         private ObservableCollection<Patent> _patents;
         private ObservableCollection<Prelude> _preludes;
         private string _name;
+        private string _search;
 
         public PackViewModel(ExtensionPack extensionPack)
         {
+            Search = string.Empty;
             Name = extensionPack.Name.ToString();
             Corporations = new ObservableCollection<Corporation>(extensionPack.Corporations);
+            CorporationView = CollectionViewSource.GetDefaultView(Corporations);
+            CorporationView.Filter = FilterCard;
+            CorporationView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
+
             Patents = new ObservableCollection<Patent>(extensionPack.Patents);
+            PatentsView = CollectionViewSource.GetDefaultView(Patents);
+            PatentsView.Filter = FilterCard;
+            PatentsView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
+
             Preludes = new ObservableCollection<Prelude>(extensionPack.Preludes);
+            PreludesView = CollectionViewSource.GetDefaultView(Preludes);
+            PreludesView.Filter = FilterCard;
+            PreludesView.SortDescriptions.Add(new SortDescription("OfficialNumberTag",ListSortDirection.Ascending));
+
             Refresh = new RelayCommand(ExecuteRefresh);
             AddCorporationCommand = new RelayCommand(ExecuteAddcorporation);
             AddPatentCommand = new RelayCommand(ExecuteAddPatent);
@@ -36,6 +52,34 @@ namespace TM.Digital.Editor
 
             Deletecommand = new RelayCommand(ExecuteDelete);
         }
+
+        private bool FilterCard(object obj)
+        {
+            if (obj is Card c)
+            {
+                return string.IsNullOrEmpty(c.Name) && string.IsNullOrEmpty(Search) || !string.IsNullOrEmpty(c.Name) && c.Name.ToUpper().Contains(Search.ToUpper());
+            }
+
+            return false;
+        }
+
+        public string Search
+        {
+            get => _search;
+            set
+            {
+                _search = value; OnPropertyChanged();
+                CorporationView?.Refresh();
+                PatentsView?.Refresh();
+                PreludesView?.Refresh();
+            }
+        }
+
+        public ICollectionView PreludesView { get; set; }
+
+        public ICollectionView PatentsView { get; set; }
+
+        public ICollectionView CorporationView { get; set; }
 
         private void ExecuteDelete(object obj)
         {
@@ -91,6 +135,7 @@ namespace TM.Digital.Editor
 
             };
             Patents.Add(patent);
+            PatentsView.Refresh();
             SelectedObject = patent;
         }
 
@@ -101,6 +146,7 @@ namespace TM.Digital.Editor
 
             };
             Corporations.Add(corp);
+            CorporationView.Refresh();
             SelectedObject = corp;
         }
 
@@ -111,34 +157,27 @@ namespace TM.Digital.Editor
 
             };
             Preludes.Add(corp);
+            PreludesView.Refresh();
             SelectedObject = corp;
         }
 
         private void ExecuteRefresh(object obj)
         {
-            if (obj == null)
-            {
-                Corporations = new ObservableCollection<Corporation>(_corporations);
-                Patents = new ObservableCollection<Patent>(_patents);
-                Preludes = new ObservableCollection<Prelude>(_preludes);
 
-
-            }
-            else if (SelectedObject != null)
+            if (SelectedObject is Prelude)
             {
-                if (SelectedObject is Patent)
-                {
-                    OnPropertyChanged(nameof(Patents));
-                }
-                if (SelectedObject is Corporation)
-                {
-                    OnPropertyChanged(nameof(Corporations));
-                }
-                if (SelectedObject is Prelude)
-                {
-                    OnPropertyChanged(nameof(Preludes));
-                }
+                PreludesView.Refresh();
             }
+            if (SelectedObject is Patent)
+            {
+                PatentsView.Refresh();
+            }
+            if (SelectedObject is Corporation)
+            {
+                CorporationView.Refresh();
+            }
+   
+            
         }
 
 

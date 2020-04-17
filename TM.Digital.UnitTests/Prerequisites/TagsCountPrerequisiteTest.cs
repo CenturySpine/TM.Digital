@@ -4,6 +4,7 @@ using TM.Digital.Cards;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Model.Effects;
 using TM.Digital.Services;
 
 namespace TM.Digital.UnitTests.Prerequisites
@@ -29,7 +30,7 @@ namespace TM.Digital.UnitTests.Prerequisites
 
             patent.Prerequisites.TagsPrerequisites.Add(new TagsPrerequisite() { Tag = Tags.Energy, Value = 2 });
             var player = ModelFactory.NewPlayer("test", false);
-            player.PlayedCards.Add(new Patent() { Tags = new List<Tags>() { Tags.Energy } });
+            player.PlayedCards.Add(new Patent() { Tags = new TagsList() { Tags.Energy } });
             player.Corporation = CorporationsFactory.NewCorporation();
 
             var result = _target.CanPlayCard(patent, new Board(), player);
@@ -43,7 +44,7 @@ namespace TM.Digital.UnitTests.Prerequisites
 
             patent.Prerequisites.TagsPrerequisites.Add(new TagsPrerequisite() { Tag = Tags.Energy, Value = 2 });
             var player = ModelFactory.NewPlayer("test", false);
-            player.PlayedCards.Add(new Patent() { Tags = new List<Tags>() { Tags.Energy, Tags.Energy } });
+            player.PlayedCards.Add(new Patent() { Tags = new TagsList() { Tags.Energy, Tags.Energy } });
             player.Corporation = CorporationsFactory.NewCorporation();
             var result = _target.CanPlayCard(patent, new Board(), player);
             Assert.IsTrue(result);
@@ -56,8 +57,8 @@ namespace TM.Digital.UnitTests.Prerequisites
 
             patent.Prerequisites.TagsPrerequisites.Add(new TagsPrerequisite() { Tag = Tags.Energy, Value = 2 });
             var player = ModelFactory.NewPlayer("test", false);
-            player.PlayedCards.Add(new Patent() { Tags = new List<Tags>() { Tags.Energy } });
-            player.PlayedCards.Add(new Patent() { Tags = new List<Tags>() { Tags.Energy } });
+            player.PlayedCards.Add(new Patent() { Tags = new TagsList() { Tags.Energy } });
+            player.PlayedCards.Add(new Patent() { Tags = new TagsList() { Tags.Energy } });
             player.Corporation = CorporationsFactory.NewCorporation();
             var result = _target.CanPlayCard(patent, new Board(), player);
             Assert.IsTrue(result);
@@ -75,8 +76,8 @@ namespace TM.Digital.UnitTests.Prerequisites
             player.Corporation.Tags.Add(Tags.Energy);
 
 
-            player.PlayedCards.Add(new Patent() { Tags = new List<Tags>() { Tags.Energy } });
-            player.PlayedCards.Add(new Patent() { Tags = new List<Tags>() { Tags.Energy } });
+            player.PlayedCards.Add(new Patent() { Tags = new TagsList() { Tags.Energy } });
+            player.PlayedCards.Add(new Patent() { Tags = new TagsList() { Tags.Energy } });
 
             var result = _target.CanPlayCard(patent, new Board(), player);
             Assert.IsTrue(result);

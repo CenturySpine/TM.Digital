@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Windows;
 using Newtonsoft.Json;
 using TM.Digital.Model;
@@ -49,7 +50,12 @@ namespace TM.Digital.Editor
 
             if (TheOne != null && File.Exists(TheOne.FullName))
             {
-                all = JsonConvert.DeserializeObject<CardReferencesHolder>(File.ReadAllText(TheOne.FullName));
+                all = System.Text.Json.JsonSerializer.Deserialize<CardReferencesHolder>(File.ReadAllText(TheOne.FullName)
+                //    , new JsonSerializerOptions
+                //{
+                //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                //}
+                    );
             }
             else
             {
@@ -115,7 +121,7 @@ namespace TM.Digital.Editor
                     }).ToList()
                 };
 
-                streamWriter.Write(JsonConvert.SerializeObject(h));
+                streamWriter.Write(System.Text.Json.JsonSerializer.Serialize(h));
             }
         }
     }

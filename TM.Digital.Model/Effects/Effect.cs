@@ -2,5 +2,6 @@
 {
     public class Effect
     {
+        public bool IsCorporationEffect { get; set; }
     }
 }
