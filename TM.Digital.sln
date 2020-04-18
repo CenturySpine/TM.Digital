@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Ui.Resources", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A910EEC5-8966-4F04-8FC2-7F236C5D272C}"
 	ProjectSection(SolutionItems) = preProject
-		TM.Digital.Editor\bin\Debug\netcoreapp3.1\637228266606625874_packs.json = TM.Digital.Editor\bin\Debug\netcoreapp3.1\637228266606625874_packs.json
+		637228349893865617_packs.json = 637228349893865617_packs.json
 	EndProjectSection
 EndProject
 Global

@@ -16,7 +16,7 @@ namespace TM.Digital.Services.Common
         {
             DirectoryInfo di = new DirectoryInfo(directory);
             CardReferencesHolder all;
-            var files = di.GetFiles("*_packs.json").OrderBy(fi => fi.CreationTime).Reverse();
+            var files = di.GetFiles("*packs.json").OrderBy(fi => fi.CreationTime).Reverse();
             var TheOne = files.FirstOrDefault();
 
             if (TheOne != null && File.Exists(TheOne.FullName))
