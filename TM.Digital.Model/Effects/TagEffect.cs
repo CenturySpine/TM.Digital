@@ -4,7 +4,7 @@ using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Model.Effects
 {
-    public enum MultipleTagsEffectCombinationType
+    public enum MultipleEffectCombinationType
     {
         Or,
         And
@@ -15,14 +15,14 @@ namespace TM.Digital.Model.Effects
         Self, 
         Any
     }
-    public class TagEffect
+    public class TagEffect : Effect
     {
         public TagEffectType TagEffectType { get; set; }
         
         public ActionOrigin ActionOrigin { get; set; }
 
         public TagsList AffectedTags { get; set; }
-        public MultipleTagsEffectCombinationType CombinationType { get; set; }
+        public MultipleEffectCombinationType CombinationType { get; set; }
 
         public List<ResourceEffect> ResourceEffects { get; set; }
     }

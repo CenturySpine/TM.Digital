@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using TM.Digital.Model.Cards;
@@ -10,9 +11,9 @@ namespace TM.Digital.Model.Corporations
     {
         [XmlIgnore]
         [JsonIgnore]
-        public Effect CorporationEffect
+        public List<Effect> CorporationEffect
         {
-            get { return AllEffects().FirstOrDefault(e => e.IsCorporationEffect); }
+            get { return AllEffects().Where(e => e.IsCorporationEffect).ToList(); }
         }
     }
 }

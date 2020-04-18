@@ -16,9 +16,9 @@ namespace TM.Digital.Editor
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
 
-        public MainWindow()
+        public MainWindow(MainViewModel vm)
         {
-            DataContext = new MainViewModel();
+            DataContext = vm;
             InitializeComponent();
 
 

@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TM.Digital.Cards\TM.Digital.Cards.csproj" />
     <ProjectReference Include="..\TM.Digital.Model\TM.Digital.Model.csproj" />
+    <ProjectReference Include="..\TM.Digital.Services.Common\TM.Digital.Services.Common.csproj" />
     <ProjectReference Include="..\TM.Digital.Ui.Resources\TM.Digital.Ui.Resources.csproj" />
   </ItemGroup>
 

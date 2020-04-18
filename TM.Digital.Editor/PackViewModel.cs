@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
@@ -25,6 +26,8 @@ namespace TM.Digital.Editor
         private ObservableCollection<Prelude> _preludes;
         private string _name;
         private string _search;
+        private string _destinationPack;
+
 
         public PackViewModel(ExtensionPack extensionPack)
         {
@@ -50,8 +53,11 @@ namespace TM.Digital.Editor
             AddPatentCommand = new RelayCommand(ExecuteAddPatent);
             AddPreludeCommand = new RelayCommand(ExecuteAddPrelude);
 
+
             Deletecommand = new RelayCommand(ExecuteDelete);
         }
+
+
 
         private bool FilterCard(object obj)
         {
@@ -192,5 +198,7 @@ namespace TM.Digital.Editor
         public RelayCommand AddPreludeCommand { get; set; }
 
         public RelayCommand Refresh { get; }
+
+
     }
 }

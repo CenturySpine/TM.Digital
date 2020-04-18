@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
-using Newtonsoft.Json;
 using TM.Digital.Model;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Services.Common;
 using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Editor
@@ -18,6 +18,7 @@ namespace TM.Digital.Editor
         private const string packs = "packs.json";
 
         private ObservableCollection<PackPresenter> _packs;
+        private PackPresenter _destinationPack;
 
         public ObservableCollection<PackPresenter> Packs
         {
@@ -29,76 +30,70 @@ namespace TM.Digital.Editor
             }
         }
 
+        public RelayCommand MoveToCommand { get; set; }
+
+        public PackPresenter DestinationPack
+        {
+            get => _destinationPack;
+            set { _destinationPack = value; OnPropertyChanged(); }
+        }
+
         public RelayCommand SaveCommand { get; set; }
 
         //SelectedObject = all;
 
-
         private void SaveObject_OnClick(object sender, RoutedEventArgs e)
         {
-
         }
+
+        private void ExecuteMoveTo(object obj)
+        {
+            if (obj != null && DestinationPack != null)
+            {
+                if (obj is Patent patent)
+                {
+                    var currentPack = Packs.FirstOrDefault(r => r.Content.Patents.Contains(patent));
+                    if (currentPack != null)
+                    {
+                        currentPack.Content.Patents.Remove(patent);
+                        DestinationPack.Content.Patents.Add(patent);
+                    }
+                }
+                if (obj is Corporation corporation)
+                {
+                    var currentPack = Packs.FirstOrDefault(r => r.Content.Corporations.Contains(corporation));
+                    if (currentPack != null)
+                    {
+                        currentPack.Content.Corporations.Remove(corporation);
+                        DestinationPack.Content.Corporations.Add(corporation);
+                    }
+                }
+                if (obj is Prelude prelude)
+                {
+                    var currentPack = Packs.FirstOrDefault(r => r.Content.Preludes.Contains(prelude));
+                    if (currentPack != null)
+                    {
+                        currentPack.Content.Preludes.Remove(prelude);
+                        DestinationPack.Content.Preludes.Add(prelude);
+                    }
+                }
+            }
+        }
+
         public MainViewModel()
         {
+            MoveToCommand = new RelayCommand(ExecuteMoveTo);
+
             SaveCommand = new RelayCommand(ExecuteSave);
+            
+        }
+
+        public async Task Initialize()
+        {
             CardReferencesHolder all;
+            string directory = Environment.CurrentDirectory;
 
-            DirectoryInfo di = new DirectoryInfo(Environment.CurrentDirectory);
-            var files = di.GetFiles("*_packs.json").OrderBy(fi => fi.CreationTime).Reverse();
-            var TheOne = files.FirstOrDefault();
-
-
-            if (TheOne != null && File.Exists(TheOne.FullName))
-            {
-                all = System.Text.Json.JsonSerializer.Deserialize<CardReferencesHolder>(File.ReadAllText(TheOne.FullName)
-                //    , new JsonSerializerOptions
-                //{
-                //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                //}
-                    );
-            }
-            else
-            {
-                all = new CardReferencesHolder()
-                {
-                    Packs = new List<ExtensionPack>()
-                    {
-                        new ExtensionPack()
-                        {
-                            Name = Extensions.Base,
-                            Corporations = new List<Corporation>(),
-                            Patents = new List<Patent>(),
-                            Preludes = new List<Prelude>()
-
-                        },
-                        new ExtensionPack()
-                        {
-                            Name = Extensions.Prelude,
-                            Corporations = new List<Corporation>(),
-                            Patents = new List<Patent>(),
-                            Preludes = new List<Prelude>()
-
-                        },
-                        new ExtensionPack()
-                        {
-                            Name = Extensions.Colonies,
-                            Corporations = new List<Corporation>(),
-                            Patents = new List<Patent>(),
-                            Preludes = new List<Prelude>()
-
-                        },
-                        new ExtensionPack()
-                        {
-                            Name = Extensions.Turnmoil,
-                            Corporations = new List<Corporation>(),
-                            Patents = new List<Patent>(),
-                            Preludes = new List<Prelude>()
-
-                        }
-                    }
-                };
-            }
-
+            all = await PackSerializer.GtPacks(directory);
             Packs = new ObservableCollection<PackPresenter>(all.Packs.Select(r => new PackPresenter()
             {
                 Content = new PackViewModel(r),

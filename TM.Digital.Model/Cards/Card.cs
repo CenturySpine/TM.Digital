@@ -8,6 +8,8 @@ using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Model.Cards
 {
+
+
     public class Card
     {
         protected bool Equals(Card other)
@@ -28,6 +30,11 @@ namespace TM.Digital.Model.Cards
             return Guid.GetHashCode();
         }
 
+        public Card()
+        {
+
+        }
+
         public Guid Guid { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public string OfficialNumberTag { get; set; }
@@ -36,31 +43,39 @@ namespace TM.Digital.Model.Cards
 
         public TagsList Tags { get; set; }
         public List<ResourceEffect> ResourcesEffects { get; set; } = new List<ResourceEffect>();
+     
+        public List<ResourceEffect> ResourceEffectAlternatives { get; set; }
         public List<BoardLevelEffect> BoardEffects { get; set; } = new List<BoardLevelEffect>();
         public TagsEffects TagEffects { get; set; } = new TagsEffects();
         public List<TileEffect> TileEffects { get; set; } = new List<TileEffect>();
-        public TilePassiveEffects TilePassiveEffects { get; set; }
-        public List<Action> Actions { get; set; }
+        public TilePassiveEffects TilePassiveEffects { get; set; } = new TilePassiveEffects();
+        public List<Action> Actions { get; set; } = new List<Action>();
         public ResourceType ResourceType { get; set; }
 
         public int ResourcesCount { get; set; }
 
         public StandardVictoryPoint CardVictoryPoints { get; set; }
 
-        public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
+        public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; } 
 
         public MineralModifiers MineralModifiers { get; set; }
 
-        public ConversionRates ConversionRates { get; set; }
+        public ConversionRates ConversionRates { get; set; } 
 
         public List<Effect> AllEffects()
         {
             return new List<Effect>(ResourcesEffects)
-                .Concat(new List<Effect> { MineralModifiers.SteelModifier, MineralModifiers.TitaniumModifier })
-                .Concat(new List<Effect> { ConversionRates.Heat, ConversionRates.PlantConversion })
+                .Concat(TagEffects != null && TagEffects.Any() ? TagEffects.Cast<Effect>() : new List<Effect>())
+                .Concat(MineralModifiers?.SteelModifier != null ? new List<Effect> { MineralModifiers.SteelModifier } : new List<Effect>())
+                .Concat(MineralModifiers?.TitaniumModifier != null ? new List<Effect>() { MineralModifiers.TitaniumModifier } : new List<Effect>())
+                .Concat(ConversionRates?.Heat != null ? new List<Effect> { ConversionRates.Heat } : new List<Effect>())
+                .Concat(ConversionRates?.PlantConversion != null ? new List<Effect> { ConversionRates.PlantConversion } : new List<Effect>())
+
                 .Concat(BoardEffects)
+                .Concat((TilePassiveEffects != null && TilePassiveEffects.Any()? TilePassiveEffects.Cast<Effect>():new List<Effect>()))
+
                 .Concat(TileEffects)
-                .Concat(Actions)
+                .Concat((Actions != null && Actions.Any()) ? Actions.Cast<Effect>() : new List<Effect>())
                 .ToList();
         }
     }

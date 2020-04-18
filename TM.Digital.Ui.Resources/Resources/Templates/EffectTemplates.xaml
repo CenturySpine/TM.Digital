@@ -132,6 +132,9 @@
                                         <DataTrigger Binding="{Binding ModifierRatio}" Value="1">
                                             <Setter Property="Visibility" Value="Collapsed"></Setter>
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding ModifierRatio}" Value="0">
+                                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
@@ -165,6 +168,9 @@
                                         <Setter Property="Visibility" Value="Visible"></Setter>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ModifierRatio}" Value="1">
+                                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ModifierRatio}" Value="0">
                                                 <Setter Property="Visibility" Value="Collapsed"></Setter>
                                             </DataTrigger>
                                         </Style.Triggers>

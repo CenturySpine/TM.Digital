@@ -9,6 +9,131 @@
                     xmlns:templateSelectors="clr-namespace:TM.Digital.Ui.Resources.Resources.TemplateSelectors"
                     xmlns:effects="clr-namespace:TM.Digital.Model.Effects;assembly=TM.Digital.Model">
 
+    <DataTemplate DataType="{x:Type effects:TilePassiveEffect}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+
+
+
+            <Grid Grid.Column="0"  HorizontalAlignment="Left">
+                <Path  Margin="0"  Stretch="Uniform" Height="27" Width="27">
+
+                    <Path.Style>
+                        <Style TargetType="{x:Type Path}" BasedOn="{StaticResource tileShape}">
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActionOrigin}" Value="{x:Static effects:ActionOrigin.Any}">
+                                    <Setter Property="Fill" Value="Red" />
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </Path.Style>
+                </Path>
+                <Viewbox Stretch="Uniform" Height="25" Width="25">
+                    <ContentControl >
+                        <ContentControl.Style>
+                            <Style TargetType="{x:Type ContentControl}">
+                                <Setter Property="Content" Value="{Binding TileType}" />
+                                <Setter Property="ContentTemplateSelector" Value="{StaticResource tileEffectTemplateSelector}" />
+
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+                </Viewbox>
+
+            </Grid>
+
+            <TextBlock Grid.Column="1" Text=" : " VerticalAlignment="Center" Margin="2" HorizontalAlignment="Left"></TextBlock>
+
+            <ItemsControl Grid.Column="2" ItemsSource="{Binding ResourceEffects}"  HorizontalAlignment="Left">
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="{x:Type ContentPresenter}">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid  >
+                            <ContentControl  Content="{Binding .}" ></ContentControl>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
+
+        </Grid>
+    </DataTemplate>
+    <!--<DataTemplate DataType="{x:Type effects:TilePassiveEffects}">
+        <Grid>
+<ItemsControl ItemsSource="{Binding}"></ItemsControl>
+
+        </Grid>
+    </DataTemplate>-->
+    <DataTemplate DataType="{x:Type cards:ConversionRate}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Rate}" VerticalAlignment="Center" Margin="5"/>
+                <ContentControl Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Width="20" Height="20" Margin="2"/>
+            </StackPanel>
+            <ContentControl ContentTemplate="{StaticResource dt_action}" HorizontalAlignment="Center" Grid.Column="1" Margin="2" />
+
+            <Grid Grid.Column="2" Height="25" Width="25">
+                <Viewbox Stretch="Uniform">
+                    <ContentControl >
+                        <ContentControl.Style>
+                            <Style TargetType="{x:Type ContentControl}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Plant}">
+                                        <Setter Property="Content" Value="{x:Static tile:TileType.Forest}" />
+                                        <Setter Property="ContentTemplateSelector" Value="{StaticResource tileEffectTemplateSelector}" />
+
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Heat}">
+                                        <Setter Property="Content" Value="{x:Static board:BoardLevelType.Temperature}" />
+                                        <Setter Property="ContentTemplateSelector" Value="{StaticResource globalParamTemplateSelector}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+                </Viewbox>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type cards:MineralModifier}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ContentControl Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Width="20" Height="20" Margin="2"/>
+            <TextBlock Grid.Column="1" Text=" : " VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Grid.Column="2" Text="{Binding Value, StringFormat='{}+{0}'}" VerticalAlignment="Center" FontWeight="Bold"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type cards:MineralModifiers}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ContentControl Content="{Binding SteelModifier}" />
+            <ContentControl Grid.Row="1" Content="{Binding TitaniumModifier}" />
+        </Grid>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type cards:TagsEffects}">
         <Grid  Margin="2" HorizontalAlignment="Center">
             <Grid.Style>
@@ -90,23 +215,23 @@
 
     <DataTemplate DataType="{x:Type effects:TagsList}">
         <Border Background="Transparent">
-        <ItemsControl ItemsSource="{Binding}" Padding="0" Margin="0">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"></StackPanel>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="{x:Type ContentPresenter}">
-                    <Setter Property="Margin" Value="0"></Setter>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource tagTemplateSelector}" Height="20" Width="20" Margin="1,0" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            <ItemsControl ItemsSource="{Binding}" Padding="0" Margin="0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="{x:Type ContentPresenter}">
+                        <Setter Property="Margin" Value="0"></Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource tagTemplateSelector}" Height="20" Width="20" Margin="1,0" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Border>
     </DataTemplate>
 
@@ -125,16 +250,16 @@
                         <Setter Property="BorderBrush" Value="Red"></Setter>
                         <Setter Property="BorderThickness" Value="0,0,0,1"></Setter>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding CombinationType}" Value="{x:Static effects:MultipleTagsEffectCombinationType.Or}">
+                            <DataTrigger Binding="{Binding CombinationType}" Value="{x:Static effects:MultipleEffectCombinationType.Or}">
                                 <Setter Property="BorderBrush" Value="Green">
-                                    
+
                                 </Setter>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
                 <Grid>
-                <ContentControl Content="{Binding AffectedTags}"></ContentControl>
+                    <ContentControl Content="{Binding AffectedTags}"></ContentControl>
                 </Grid>
             </Border>
 
@@ -279,27 +404,28 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                        <Border BorderBrush="Black" BorderThickness="1" Width="60"  VerticalAlignment="Center">
-                            <Border.Style>
-                                <Style TargetType="{x:Type Border}">
-                                    <Setter Property="Background" Value="Gold"></Setter>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsMax}" Value="true">
-                                            <Setter Property="Background" >
-                                                <Setter.Value>
-                                                    <SolidColorBrush Color="Red" Opacity="0.5"></SolidColorBrush>
-                                                </Setter.Value>
-                                            </Setter>                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <Grid>
+                            <Border BorderBrush="Black" BorderThickness="1" Width="60"  VerticalAlignment="Center">
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="Background" Value="Gold"></Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsMax}" Value="true">
+                                                <Setter Property="Background" >
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Color="Red" Opacity="0.5"></SolidColorBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
 
 
                                     <TextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold" FontSize="10"></TextBlock>
-                                
-                            </Grid>
-                        </Border>
+
+                                </Grid>
+                            </Border>
                             <ContentControl Content="{Binding Tag}" ContentTemplateSelector="{StaticResource tagTemplateSelector}" Width="20" Height="20"  Margin="0,0,5,0" 
                                             VerticalAlignment="Center" HorizontalAlignment="Right"/>
 
@@ -332,27 +458,27 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                        <Border BorderBrush="Black" BorderThickness="1" Width="60"  VerticalAlignment="Center">
-                            <Border.Style>
-                                <Style TargetType="{x:Type Border}">
-                                    <Setter Property="Background" Value="Gold"></Setter>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsMax}" Value="true">
-                                            <Setter Property="Background" >
-                                                <Setter.Value>
-                                                    <SolidColorBrush Color="Red" Opacity="0.5"></SolidColorBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            
+                            <Border BorderBrush="Black" BorderThickness="1" Width="60"  VerticalAlignment="Center">
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="Background" Value="Gold"></Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsMax}" Value="true">
+                                                <Setter Property="Background" >
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Color="Red" Opacity="0.5"></SolidColorBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
                                 <TextBlock Text="{Binding Value}"  VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold" FontSize="10"></TextBlock>
 
 
-                            
-                        </Border>
+
+                            </Border>
                             <ContentControl Width="25" Height="25"  Margin="0,0,5,0"
                                             Content="{Binding Parameter}" VerticalAlignment="Center" HorizontalAlignment="Right"
                                             ContentTemplateSelector="{StaticResource globalParamTemplateSelector}" />
