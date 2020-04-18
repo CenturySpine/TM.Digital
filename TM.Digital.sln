@@ -23,7 +23,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Services.Common"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Editor", "TM.Digital.Editor\TM.Digital.Editor.csproj", "{5F54CDB8-3879-4E28-BD36-C36D376EC871}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TM.Digital.Ui.Resources", "TM.Digital.Ui.Resources\TM.Digital.Ui.Resources.csproj", "{C8A963D2-2A75-4233-B265-A58A0EF3951D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TM.Digital.Ui.Resources", "TM.Digital.Ui.Resources\TM.Digital.Ui.Resources.csproj", "{C8A963D2-2A75-4233-B265-A58A0EF3951D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A910EEC5-8966-4F04-8FC2-7F236C5D272C}"
+	ProjectSection(SolutionItems) = preProject
+		TM.Digital.Editor\bin\Debug\netcoreapp3.1\637228266606625874_packs.json = TM.Digital.Editor\bin\Debug\netcoreapp3.1\637228266606625874_packs.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
