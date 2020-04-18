@@ -12,7 +12,7 @@ using TM.Digital.Services;
 namespace TM.Digital.UnitTests.Prerequisites
 {
     [TestClass]
-    public class PatentCostTests 
+    public class PatentCostTests
     {
         private PatentCostPrerequisite _target;
 
@@ -168,7 +168,14 @@ namespace TM.Digital.UnitTests.Prerequisites
         {
             Player p = ModelFactory.NewPlayer("toto", false);
             var playedPatent = PatentFactory.NewPatent();
-            playedPatent.TitaniumValueModifier = 1;
+            playedPatent.MineralModifiers = new MineralModifiers()
+            {
+                TitaniumModifier = new MineralModifier()
+                {
+                    ResourceType = ResourceType.Titanium,
+                    Value = 1
+                }
+            };
             p.PlayedCards.Add(playedPatent);
 
             p.Resources.First(r => r.ResourceType == ResourceType.Money)

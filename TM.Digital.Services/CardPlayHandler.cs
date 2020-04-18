@@ -55,13 +55,13 @@ namespace TM.Digital.Services
             player.PlayedCards.Add(card);
 
             //resources effects for self
-            foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == EffectDestination.Self))
+            foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == ActionTarget.Self))
             {
                 await EffectHandler.HandleResourceEffect(player, cardResourceEffect);
             }
 
             //resources effect for others
-            foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == EffectDestination.OtherPlayer))
+            foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == ActionTarget.AnyPlayer))
             {
                 currentActions.Add(ResourceEffectActionChoice(cardResourceEffect, allPlayers));
                 //await EffectHandler.HandleResourceEffect(player, cardResourceEffect);
