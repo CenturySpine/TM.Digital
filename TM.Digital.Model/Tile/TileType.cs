@@ -2,6 +2,7 @@
 {
     public enum TileType
     {
+        None,
         City,
         Forest,
         Ocean,

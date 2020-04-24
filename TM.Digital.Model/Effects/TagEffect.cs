@@ -1,31 +1,47 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using TM.Digital.Model.Cards;
-using TM.Digital.Model.Resources;
+using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Model.Effects
 {
-    public class TagEffect : IEffect
+    public enum MultipleEffectCombinationType
+    {
+        Or,
+        And
+    }
+
+    public enum ActionOrigin
+    {
+        Self, 
+        Any
+    }
+    public class TagEffect : Effect
     {
         public TagEffectType TagEffectType { get; set; }
-        public Tags AffectedTag { get; set; }
-        public int EffectValue { get; set; }
-        public ResourceType ResourceType { get; set; }
-        public ResourceKind ResourceKind { get; set; }
-
         
+        public ActionOrigin ActionOrigin { get; set; }
 
-        public void Apply(Player.Player player, Board.Board board, Card card)
-        {
-            var tagCount = card.Tags.Count(t => t == AffectedTag);
-            var res = player.Resources.FirstOrDefault(r => r.ResourceType == ResourceType);
-            if (ResourceKind == ResourceKind.Unit)
-            {
-                if (res != null) res.UnitCount += tagCount * EffectValue;
-            }
-            else
-            {
-                if (res != null) res.Production += tagCount * EffectValue;
-            }
-        }
+        public TagsList AffectedTags { get; set; }
+        public MultipleEffectCombinationType CombinationType { get; set; }
+
+        public List<ResourceEffect> ResourceEffects { get; set; }
+    }
+
+    public class TagsList : List<Tags>
+    {
+    }
+
+    public class TilePassiveEffect : Effect
+    {
+        public TileType TileType { get; set; }
+
+        public ActionOrigin ActionOrigin { get; set; }
+
+        public List<ResourceEffect> ResourceEffects { get; set; }
+    }
+
+    public class TilePassiveEffects : List<TilePassiveEffect>
+    {
+
     }
 }

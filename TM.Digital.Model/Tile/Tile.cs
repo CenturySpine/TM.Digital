@@ -8,13 +8,4 @@ namespace TM.Digital.Model.Tile
         public Guid? Owner { get; set; }
         public int BoardIndex { get; set; }
     }
-
-    public enum TilePlacementCosntrains
-    {
-        None,
-        ReservedForOcean,
-        StandardCity,
-        VolcanicSpace,
-        NothingAround
-    }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TM.Digital.Cards;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Prerequisite;
 using TM.Digital.Services;
@@ -11,7 +12,7 @@ using GlobalPrerequisite = TM.Digital.Model.Cards.GlobalPrerequisite;
 namespace TM.Digital.UnitTests.Prerequisites
 {
     [TestClass]
-    public class GlobalParametersCheckTests : TestPatentCheckClassAbase
+    public class GlobalParametersCheckTests 
     {
         private GlobalCheckPrerequisite _target;
         private Board board;
@@ -28,7 +29,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         [TestMethod]
         public void TestTemperatureMinNotReached()
         {
-            var patent = NewPatent();
+            var patent = PatentFactory.NewPatent();
             patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite()
             {
                 Value = -6,
@@ -50,7 +51,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         [TestMethod]
         public void TestTemperatureMaxOverReached()
         {
-            var patent = NewPatent();
+            var patent = PatentFactory.NewPatent();
             patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite()
             {
                 IsMax = true,
@@ -73,7 +74,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         [TestMethod]
         public void TestTemperatureMinOk()
         {
-            var patent = NewPatent();
+            var patent = PatentFactory.NewPatent();
             patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite()
             {
               
@@ -96,7 +97,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         [TestMethod]
         public void TestTemperatureMaxOk()
         {
-            var patent = NewPatent();
+            var patent = PatentFactory.NewPatent();
             patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite()
             {
                 IsMax = true,

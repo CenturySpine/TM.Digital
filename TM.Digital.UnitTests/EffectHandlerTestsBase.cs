@@ -1,6 +1,7 @@
 using System.Linq;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
+using TM.Digital.Services;
 
 namespace TM.Digital.UnitTests
 {
@@ -13,7 +14,7 @@ namespace TM.Digital.UnitTests
         protected Player Player;
         protected void SetupPlayer()
         {
-            Player = new Model.Player.Player();
+            Player = ModelFactory.NewPlayer("test", false);
             PlayerResource(ResourceType.Energy).Production = 2;
             PlayerResource(ResourceType.Energy).UnitCount = 5;
             PlayerResource(ResourceType.Money).Production = 1;

@@ -4,6 +4,7 @@
     {
         public static string Playing="PlayersTurn";
         public static string LogReceived="LogReceived";
+        public static string ResourceEffectForOtherPlayer="ResourceEffectForOtherPlayerRequest";
         public const string SetupChoice = "SetupPlayerChoice";
         public const string RecieveGameUpdate = "ReceiveGameUpdate";
         public const string PlaceTileRequest = "PlaceTile";

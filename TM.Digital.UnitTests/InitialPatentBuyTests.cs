@@ -23,9 +23,22 @@ namespace TM.Digital.UnitTests
         public void BasicPatentBuyTest()
 
         {
-            EffectHandler.HandleInitialPatentBuy(Player, new List<Patent> { new Patent(), new Patent() }, new Corporation { StartingMoney = 50 });
 
-            Assert.AreEqual(44,PlayerResource(ResourceType.Money).UnitCount);
+            PlayerResource(ResourceType.Money).UnitCount = 0;
+           var t= EffectHandler.HandleInitialPatentBuy(Player, new List<Patent>
+           {
+               new Patent(), 
+               new Patent()
+           }, 
+               new Corporation { ResourcesEffects = new List<ResourceEffect>
+               {
+                new ResourceEffect()
+                {
+                    ResourceType = ResourceType.Money,ResourceKind = ResourceKind.Unit,Amount = 44
+                }
+            }});
+           t.Wait();
+            Assert.AreEqual(38,PlayerResource(ResourceType.Money).UnitCount);
         }
     }
 }

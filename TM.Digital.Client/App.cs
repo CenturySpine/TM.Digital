@@ -1,5 +1,6 @@
 ﻿using SimpleInjector;
 using System.Windows;
+using TM.Digital.Client.Screens.ActionChoice;
 using TM.Digital.Client.Screens.HandSetup;
 using TM.Digital.Client.Screens.Main;
 using TM.Digital.Client.Screens.Menu;
@@ -26,6 +27,7 @@ namespace TM.Digital.Client
             ctn.Register<GameSetupViewModel>(Lifestyle.Transient);
             ctn.Register<MainMenuViewModel>(Lifestyle.Singleton);
             ctn.Register<WaitingGameScreenViewModel>(Lifestyle.Singleton);
+            ctn.Register<ActionChoiceViewModel>(Lifestyle.Singleton);
             ctn.Register<IApiProxy, ApiProxy>(Lifestyle.Singleton);
 
             //ctn.Register<PopupService>(Lifestyle.Singleton);

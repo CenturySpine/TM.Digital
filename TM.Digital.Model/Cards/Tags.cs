@@ -6,6 +6,7 @@ namespace TM.Digital.Model.Cards
 {
     public enum Tags
     {
+        None,
         Building,
         Event,
         Space,
@@ -17,5 +18,6 @@ namespace TM.Digital.Model.Cards
         Earth,
         City,
         Science,
+        Joker
     }
 }

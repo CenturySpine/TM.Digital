@@ -1,18 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TM.Digital.Cards;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Services.Common;
 
 namespace TM.Digital.Services
 {
     public class CardDrawer
     {
-        private readonly List<Corporation> _allCorporations = new List<Corporation>
+        private List<Corporation> _allCorporations = new List<Corporation>
         {
             CorporationsFactory.Arklight(),CorporationsFactory.CheungShingMars(),CorporationsFactory.InterPlanetaryCinematics(), CorporationsFactory.Teractor(), CorporationsFactory.PhobLog(),
         };
 
-        private readonly List<Patent> _allPatents = new List<Patent>
+        private List<Patent> _allPatents = new List<Patent>
         {
             PatentFactory.BubbleCity(),
             PatentFactory.FusionEnergy(),
@@ -26,22 +30,30 @@ namespace TM.Digital.Services
             PatentFactory.ProtectedValley(),
             PatentFactory.GiantIceAsteroid()
         };
-
-        public CardDrawer()
+        public async Task LoadResources()
         {
+            //C:\Users\bruno\Source\Repos\TM.Digital\PackageData
+            var pack = await PackSerializer.GtPacks(@"C:\Users\bruno\Source\Repos\TM.Digital\PackageData");
+            _allCorporations = new List<Corporation>(pack.Packs.SelectMany(p => p.Corporations));
+            _allPatents = new List<Patent>(pack.Packs.SelectMany(p => p.Patents));
             _allCorporations.Shuffle();
             _allPatents.Shuffle();
 
             DiscardPile = new List<Patent>();
             AvailableCorporations = new Queue<Corporation>(_allCorporations);
             AvailablePatents = new Queue<Patent>(_allPatents);
+
+        }
+        public CardDrawer()
+        {
+
         }
 
-        private Queue<Corporation> AvailableCorporations { get; }
+        private Queue<Corporation> AvailableCorporations { get; set; }
 
         private Queue<Patent> AvailablePatents { get; set; }
 
-        private List<Patent> DiscardPile { get; }
+        private List<Patent> DiscardPile { get; set; }
 
         public Corporation DrawCorporation()
         {
@@ -65,5 +77,35 @@ namespace TM.Digital.Services
             DiscardPile.Clear();
 
         }
+
+        public Corporation PickCorporation(Guid parse)
+        {
+            return _allCorporations.FirstOrDefault(c => c.Guid == parse);
+        }
+
+        public List<Patent> DispatchPatents(Dictionary<string, bool> selectionBoughtCards)
+        {
+            List<Patent> pat = new List<Patent>();
+
+            foreach (var selectionBoughtCard in selectionBoughtCards)
+            {
+                var patetn = _allPatents.FirstOrDefault(r => r.Guid == Guid.Parse(selectionBoughtCard.Key));
+                if (selectionBoughtCard.Value)
+                {
+
+                    if (patetn != null)
+                    {
+                        pat.Add(patetn);
+                    }
+                }
+                else
+                {
+                    DiscardPile.Add(patetn);
+                }
+            }
+            return pat;
+        }
+
+
     }
 }

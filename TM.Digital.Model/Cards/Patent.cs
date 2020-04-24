@@ -1,20 +1,16 @@
-﻿using System.Collections.Generic;
-
-namespace TM.Digital.Model.Cards
+﻿namespace TM.Digital.Model.Cards
 {
     public class Patent : Card
     {
         public int BaseCost { get; set; }
         public int ModifiedCost { get; set; }
 
-
         public Prerequisites Prerequisites { get; set; }
         public bool CanBePlayed { get; set; }
-    }
 
-    public class Prerequisites
-    {
-        public List<TagsPrerequisite> TagsPrerequisites { get; set; } 
-        public List<GlobalPrerequisite> GlobalPrerequisites { get; set; } 
+        public bool IsSameCost
+        {
+            get { return BaseCost == ModifiedCost; }
+        }
     }
 }

@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using TM.Digital.Client.Services;
-using TM.Digital.Client.ViewModelCore;
 using TM.Digital.Model.Game;
+using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Client.Screens.Wait
 {

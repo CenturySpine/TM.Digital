@@ -20,7 +20,7 @@ namespace TM.Digital.Api.Controllers
 
         public GameController(IHubContext<ClientNotificationHub> hubContext)
         {
-            Logger.HubContext = hubContext;
+            Logger.HubContext = Hubconcentrator.Hub = hubContext;
             _hubContext = hubContext;
         }
 
@@ -56,7 +56,7 @@ namespace TM.Digital.Api.Controllers
         }
 
         [Route("{gameId}/play/{playerId}")]
-        public async Task<ActionResult> PlayCard(Patent card, Guid gameId, Guid playerId)
+        public async Task<ActionResult> PlayCard(ActionPlay card, Guid gameId, Guid playerId)
         {
             await GamesService.Instance.Play(card, gameId, playerId, _hubContext);
 
@@ -79,6 +79,14 @@ namespace TM.Digital.Api.Controllers
         public async Task<ActionResult> PlaceTile(BoardPlace place, Guid gameId, Guid playerId)
         {
             await GamesService.Instance.PlaceTile(place, gameId, playerId, _hubContext);
+
+            return Ok();
+        }
+
+        [Route("{gameId}/selectactiontarget/{playerId}")]
+        public async Task<ActionResult> SelectActionTarget(ResourceEffectPlayerChooser place, Guid gameId, Guid playerId)
+        {
+            await GamesService.Instance.SelectActionTarget(place, gameId, playerId, _hubContext);
 
             return Ok();
         }
