@@ -2,18 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Player;
 using TM.Digital.Services.Common;
-using TM.Digital.Transport.Hubs.Hubs;
 
 namespace TM.Digital.Services
 {
-    public static class Hubconcentrator
-    {
-        public static IHubContext<ClientNotificationHub> Hub { get; set; }
-    }
     internal class ActionPlanner
     {
         private static readonly Queue<Action<Player, Board>> RemainingActions = new Queue<Action<Player, Board>>();
@@ -60,6 +54,4 @@ namespace TM.Digital.Services
             ActionFinished?.Invoke(player);
         }
     }
-
-    public delegate void AllActionFinishedEventHandler(Player player);
 }

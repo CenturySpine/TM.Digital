@@ -49,8 +49,8 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type handSetup:PatentSelector}">
-        <Border BorderBrush="Black" BorderThickness="1"  Margin="2"  Height="300" Padding="2">
-            <Border.Style>
+        <Border BorderBrush="Transparent" BorderThickness="1"  Margin="2"   Padding="2" Background="Transparent">
+            <!--<Border.Style>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="Background" Value="White"></Setter>
                     <Style.Triggers>
@@ -68,7 +68,7 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Border.Style>
+            </Border.Style>-->
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -82,7 +82,11 @@
 
                 <ContentControl Grid.Row="1" Content="{Binding Patent}" />
 
-                <ToggleButton Grid.Row="2" Content="Select" Command="{Binding DataContext.SelectCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                <ToggleButton Grid.Row="2" Content="Select" 
+                              HorizontalAlignment="Center"
+                              Padding="20,5"
+                              Margin="0,5"
+                              Command="{Binding DataContext.SelectCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
                               CommandParameter="{Binding}"
                               IsChecked="{Binding IsSelected, Mode=OneWay}" />
             </Grid>
@@ -90,13 +94,13 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type handSetup:CorporationSelector}">
-        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="2" Width="300" Height="150" Padding="10">
+        <Border BorderBrush="Transparent" BorderThickness="1" CornerRadius="5" Margin="2"  Padding="10">
             <Border.Style>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="Background" Value="White"></Setter>
+                    <Setter Property="Background" Value="Transparent"></Setter>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsSelected}" Value="true">
-                            <Setter Property="Background" Value="LightGray"></Setter>
+                            <Setter Property="Background" Value="Transparent"></Setter>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -112,7 +116,11 @@
                 <ContentControl Content="{Binding Corporation}"></ContentControl>
                 
 
-                <ToggleButton Grid.Row="2" Content="Select" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.SelectCardCommand}"
+                <ToggleButton Grid.Row="2" Content="Select" 
+                              HorizontalAlignment="Center"
+                              Padding="20,5"
+                              Margin="0,5"
+                              Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.SelectCardCommand}"
                                           CommandParameter="{Binding}"
                                           IsChecked="{Binding IsSelected, Mode=OneWay}" />
             </Grid>
@@ -267,18 +275,24 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type handSetup:GameSetupViewModel}">
 
-
-        <Border HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20">
+<Border Background="White">
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center"  BorderBrush="Black" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect Opacity="0.4" ShadowDepth="10"></DropShadowEffect>
+            </Border.Effect>
             <Grid>
                 <Grid.Background>
-                    <SolidColorBrush Color="White" Opacity="0.8" />
+                    <SolidColorBrush Color="WhiteSmoke" Opacity="1" />
                 </Grid.Background>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <ItemsControl Margin="10" ItemsSource="{Binding CorporationChoices}" 
+                <TextBlock Text="Initial Setup" Margin="10" VerticalAlignment="Center" TextAlignment="Center"
+                           FontSize="25" FontWeight="Bold" Background="AntiqueWhite"></TextBlock>
+                <ItemsControl Grid.Row="1" Margin="10" ItemsSource="{Binding CorporationChoices}" 
                               Visibility="{Binding IsInitialSetup, Converter={StaticResource boolToVisConverter}}" 
                               HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
@@ -287,16 +301,17 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
-                <ItemsControl Margin="10" Grid.Row="1" ItemsSource="{Binding PatentChoices}" HorizontalAlignment="Center">
+                <ItemsControl Margin="10" Grid.Row="2" ItemsSource="{Binding PatentChoices}" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"></StackPanel>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
-                <Button Grid.Row="2" Content="Validate" Command="{Binding CloseCommand}" HorizontalAlignment="Center" Padding="20" FontSize="20" Margin="20"></Button>
+                <Button Grid.Row="3" Content="Validate" Command="{Binding CloseCommand}" HorizontalAlignment="Center" Padding="20" FontSize="20" Margin="20"></Button>
             </Grid>
         </Border>
+</Border>
     </DataTemplate>
     <DataTemplate DataType="{x:Type main:PlayerSelector}">
         <Grid>

@@ -24,7 +24,7 @@ namespace TM.Digital.Client.Screens.Main
     public class MainWindowViewModel : NotifierBase
     {
         public WaitingGameScreenViewModel WaitVm { get; }
-        
+
         private Board _board;
         private PlayerSelector _currentPlayer;
 
@@ -133,7 +133,7 @@ namespace TM.Digital.Client.Screens.Main
             });
             connection.On<string, string>(ServerPushMethods.PlayerJoined, (user, message) =>
             {
-                if (Guid.Parse(user) != WaitVm.PlayerId)
+                if (WaitVm.PlayerId != Guid.Empty && Guid.Parse(user) != WaitVm.PlayerId)
                 {
                     //display message
                     WaitVm.IncommingMessages.Add($"Player '{message}' joined the game");
@@ -191,10 +191,10 @@ namespace TM.Digital.Client.Screens.Main
         }
         private async void ActionChoiceViewModel_ChoiceSelected(ResourceEffectPlayerChooser choice)
         {
-            
+
             ActionChoiceViewModel.SelectedChoice = null;
             ActionChoiceViewModel.IsVisible = false;
-            
+
 
             await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/selectactiontarget/{CurrentPlayer.Player.PlayerId}", choice);
 

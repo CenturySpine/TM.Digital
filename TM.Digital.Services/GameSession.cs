@@ -100,6 +100,8 @@ namespace TM.Digital.Services
             _actionPlanner = new ActionPlanner();
             _actionPlanner.ActionFinished += _actionPlanner_ActionFinished;
             _cardDrawer = new CardDrawer();
+            await _cardDrawer.LoadResources();
+
             _playerRandomization = new Random((int)(DateTime.Now.Millisecond / 3.5));
 
             Board = BoardGenerator.Instance.Original();
@@ -221,10 +223,10 @@ namespace TM.Digital.Services
                     selectedCorpo = _cardDrawer.PickCorporation(Guid.Parse(selected.Key));
                     await Logger.Log(player.Name, $"Receiving player setup. chosen corporation = '{selectedCorpo.Name}'");
                     player.Corporation = selectedCorpo;
-                    foreach (var corporationEffect in selectedCorpo.ResourcesEffects)
-                    {
-                        await EffectHandler.HandleResourceEffect(player, corporationEffect);
-                    }
+                    //foreach (var corporationEffect in selectedCorpo.ResourcesEffects)
+                    //{
+                    //    await EffectHandler.HandleResourceEffect(player, corporationEffect);
+                    //}
                 }
 
                 await Logger.Log(player.Name, $"Patent bought : {selection.BoughtCards.Count}");
