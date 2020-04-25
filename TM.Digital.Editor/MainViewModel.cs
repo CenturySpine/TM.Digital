@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using TM.Digital.Editor.Board;
 using TM.Digital.Model;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
@@ -127,6 +128,18 @@ namespace TM.Digital.Editor
 
             SaveCommand = new RelayCommand(ExecuteSave);
             LoadDataCommand = new RelayCommand(ExecuteLoadData);
+
+            SelectBoardPlace = new RelayCommand(ExecuteSelectBoardPlace);
+
+            BoardViewModel = new BoardTesterViewModel();
+        }
+
+        public BoardTesterViewModel BoardViewModel { get; set; }
+
+        private void ExecuteSelectBoardPlace(object obj)
+        {
+
+            BoardViewModel.SelectPlace(obj);
         }
 
         private async void ExecuteLoadData(object obj)
@@ -201,5 +214,7 @@ namespace TM.Digital.Editor
                 MessageBox.Show(ex.ToString(), "Save Error",MessageBoxButton.OK,MessageBoxImage.Error);
             }
         }
+
+        public RelayCommand SelectBoardPlace { get; set; }
     }
 }

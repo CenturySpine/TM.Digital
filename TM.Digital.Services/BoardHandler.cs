@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
+using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
@@ -53,65 +54,150 @@ namespace TM.Digital.Services
             return availablePlaces;
         }
 
-        private static PlaceCoordinates[] GetPlaceSurroundingsIndexes(BoardPlace space, Board board)
+        public static PlaceCoordinates[] GetPlaceSurroundingsIndexes(BoardPlace space, Board board)
         {
-
-            var currentLine = board.BoardLines.FirstOrDefault(l => l.BoardPlaces.FirstOrDefault(p => p.Index.Equals(space.Index)) != null);
-            //int linePlaceCount = currentLine.BoardPlaces.Count;
-            //int upperLinePlaceCount = currentLine.Index > 0 ? board.BoardLines[currentLine.Index - 1].BoardPlaces.Count() : 0;
-            //int lowerLinePlaceCount = currentLine.Index < board.BoardLines.Count ? board.BoardLines[currentLine.Index + 1].BoardPlaces.Count() : 0;
-
-            var surr = new PlaceCoordinates[]
+            PlaceCoordinates[] surr;
+            if (space.Index.Y % 2 != 0)
             {
-                //upper left surroundings
-                new PlaceCoordinates
-                {
-                    X = space.Index.X - 1,
-                    Y = space.Index.Y -1
-                },
-
-                //middle left surroundings
-                new PlaceCoordinates
-                {
+                surr = new PlaceCoordinates[]
+               {
+                    //upper left surroundings
+                    new PlaceCoordinates
+                    {
                         X = space.Index.X ,
                         Y = space.Index.Y -1
-                },
+                    },
 
-                //bottom left surroundings
-                new PlaceCoordinates
+                    //middle left surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X-1 ,
+                        Y = space.Index.Y
+                    },
+
+                    //bottom left surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X ,
+                        Y = space.Index.Y +1
+                    },
+
+                    //upper right surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X+1 ,
+                        Y = space.Index.Y -1
+                    },
+
+                    //middle right surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X +1,
+                        Y = space.Index.Y
+                    },
+                    //bottom right surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X+1 ,
+                        Y = space.Index.Y +1
+                    },
+
+
+               };
+            }
+            else
+            {
+                surr = new PlaceCoordinates[]
                 {
-                    X = space.Index.X+1 ,
-                    Y = space.Index.Y -1
-                },
+                    //upper left surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X -1,
+                        Y = space.Index.Y -1
+                    },
 
-                //upper right surroundings
-                new PlaceCoordinates
-                {
-                    X = space.Index.X-1 ,
-                    Y = space.Index.Y 
-                },
+                    //middle left surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X-1 ,
+                        Y = space.Index.Y
+                    },
 
-                //middle right surroundings
-                new PlaceCoordinates
-                {
-                    X = space.Index.X ,
-                    Y = space.Index.Y+1
-                },
-                //bottom right surroundings
-                new PlaceCoordinates
-                {
-                    X = space.Index.X+1 ,
-                    Y = space.Index.Y 
-                },
+                    //bottom left surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X -1,
+                        Y = space.Index.Y +1
+                    },
+
+                    //upper right surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X ,
+                        Y = space.Index.Y -1
+                    },
+
+                    //middle right surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X +1,
+                        Y = space.Index.Y
+                    },
+                    //bottom right surroundings
+                    new PlaceCoordinates
+                    {
+                        X = space.Index.X ,
+                        Y = space.Index.Y +1
+                    },
 
 
-            };
+                };
+            }
+
             return surr;
+        }
+
+        public static List<BoardPlace> GetTilesFromIndexes(PlaceCoordinates[] coords, Board board)
+        {
+            return board.BoardLines.SelectMany(l => l.BoardPlaces).Where(bp => coords.Contains(bp.Index)).ToList();
         }
 
         public static List<BoardPlace> GetNonOccupiedSpaces(Model.Board.Board board)
         {
             return board.BoardLines.SelectMany(l => l.BoardPlaces).Where(p => p.PlayedTile == null).ToList();
+        }
+
+        public static List<BoardPlace> GetPlayerOwnedPlacesSurroundings(Player player, Model.Board.Board board)
+        {
+            var playersTiles = board.BoardLines
+                .SelectMany(l => l.BoardPlaces)
+                .Where(p =>
+                    p.PlayedTile != null && p.PlayedTile.Owner.HasValue && p.PlayedTile.Owner.Value == player.PlayerId)
+                .ToList();
+
+            if (!playersTiles.Any())
+            {
+                return GetNonOccupiedSpaces(board).Where(r => !r.Reserved.IsExclusive).ToList();
+            }
+
+            List<BoardPlace> bpl = new List<BoardPlace>();
+            foreach (var playersTile in playersTiles)
+            {
+                var surroundingIndexesPlayersTiles = GetPlaceSurroundingsIndexes(playersTile, board);
+
+                var posIndexes = surroundingIndexesPlayersTiles.Where(i => i.X >= 0 && i.Y >= 0).ToList();
+
+                var surroundingtiles = board.BoardLines
+                    .SelectMany(r => r.BoardPlaces)
+                    .Where(p => posIndexes.Contains(p.Index)
+                                && !p.Reserved.IsExclusive && p.PlayedTile == null)
+                    .ToList();
+                bpl.AddRange(surroundingtiles);
+            }
+
+            return bpl;
+
+
         }
 
         public static List<BoardPlace> GetOceansSpaces(List<BoardPlace> board)
@@ -129,7 +215,7 @@ namespace TM.Digital.Services
             return nonOccupiedSpaces.Where(t => t.Reserved.ReservedFor == ReservedFor.Volcano).ToList();
         }
 
-        public static Model.Board.Board GetPlacesChoices(TileEffect first, Model.Board.Board board)
+        public static Board GetPlacesChoices(TileEffect first, Board board, Player player)
         {
             List<BoardPlace> choicePlaces;
             var nonOccupiedSpaces = BoardHandler.GetNonOccupiedSpaces(board);
@@ -154,7 +240,17 @@ namespace TM.Digital.Services
                 case TilePlacementCosntrains.NothingAround:
                     choicePlaces = BoardHandler.SpacesWithNothingAround(nonOccupiedSpaces, board);
                     break;
-
+                case TilePlacementCosntrains.StandardForest:
+                    choicePlaces = GetPlayerOwnedPlacesSurroundings(player, board);
+                    break;
+                case TilePlacementCosntrains.NoctisCity:
+                    choicePlaces = board.BoardLines.SelectMany(p => p.BoardPlaces).Where(p =>
+                        p.Reserved.IsExclusive && p.Reserved.ReservedFor == ReservedFor.NoctisCity).ToList();
+                    break;
+                case TilePlacementCosntrains.NotReservedForOcean:
+                    choicePlaces = nonOccupiedSpaces.Where(p => !(p.Reserved.ReservedFor == ReservedFor.Ocean))
+                        .ToList();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -166,6 +262,7 @@ namespace TM.Digital.Services
 
             return board;
         }
+
 
         public static async Task PlaceTileOnBoard(BoardPlace place, Model.Player.Player playerId, TileEffect pendingTileEffect,
             Model.Board.Board board, CardDrawer cardDrawer)
@@ -214,7 +311,7 @@ namespace TM.Digital.Services
                 var surroundingTiles = board.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => surroundings.Contains(p.Index)).ToList();
                 var playedOcenTiles = surroundingTiles
                     .Where(t => t.PlayedTile != null && t.PlayedTile.Type == TileType.Ocean).ToList();
-                await Logger.Log(playerId.Name, $"Found {playedOcenTiles.Count} ocean tiles... {string.Join(',',playedOcenTiles.Select(t=>t.Index.ToString()))}");
+                await Logger.Log(playerId.Name, $"Found {playedOcenTiles.Count} ocean tiles... {string.Join(',', playedOcenTiles.Select(t => t.Index.ToString()))}");
                 var playerResource = playerId.Resources.First(r => r.ResourceType == ResourceType.Money);
                 playerResource.UnitCount += playedOcenTiles.Count * 2;
                 await Logger.Log(playerId.Name, $"Money units increased by {playedOcenTiles.Count * 2}");

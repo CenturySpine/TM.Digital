@@ -6,6 +6,9 @@
         ReservedForOcean,
         StandardCity,
         VolcanicSpace,
-        NothingAround
+        NothingAround,
+        StandardForest,
+        NoctisCity,
+        NotReservedForOcean
     }
 }

@@ -11,5 +11,6 @@ namespace TM.Digital.Model.Player
 
         public int MoneyValueModifier { get; set; }
 
+        public bool CanConvert { get; set; }
     }
 }

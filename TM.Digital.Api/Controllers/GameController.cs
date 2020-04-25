@@ -83,6 +83,14 @@ namespace TM.Digital.Api.Controllers
             return Ok();
         }
 
+        [Route("{gameId}/convert/{playerId}")]
+        public async Task<ActionResult> ConvertResources(ResourceHandler resources, Guid gameId, Guid playerId)
+        {
+            await GamesService.Instance.ConvertResources(resources, gameId, playerId, _hubContext);
+
+            return Ok();
+        }
+
         [Route("{gameId}/selectactiontarget/{playerId}")]
         public async Task<ActionResult> SelectActionTarget(ResourceEffectPlayerChooser place, Guid gameId, Guid playerId)
         {

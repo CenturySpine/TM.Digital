@@ -9,6 +9,7 @@
         xmlns:cards="clr-namespace:TM.Digital.Model.Cards;assembly=TM.Digital.Model"
         xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid"
         xmlns:model="clr-namespace:TM.Digital.Model;assembly=TM.Digital.Model"
+        xmlns:board="clr-namespace:TM.Digital.Editor.Board"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}"
         Title="MainWindow" Height="450" Width="800">
@@ -141,40 +142,49 @@
             <TextBox Text="{Binding PackageLocation, UpdateSourceTrigger=PropertyChanged, Delay=500}" Margin="5" Width="300"></TextBox>
             <Button Content="Load" Margin="5" Padding="5,3" Command="{Binding LoadDataCommand}"></Button>
         </StackPanel>
+
         <TabControl Grid.Row="1">
-            <TabItem Header="{Binding Packs[0].Name}">
-                <ContentControl Content="{Binding Packs[0].Content}"></ContentControl>
-            </TabItem>
-            <TabItem Header="{Binding Packs[1].Name}">
-                <ContentControl Content="{Binding Packs[1].Content}"></ContentControl>
-            </TabItem>
-            <TabItem Header="{Binding Packs[2].Name}">
-                <ContentControl Content="{Binding Packs[2].Content}"></ContentControl>
-            </TabItem>
-            <!--<TabControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid Height="600">
-                    <ScrollViewer>
-                    <ContentControl Content="{Binding Content}"></ContentControl>
-                        </ScrollViewer>
+            <TabItem Header="Cards pack editor">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TabControl >
+                    <TabItem Header="{Binding Packs[0].Name}">
+                        <ContentControl Content="{Binding Packs[0].Content}"></ContentControl>
+                    </TabItem>
+                    <TabItem Header="{Binding Packs[1].Name}">
+                        <ContentControl Content="{Binding Packs[1].Content}"></ContentControl>
+                    </TabItem>
+                    <TabItem Header="{Binding Packs[2].Name}">
+                        <ContentControl Content="{Binding Packs[2].Content}"></ContentControl>
+                    </TabItem>
+
+                </TabControl>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition  />
+                        </Grid.ColumnDefinitions>
+                        <Button  x:Name="SaveObject" Content="Save object" Margin="5" Padding="5"
+                                 Command="{Binding SaveCommand}"
+                     
+                        ></Button>
+                        <TextBlock Grid.Column="1" Text="Save location" VerticalAlignment="Center" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="2" Margin="5" Text="{Binding SavePackageLocation, UpdateSourceTrigger=PropertyChanged, Delay=500}">
+                        </TextBox>
                     </Grid>
-                </DataTemplate>
-            </TabControl.ItemTemplate>-->
+                </Grid>
+            </TabItem>
+            <TabItem Header="Board Tester" DataContext="{Binding BoardViewModel}">
+                <board:BoardTester/>
+            </TabItem>
         </TabControl>
 
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition  />
-            </Grid.ColumnDefinitions>
-            <Button  x:Name="SaveObject" Content="Save object" Margin="5" Padding="5"
-                     Command="{Binding SaveCommand}"
-                     
-            ></Button>
-            <TextBlock Grid.Column="1" Text="Save location" VerticalAlignment="Center" Margin="5"></TextBlock>
-            <TextBox Grid.Column="2" Margin="5" Text="{Binding SavePackageLocation, UpdateSourceTrigger=PropertyChanged, Delay=500}">
-            </TextBox>
-        </Grid>
+
+
     </Grid>
 </Window>

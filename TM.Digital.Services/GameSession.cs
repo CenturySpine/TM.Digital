@@ -171,7 +171,18 @@ namespace TM.Digital.Services
                 await _actionPlanner.Continue(player, Board);
             }
         }
-
+        public async Task ConvertResources(ResourceHandler resources, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (Players.TryGetValue(playerId, out var playerObj))
+            {
+                var choices = await CardPlayHandler.Convert(playerObj, resources, Board);
+                foreach (var choice in choices)
+                {
+                    _actionPlanner.Plan(choice);
+                }
+                await PlanCommon(hubContext, playerObj);
+            }
+        }
         public async Task PlayCard(ActionPlay card, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
             if (Players.TryGetValue(playerId, out var player))
@@ -182,34 +193,44 @@ namespace TM.Digital.Services
                 {
                     _actionPlanner.Plan(choice);
                 }
-                _actionPlanner.Plan(async (p, b) =>
-                {
-                    await EffectHandler.CheckCardsReductions(p);
-                    await _actionPlanner.Continue(p, b);
-                });
-                _actionPlanner.Plan(async (p, b) =>
-                {
-                    await PrerequisiteHandler.CanPlayCards(b, p);
-                    await _actionPlanner.Continue(p, b);
-                });
-                _actionPlanner.Plan(async (p, b) =>
-                {
-                    p.RemainingActions--;
-                    if (p.RemainingActions == 0)
-                    {
-                        await Logger.Log(p.Name, $"No remaining action, auto skip");
-                        //await UpdateGame(hubContext);
-                        await Skip(p.PlayerId, hubContext);
-                    }
-                    else
-                    {
-                        await _actionPlanner.Continue(p, b);
-                    }
-                });
-                //}
-
-                await _actionPlanner.FollowPlan(player, Board);
+                await PlanCommon(hubContext, player);
             }
+        }
+
+        private async Task PlanCommon(IHubContext<ClientNotificationHub> hubContext, Player player)
+        {
+            _actionPlanner.Plan(async (p, b) =>
+            {
+                await EffectHandler.CheckCardsReductions(p);
+                await _actionPlanner.Continue(p, b);
+            });
+            _actionPlanner.Plan(async (p, b) =>
+            {
+                await PrerequisiteHandler.CanPlayCards(b, p);
+                await _actionPlanner.Continue(p, b);
+            });
+            _actionPlanner.Plan(async (p, b) =>
+            {
+                await PrerequisiteHandler.CanConvertResources(b, p);
+                await _actionPlanner.Continue(p, b);
+            });
+            _actionPlanner.Plan(async (p, b) =>
+            {
+                p.RemainingActions--;
+                if (p.RemainingActions == 0)
+                {
+                    await Logger.Log(p.Name, $"No remaining action, auto skip");
+                    //await UpdateGame(hubContext);
+                    await Skip(p.PlayerId, hubContext);
+                }
+                else
+                {
+                    await _actionPlanner.Continue(p, b);
+                }
+            });
+            //}
+
+            await _actionPlanner.FollowPlan(player, Board);
         }
 
         public async Task<Player> SetupPlayer(GameSetupSelection selection, IHubContext<ClientNotificationHub> hubContext)
@@ -276,6 +297,10 @@ namespace TM.Digital.Services
             Board.Generation++;
             foreach (var player in Players)
             {
+                //energy to heat conversion
+                player.Value[ResourceType.Heat].UnitCount += player.Value[ResourceType.Energy].UnitCount;
+                player.Value[ResourceType.Energy].UnitCount = 0;
+
                 foreach (var resourceHandler in player.Value.Resources)
                 {
                     if (resourceHandler.ResourceType == ResourceType.Money)
@@ -411,5 +436,7 @@ namespace TM.Digital.Services
             await hubContext.Clients.All.SendAsync(ServerPushMethods.RecieveGameUpdate, "PlayResult",
                 JsonSerializer.Serialize(game));
         }
+
+
     }
 }

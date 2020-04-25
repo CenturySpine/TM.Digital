@@ -14,6 +14,7 @@ namespace TM.Digital.Client.Screens.HandSetup
         }
         private bool _isSelected;
         public Patent Patent { get; set; }
+        public bool IsSetup { get; set; }
         public MineralsPatentModifiersSummary MineralsPatentModifiersSummary { get; set; }
         public bool IsSelected
         {

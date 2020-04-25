@@ -29,17 +29,17 @@
                 </Style>
             </Grid.Style>-->
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.4*" />
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="Auto" MaxWidth="350"/>
                 </Grid.ColumnDefinitions>
 
-                <ContentControl  Content="{Binding Board}" >
+                <ContentControl  Content="{Binding Board}" HorizontalAlignment="Center" >
                     <ContentControl.Style>
                         <Style TargetType="{x:Type ContentControl}">
                             <Setter Property="IsEnabled" Value="True" />
@@ -52,7 +52,8 @@
                     </ContentControl.Style>
                 </ContentControl>
 
-                <ListBox Grid.Column="1" ItemsSource="{Binding Logs}">
+                <Expander Grid.Column="1" ExpandDirection="Right" IsExpanded="False">
+                <ListBox  ItemsSource="{Binding Logs}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Background="Aqua">
@@ -61,6 +62,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                </Expander>
             </Grid>
             
 

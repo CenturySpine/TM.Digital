@@ -78,7 +78,7 @@ namespace TM.Digital.Client.Screens.HandSetup
             }
             foreach (var gameSetupPatent in gameSetup.Patents)
             {
-                PatentChoices.Add(new PatentSelector { Patent = gameSetupPatent });
+                PatentChoices.Add(new PatentSelector { Patent = gameSetupPatent, IsSetup = true});
             }
 
             IsVisible = true;
