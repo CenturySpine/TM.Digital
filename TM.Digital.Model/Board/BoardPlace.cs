@@ -26,11 +26,11 @@ namespace TM.Digital.Model.Board
 
         public BoardPlace Clone()
         {
-            return new BoardPlace()
+            return new BoardPlace
             {
                 Name = Name,
                 CanBeChosed = CanBeChosed,
-                Index = new PlaceCoordinates() { X = Index.X, Y = Index.Y},
+                Index = new PlaceCoordinates { X = Index.X, Y = Index.Y},
                 Reserved =  Reserved.Clone(),
                 PlacementBonus = new List<BoardPlaceBonus>(PlacementBonus.Select(b=>b.Clone())),
                 PlayedTile = PlayedTile?.Clone()

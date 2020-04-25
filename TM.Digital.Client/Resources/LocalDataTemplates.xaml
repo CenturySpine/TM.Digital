@@ -21,25 +21,28 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-
+                <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Content="-" Command="{Binding RemoveUnitUsage}" Margin="2" FontWeight="Bold" Padding="2"/>
-            <ContentControl Margin="2" Height="20" Width="20" Grid.Column="1" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" />
-            <Button Margin="2" Grid.Column="2" Content="+" Command="{Binding AddUnitUsage}" FontWeight="Bold" Padding="2"></Button>
+            <TextBlock Text="{Binding UnitsUsed}" VerticalAlignment="Center" Margin="2" HorizontalAlignment="Left"></TextBlock>
+            <Button Grid.Column="1" Content="-" Command="{Binding RemoveUnitUsage}" Margin="2" FontWeight="Bold" Padding="2"/>
+
+            <ContentControl Margin="2" Height="20" Width="20" Grid.Column="2" Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" />
+            
+            <Button Margin="2" Grid.Column="3" Content="+" Command="{Binding AddUnitUsage}" FontWeight="Bold" Padding="2"></Button>
         </Grid>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type handSetup:MineralsPatentModifiersSummary}">
         <Grid>
-            <Grid.ColumnDefinitions>
+            <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition />
 
 
                 <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding ModifiedRessourceCost}" VerticalAlignment="Center" Margin="2" HorizontalAlignment="Left"></TextBlock>
+            </Grid.ColumnDefinitions>-->
+            <!--<TextBlock Text="{Binding ModifiedRessourceCost}" VerticalAlignment="Center" Margin="2" HorizontalAlignment="Left"></TextBlock>-->
             <ItemsControl Grid.Column="1" ItemsSource="{Binding MineralsPatentModifier}" HorizontalAlignment="Right" Margin="2">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -53,7 +56,7 @@
 
     <DataTemplate DataType="{x:Type handSetup:PatentSelector}">
         <Border BorderBrush="Transparent" BorderThickness="1"  Margin="2"   Padding="2" Background="Transparent">
-            <Border.ToolTip>
+            <!--<Border.ToolTip>
                 <Grid>
                     <Viewbox Stretch="Uniform" StretchDirection="Both">
                         <ContentControl Content="{Binding Patent}" >
@@ -61,7 +64,7 @@
                         </ContentControl>
                     </Viewbox>
                 </Grid>
-            </Border.ToolTip>
+            </Border.ToolTip>-->
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -87,13 +90,40 @@
 
                 <ContentControl Grid.Row="1" Content="{Binding Patent}" />
 
-                <ToggleButton Grid.Row="2" Content="Select" 
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <ToggleButton  Content="Select" 
                               HorizontalAlignment="Center"
                               Padding="20,5"
                               Margin="0,5"
                               Command="{Binding DataContext.SelectCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
                               CommandParameter="{Binding}"
-                              IsChecked="{Binding IsSelected, Mode=OneWay}" />
+                              
+                              IsChecked="{Binding IsSelected, Mode=OneWay}" >
+                        <ToggleButton.Style>
+                            <Style TargetType="{x:Type ToggleButton}">
+                                <Setter Property="IsEnabled" Value="true" />
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsSetup}" Value="false"></Condition>
+                                            <Condition Binding="{Binding Patent.CanBePlayed}" Value="false"></Condition>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="IsEnabled" Value="False" />
+
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+                    <Button  Content="Verify" 
+                               HorizontalAlignment="Center"
+                               Padding="20,5"
+                               Margin="0,5"
+                               Command="{Binding DataContext.VerifyCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                               CommandParameter="{Binding}"
+                                />
+                </StackPanel>
             </Grid>
         </Border>
     </DataTemplate>

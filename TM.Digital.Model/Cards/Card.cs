@@ -67,7 +67,7 @@ namespace TM.Digital.Model.Cards
             return new List<Effect>(ResourcesEffects)
                 .Concat(TagEffects != null && TagEffects.Any() ? TagEffects.Cast<Effect>() : new List<Effect>())
                 .Concat(MineralModifiers?.SteelModifier != null ? new List<Effect> { MineralModifiers.SteelModifier } : new List<Effect>())
-                .Concat(MineralModifiers?.TitaniumModifier != null ? new List<Effect>() { MineralModifiers.TitaniumModifier } : new List<Effect>())
+                .Concat(MineralModifiers?.TitaniumModifier != null ? new List<Effect> { MineralModifiers.TitaniumModifier } : new List<Effect>())
                 .Concat(ConversionRates?.Heat != null ? new List<Effect> { ConversionRates.Heat } : new List<Effect>())
                 .Concat(ConversionRates?.PlantConversion != null ? new List<Effect> { ConversionRates.PlantConversion } : new List<Effect>())
 

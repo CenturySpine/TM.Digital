@@ -10,7 +10,7 @@ namespace TM.Digital.Model.Tile
 
         public Tile Clone()
         {
-            return new Tile()
+            return new Tile
             {
                 Owner = Owner,
                 BoardIndex = BoardIndex,

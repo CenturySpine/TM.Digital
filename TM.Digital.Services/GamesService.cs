@@ -174,5 +174,28 @@ namespace TM.Digital.Services
             throw Errors.ErrorGameIdNotFound(gameId);
 
         }
+
+        public async Task VerifyCard(Patent card, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+                await session.VerifyCard(card, playerId, hubContext);
+                return;
+            }
+
+            throw Errors.ErrorGameIdNotFound(gameId);
+        }
+
+        public async Task VerifyCardWithResources(PlayCardWithResources modifiers, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+                await session.VerifyCardWithResources(modifiers, playerId, hubContext);
+                return;
+            }
+
+            throw Errors.ErrorGameIdNotFound(gameId);
+
+        }
     }
 }

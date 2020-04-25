@@ -32,7 +32,7 @@ namespace TM.Digital.UnitTests
            }, 
                new Corporation { ResourcesEffects = new List<ResourceEffect>
                {
-                new ResourceEffect()
+                new ResourceEffect
                 {
                     ResourceType = ResourceType.Money,ResourceKind = ResourceKind.Unit,Amount = 44
                 }

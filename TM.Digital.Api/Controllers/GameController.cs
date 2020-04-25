@@ -63,6 +63,21 @@ namespace TM.Digital.Api.Controllers
             return Ok();
         }
 
+        [Route("{gameId}/verify/{playerId}")]
+        public async Task<ActionResult> VerifyCard(Patent card, Guid gameId, Guid playerId)
+        {
+            await GamesService.Instance.VerifyCard(card, gameId, playerId, _hubContext);
+
+            return Ok();
+        }
+        [Route("{gameId}/verifywithresources/{playerId}")]
+        public async Task<ActionResult> VerifyCardWithResources(PlayCardWithResources modifiers, Guid gameId, Guid playerId)
+        {
+            await GamesService.Instance.VerifyCardWithResources(modifiers, gameId, playerId, _hubContext);
+
+            return Ok();
+        }
+
         [Route("{gameId}/pass/{playerId}")]
         public async Task<bool> Pass(Guid gameId, Guid playerId)
         {

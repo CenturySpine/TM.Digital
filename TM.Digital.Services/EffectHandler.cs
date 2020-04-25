@@ -110,6 +110,9 @@ namespace TM.Digital.Services
                 {
                     playerHandCard.ModifiedCost = playerHandCard.BaseCost;
                 }
+
+                playerHandCard.TitaniumUnitUsed = 0;
+                playerHandCard.SteelUnitUsed = 0;
             }
         }
     }

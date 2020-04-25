@@ -149,7 +149,7 @@ namespace TM.Digital.Editor
             string directory = _config.PackageLocation;
 
             all = await PackSerializer.GtPacks(directory);
-            Packs = new ObservableCollection<PackPresenter>(all.Packs.Select(r => new PackPresenter()
+            Packs = new ObservableCollection<PackPresenter>(all.Packs.Select(r => new PackPresenter
             {
                 Content = new PackViewModel(r),
                 Name = r.Name.ToString(),
@@ -169,7 +169,7 @@ namespace TM.Digital.Editor
                 }
                 else
                 {
-                    _config = new EditorConfig() { PackageLocation = Environment.CurrentDirectory };
+                    _config = new EditorConfig { PackageLocation = Environment.CurrentDirectory };
                     SaveConfig();
                 }
 
@@ -194,9 +194,9 @@ namespace TM.Digital.Editor
             {
                 using (var streamWriter = new StreamWriter($"{SavePackageLocation}\\{DateTime.Now.Ticks}_{packs}", false))
                 {
-                    var h = new CardReferencesHolder()
+                    var h = new CardReferencesHolder
                     {
-                        Packs = Packs.Select(r => new ExtensionPack()
+                        Packs = Packs.Select(r => new ExtensionPack
                         {
                             Name = (Extensions)Enum.Parse(typeof(Extensions), r.Name),
                             Patents = r.Content.Patents.ToList(),

@@ -7,7 +7,7 @@
 
         public BoardParameter Clone()
         {
-            return new BoardParameter()
+            return new BoardParameter
             {
                 GlobalParameterLevel = GlobalParameterLevel.Clone(),
                 Type = Type,

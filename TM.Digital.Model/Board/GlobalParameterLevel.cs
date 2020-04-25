@@ -10,7 +10,7 @@
 
         public GlobalParameterLevel Clone()
         {
-            return new GlobalParameterLevel()
+            return new GlobalParameterLevel
             {
                 Min = Min,
                 Max =  Max,

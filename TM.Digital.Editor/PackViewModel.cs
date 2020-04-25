@@ -136,7 +136,7 @@ namespace TM.Digital.Editor
 
         private void ExecuteAddPatent(object obj)
         {
-            var patent = new Patent()
+            var patent = new Patent
             {
 
             };
@@ -147,7 +147,7 @@ namespace TM.Digital.Editor
 
         private void ExecuteAddcorporation(object obj)
         {
-            var corp = new Corporation()
+            var corp = new Corporation
             {
 
             };

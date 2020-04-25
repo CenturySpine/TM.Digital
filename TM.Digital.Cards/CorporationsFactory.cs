@@ -13,7 +13,7 @@ namespace TM.Digital.Cards
 
             public static Corporation NewCorporation()
             {
-                return new Corporation()
+                return new Corporation
                 {
                     TagEffects = new TagsEffects(),
                     Tags = new TagsList(),
@@ -37,9 +37,9 @@ namespace TM.Digital.Cards
                 Tags = new TagsList()
             };
             c.ResourcesEffects.Add(new ResourceEffect { Amount = 44, ResourceType = ResourceType.Money });
-            c.TagEffects.Add(new TagEffect { AffectedTags = new TagsList{ Tags.Building }, ResourceEffects = new List<ResourceEffect>()
+            c.TagEffects.Add(new TagEffect { AffectedTags = new TagsList{ Tags.Building }, ResourceEffects = new List<ResourceEffect>
             {
-                new ResourceEffect()
+                new ResourceEffect
                 {
                     ResourceType = ResourceType.Money,ResourceKind = ResourceKind.Unit,Amount = -2
                 }
@@ -60,9 +60,9 @@ namespace TM.Digital.Cards
             };
             c.ResourcesEffects.Add(new ResourceEffect { Amount = 60, ResourceType = ResourceType.Money });
             c.TagEffects.Add(new TagEffect { AffectedTags = new TagsList { Tags.Earth },
-                ResourceEffects = new List<ResourceEffect>()
+                ResourceEffects = new List<ResourceEffect>
                 {
-                    new ResourceEffect()
+                    new ResourceEffect
                     {
                         ResourceType = ResourceType.Money,ResourceKind = ResourceKind.Unit,Amount = -3
                     }
@@ -84,7 +84,7 @@ namespace TM.Digital.Cards
             c.ResourcesEffects.Add(new ResourceEffect { Amount = 23, ResourceType = ResourceType.Money });
             c.ResourcesEffects.Add(new ResourceEffect { Amount = 10, ResourceType = ResourceType.Titanium });
 
-            c.MineralModifiers = new MineralModifiers(){TitaniumModifier = new MineralModifier{ResourceType = ResourceType.Titanium, Value = 1}, SteelModifier = new MineralModifier { ResourceType = ResourceType.Steel, Value = 0 } };
+            c.MineralModifiers = new MineralModifiers {TitaniumModifier = new MineralModifier{ResourceType = ResourceType.Titanium, Value = 1}, SteelModifier = new MineralModifier { ResourceType = ResourceType.Steel, Value = 0 } };
             c.Tags.Add(Tags.Space);
             return c;
         }
@@ -101,9 +101,9 @@ namespace TM.Digital.Cards
             };
             c.ResourcesEffects.Add(new ResourceEffect { Amount = 30, ResourceType = ResourceType.Money });
             c.TagEffects.Add(new TagEffect { AffectedTags = new TagsList { Tags.Event },
-                ResourceEffects = new List<ResourceEffect>()
+                ResourceEffects = new List<ResourceEffect>
                 {
-                    new ResourceEffect()
+                    new ResourceEffect
                     {
                         ResourceType = ResourceType.Money,ResourceKind = ResourceKind.Unit,Amount = 2
                     }
@@ -132,9 +132,9 @@ namespace TM.Digital.Cards
 
             c.ResourcesEffects.Add(new ResourceEffect { ResourceType = ResourceType.Money, Amount = 2, ResourceKind = ResourceKind.Production});
             c.TagEffects.Add(new TagEffect { AffectedTags = new TagsList { Tags.Animal, Tags.Plant },
-                ResourceEffects = new List<ResourceEffect>()
+                ResourceEffects = new List<ResourceEffect>
                 {
-                    new ResourceEffect()
+                    new ResourceEffect
                     {
                         ResourceType = ResourceType.Animal,ResourceKind = ResourceKind.Unit,Amount = 1
                     }

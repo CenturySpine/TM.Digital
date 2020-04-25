@@ -25,32 +25,32 @@ namespace TM.Digital.Services.Common
             }
             else
             {
-                all = new CardReferencesHolder()
+                all = new CardReferencesHolder
                 {
-                    Packs = new List<ExtensionPack>()
+                    Packs = new List<ExtensionPack>
                     {
-                        new ExtensionPack()
+                        new ExtensionPack
                         {
                             Name = Extensions.Base,
                             Corporations = new List<Corporation>(),
                             Patents = new List<Patent>(),
                             Preludes = new List<Prelude>()
                         },
-                        new ExtensionPack()
+                        new ExtensionPack
                         {
                             Name = Extensions.Prelude,
                             Corporations = new List<Corporation>(),
                             Patents = new List<Patent>(),
                             Preludes = new List<Prelude>()
                         },
-                        new ExtensionPack()
+                        new ExtensionPack
                         {
                             Name = Extensions.Colonies,
                             Corporations = new List<Corporation>(),
                             Patents = new List<Patent>(),
                             Preludes = new List<Prelude>()
                         },
-                        new ExtensionPack()
+                        new ExtensionPack
                         {
                             Name = Extensions.Turnmoil,
                             Corporations = new List<Corporation>(),

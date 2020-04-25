@@ -168,9 +168,9 @@ namespace TM.Digital.UnitTests.Prerequisites
         {
             Player p = ModelFactory.NewPlayer("toto", false);
             var playedPatent = PatentFactory.NewPatent();
-            playedPatent.MineralModifiers = new MineralModifiers()
+            playedPatent.MineralModifiers = new MineralModifiers
             {
-                TitaniumModifier = new MineralModifier()
+                TitaniumModifier = new MineralModifier
                 {
                     ResourceType = ResourceType.Titanium,
                     Value = 1

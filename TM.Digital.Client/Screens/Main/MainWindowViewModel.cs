@@ -245,6 +245,7 @@ namespace TM.Digital.Client.Screens.Main
         {
             if (CurrentPlayer != null)
             {
+                CurrentPlayer.Clean();
                 CurrentPlayer.PlayerSkipped -= CurrentPlayer_PlayerSkipped;
                 CurrentPlayer.PlayerPassed -= CurrentPlayerPlayerPassed;
             }

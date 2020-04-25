@@ -30,14 +30,14 @@ namespace TM.Digital.UnitTests.Prerequisites
         public void TestTemperatureMinNotReached()
         {
             var patent = PatentFactory.NewPatent();
-            patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite()
+            patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite
             {
                 Value = -6,
                 Parameter = BoardLevelType.Temperature,
                 PrerequisiteKind = PrerequisiteKind.Board
             });
 
-            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel()
+            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel
             {
                 Level = -8
             };
@@ -52,7 +52,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         public void TestTemperatureMaxOverReached()
         {
             var patent = PatentFactory.NewPatent();
-            patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite()
+            patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite
             {
                 IsMax = true,
                 Value = -6,
@@ -60,7 +60,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 PrerequisiteKind = PrerequisiteKind.Board
             });
 
-            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel()
+            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel
             {
                 Level = -4
             };
@@ -75,7 +75,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         public void TestTemperatureMinOk()
         {
             var patent = PatentFactory.NewPatent();
-            patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite()
+            patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite
             {
               
                 Value = -6,
@@ -83,7 +83,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 PrerequisiteKind = PrerequisiteKind.Board
             });
 
-            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel()
+            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel
             {
                 Level = -4
             };
@@ -98,7 +98,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         public void TestTemperatureMaxOk()
         {
             var patent = PatentFactory.NewPatent();
-            patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite()
+            patent.Prerequisites.GlobalPrerequisites.Add(new GlobalPrerequisite
             {
                 IsMax = true,
                 Value = -6,
@@ -106,7 +106,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 PrerequisiteKind = PrerequisiteKind.Board
             });
 
-            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel()
+            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel
             {
                 Level = -8
             };

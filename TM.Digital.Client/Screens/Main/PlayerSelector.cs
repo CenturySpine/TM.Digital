@@ -28,19 +28,30 @@ namespace TM.Digital.Client.Screens.Main
             PatentsSelectors = new ObservableCollection<PatentSelector>(ConvertPatentsToSelector(player));
             PassCommand = new RelayCommand(ExecutePass, CanExecutePass);
             SkipCommand = new RelayCommand(ExecuteSkip, CanExecuteSkip);
-            SelectCardCommand = new RelayCommand(ExecutePlayCard, CanExecutePlayCard);
+            SelectCardCommand = new RelayCommand(ExecutePlayCard/*, CanExecutePlayCard*/);
+            VerifyCardCommand = new RelayCommand(ExecuteVerify);
             ConvertCommand = new RelayCommand(ExecuteConvert);
         }
 
+        private async void ExecuteVerify(object obj)
+        {
+            if (obj is PatentSelector patent)
+            {
+                await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/verify/{Player.PlayerId}", patent.Patent);
+            }
+        }
+
+        public RelayCommand VerifyCardCommand { get; set; }
+
         private async void ExecuteConvert(object obj)
         {
-            if(obj is ResourceHandler rh)
+            if (obj is ResourceHandler rh)
             {
                 await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/convert/{Player.PlayerId}", rh);
             }
         }
 
-        private static IEnumerable<PatentSelector> ConvertPatentsToSelector(Player player)
+        private IEnumerable<PatentSelector> ConvertPatentsToSelector(Player player)
         {
             return player.HandCards.Select(c =>
             {
@@ -54,27 +65,73 @@ namespace TM.Digital.Client.Screens.Main
 
                 if (c.Tags.Contains(Tags.Space))
                 {
-                    var modSpace = new MineralsPatentModifier()
+                    var modSpace = new MineralsPatentModifier
                     {
                         ResourceType = ResourceType.Titanium,
-                        UnitsUsed = 0,
+                        UnitsUsed = c.TitaniumUnitUsed,
                         MaxUsage = titaniumUnits
                     };
+                    modSpace.UnitUsedChanged += ModSpace_UnitUsedChanged;
                     patentSelect.MineralsPatentModifiersSummary.MineralsPatentModifier.Add(modSpace);
                 }
                 if (c.Tags.Contains(Tags.Building))
                 {
-                    var modSteel = new MineralsPatentModifier()
+                    var modSteel = new MineralsPatentModifier
                     {
                         ResourceType = ResourceType.Steel,
-                        UnitsUsed = 0,
+                        UnitsUsed = c.SteelUnitUsed,
                         MaxUsage = steelUnits
                     };
+                    modSteel.UnitUsedChanged += ModSpace_UnitUsedChanged;
                     patentSelect.MineralsPatentModifiersSummary.MineralsPatentModifier.Add(modSteel);
                 }
 
                 return patentSelect;
             });
+        }
+        public void Clean()
+        {
+            foreach (var patentsSelector in PatentsSelectors)
+            {
+                if (patentsSelector.MineralsPatentModifiersSummary != null &&
+                    patentsSelector.MineralsPatentModifiersSummary.MineralsPatentModifier.Any())
+                {
+                    foreach (var mineralsPatentModifier in patentsSelector.MineralsPatentModifiersSummary.MineralsPatentModifier)
+                    {
+                        mineralsPatentModifier.UnitUsedChanged -= ModSpace_UnitUsedChanged;
+                    }
+                }
+            }
+        }
+        private async void ModSpace_UnitUsedChanged(object sender, EventArgs e)
+        {
+            //foreach (var patentsSelector in PatentsSelectors)
+            //{
+            //    patentsSelector.Patent.CanBePlayed = RealCanBePlayedPatent(patentsSelector);
+            //    patentsSelector.RaisePropertyChanged(nameof(PatentSelector.Patent));
+            //}
+
+            if (sender is MineralsPatentModifier mod)
+            {
+                var targetPatent = PatentsSelectors.FirstOrDefault(ps =>
+                    ps.MineralsPatentModifiersSummary.MineralsPatentModifier.Contains(sender as MineralsPatentModifier));
+
+                if (targetPatent != null)
+                {
+                    await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/verifywithresources/{Player.PlayerId}", new PlayCardWithResources()
+                    {
+                        Patent = targetPatent.Patent,
+                        CardMineralModifiers = targetPatent.MineralsPatentModifiersSummary.MineralsPatentModifier
+                              .Select(m => new ActionPlayResourcesUsage
+                              {
+                                  ResourceType = m.ResourceType,
+                                  UnitPlayed = m.UnitsUsed
+                              }).ToList()
+                    });
+                }
+            }
+
+
         }
 
         private bool CanExecutePass(object arg)
@@ -86,17 +143,18 @@ namespace TM.Digital.Client.Screens.Main
         {
             if (obj is PatentSelector patent)
             {
-                if (!RealCanBePlayedPatent(patent))
-                    return;
+                //if (!RealCanBePlayedPatent(patent))
+                //    return;
 
                 ActionPlay action = new ActionPlay
                 {
                     Patent = patent.Patent,
                     ResourcesUsages = new List<ActionPlayResourcesUsage>(
                         patent.MineralsPatentModifiersSummary.MineralsPatentModifier.Where(r => r.UnitsUsed > 0)
-                            .Select(t => new ActionPlayResourcesUsage()
+                            .Select(t => new ActionPlayResourcesUsage
                             {
-                                ResourceType = t.ResourceType, UnitPlayed = t.UnitsUsed,
+                                ResourceType = t.ResourceType,
+                                UnitPlayed = t.UnitsUsed,
                             }))
                 };
 
@@ -104,59 +162,59 @@ namespace TM.Digital.Client.Screens.Main
             }
         }
 
-        private bool CanExecutePlayCard(object arg)
-        {
-            if (arg is PatentSelector patent)
-            {
-                return RealCanBePlayedPatent(patent);
-            }
+        //private bool CanExecutePlayCard(object arg)
+        //{
+        //    if (arg is PatentSelector patent)
+        //    {
+        //        return RealCanBePlayedPatent(patent);
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
-        private bool RealCanBePlayedPatent(PatentSelector patent)
-        {
-            var rawCostMAtch = //raw cost inferior to players money
-                (patent.Patent.ModifiedCost <=
-                 Player[ResourceType.Money].UnitCount);
+        //private bool RealCanBePlayedPatent(PatentSelector patent)
+        //{
+        //    var rawCostMAtch = //raw cost inferior to players money
+        //        (patent.Patent.ModifiedCost <=
+        //         Player[ResourceType.Money].UnitCount);
 
-            var mineralUsageMatch = CheckSteelUsage(
-                patent.MineralsPatentModifiersSummary,
+        //    var mineralUsageMatch = CheckSteelUsage(
+        //        patent.MineralsPatentModifiersSummary,
 
-                patent.Patent.ModifiedCost,
-                Player[ResourceType.Money].UnitCount,
-                Player[ResourceType.Steel], Player[ResourceType.Titanium]);
+        //        patent.Patent.ModifiedCost,
+        //        Player[ResourceType.Money].UnitCount,
+        //        Player[ResourceType.Steel], Player[ResourceType.Titanium]);
 
-            return patent.Patent.CanBePlayed
-                   &&
-                   rawCostMAtch
-                //or minerals units sufficient to play part of the patent
-                || mineralUsageMatch
+        //    return patent.Patent.CanBePlayed
+        //           &&
+        //          ( rawCostMAtch
+        //        //or minerals units sufficient to play part of the patent
+        //        || mineralUsageMatch)
 
 
-                ;
-        }
+        //        ;
+        //}
 
-        private bool CheckSteelUsage(MineralsPatentModifiersSummary patentMineralsPatentModifier,
-            int patentModifiedCost, in int totalMoney, params ResourceHandler[] resourceHandlers)
-        {
-            int finalMineralValue = 0;
-            foreach (var resourceHandler in resourceHandlers)
-            {
-                var mineralModifier = patentMineralsPatentModifier.MineralsPatentModifier.FirstOrDefault(t => t.ResourceType == resourceHandler.ResourceType);
-                if (mineralModifier == null) finalMineralValue += 0;
-                else
-                {
-                    finalMineralValue += mineralModifier.UnitsUsed * resourceHandler.MoneyValueModifier;
-                   
+        //private bool CheckSteelUsage(MineralsPatentModifiersSummary patentMineralsPatentModifier,
+        //    int patentModifiedCost, in int totalMoney, params ResourceHandler[] resourceHandlers)
+        //{
+        //    int finalMineralValue = 0;
+        //    foreach (var resourceHandler in resourceHandlers)
+        //    {
+        //        var mineralModifier = patentMineralsPatentModifier.MineralsPatentModifier.FirstOrDefault(t => t.ResourceType == resourceHandler.ResourceType);
+        //        if (mineralModifier == null) finalMineralValue += 0;
+        //        else
+        //        {
+        //            finalMineralValue += mineralModifier.UnitsUsed * resourceHandler.MoneyValueModifier;
 
-                }
-            }
 
-            patentMineralsPatentModifier.ModifiedRessourceCost = patentModifiedCost - finalMineralValue;
+        //        }
+        //    }
 
-            return finalMineralValue + totalMoney >= patentModifiedCost;
-        }
+        //    patentMineralsPatentModifier.ModifiedRessourceCost = patentModifiedCost - finalMineralValue;
+
+        //    return finalMineralValue + totalMoney >= patentModifiedCost;
+        //}
 
         public RelayCommand SelectCardCommand { get; set; }
 
@@ -194,5 +252,7 @@ namespace TM.Digital.Client.Screens.Main
         {
             PlayerPassed?.Invoke(playerid);
         }
+
+
     }
 }

@@ -10,7 +10,7 @@ namespace TM.Digital.Model.Board
 
         public BoardPlaceBonus Clone()
         {
-            return new BoardPlaceBonus()
+            return new BoardPlaceBonus
             {
                 BonusKind = BonusKind,
                 BonusType = BonusType,

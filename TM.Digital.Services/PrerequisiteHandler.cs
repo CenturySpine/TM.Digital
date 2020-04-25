@@ -20,7 +20,7 @@ namespace TM.Digital.Services
             }
         }
 
-        private static readonly List<IPrerequisiteStrategy> VerifyStrategies = new List<IPrerequisiteStrategy>()
+        private static readonly List<IPrerequisiteStrategy> VerifyStrategies = new List<IPrerequisiteStrategy>
         {
             new GlobalCheckPrerequisite(),
             new PatentCostPrerequisite(),
@@ -30,7 +30,7 @@ namespace TM.Digital.Services
             new TilePlacementRequirements()
         };
 
-        private static bool CanPlayCard(Patent patent, Model.Board.Board board, Model.Player.Player player)
+        internal static bool CanPlayCard(Patent patent, Model.Board.Board board, Model.Player.Player player)
         {
             return VerifyStrategies.All(t => t.CanPlayCard(patent, board, player));
         }
@@ -42,16 +42,14 @@ namespace TM.Digital.Services
             var plantConversion = GetPlantConversionRate(player);
             var heatConversion = GetHeatConversionRate(player);
             var plants = player[ResourceType.Plant];
-            if (plants.UnitCount >= plantConversion)
-            {
-                plants.CanConvert = true;
-            }
+
+            plants.CanConvert = plants.UnitCount >= plantConversion;
+
 
             var heat = player[ResourceType.Heat];
-            if (heat.UnitCount >= heatConversion)
-            {
-                heat.CanConvert = true;
-            }
+
+            heat.CanConvert = heat.UnitCount >= heatConversion;
+
         }
 
         public static int GetHeatConversionRate(Player player)
@@ -69,7 +67,7 @@ namespace TM.Digital.Services
 
         public static int GetPlantConversionRate(Player player)
         {
-            var cr = player.PlayedCards.Concat(new List<Card>(){ player.Corporation } ).Where(p => p.ConversionRates != null)
+            var cr = player.PlayedCards.Concat(new List<Card> { player.Corporation }).Where(p => p.ConversionRates != null)
                 .Select(pc => pc.ConversionRates).ToList();
 
             var plantConversion = cr.Any() ?
@@ -81,5 +79,37 @@ namespace TM.Digital.Services
             if (plantConversion == 0) plantConversion = 8;
             return plantConversion;
         }
+
+        public static void VerifyResourcesUsage(Patent handCard, List<ActionPlayResourcesUsage> modifiersCardMineralModifiers, Player player)
+        {
+            var titaniumUsage =
+                modifiersCardMineralModifiers.FirstOrDefault(t => t.ResourceType == ResourceType.Titanium);
+
+            var steelUsage = modifiersCardMineralModifiers.FirstOrDefault(t => t.ResourceType == ResourceType.Steel);
+
+            int titaniumUsageValue = 0;
+            int steelUsageValue = 0;
+
+            if (titaniumUsage != null)
+            {
+                var titaniumModofiers = player[ResourceType.Titanium].MoneyValueModifier;
+
+                titaniumUsageValue = titaniumUsage.UnitPlayed * titaniumModofiers;
+            }
+
+            if (steelUsage != null)
+            {
+                var stellModifiers = player[ResourceType.Steel].MoneyValueModifier;
+
+                steelUsageValue = steelUsage.UnitPlayed * stellModifiers;
+            }
+
+            handCard.SteelUnitUsed = steelUsage?.UnitPlayed ?? 0;
+            handCard.TitaniumUnitUsed = titaniumUsage?.UnitPlayed ?? 0;
+            handCard.ModifiedCost -= steelUsageValue + titaniumUsageValue;
+            if (handCard.ModifiedCost < 0) handCard.ModifiedCost = 0;
+        }
+
+
     }
 }

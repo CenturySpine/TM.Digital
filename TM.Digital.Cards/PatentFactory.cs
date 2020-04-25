@@ -14,13 +14,13 @@ namespace TM.Digital.Cards
     {
         public static Patent NewPatent()
         {
-            return new Patent()
+            return new Patent
             {
                 BoardEffects = new List<BoardLevelEffect>(),
                 CardResourcesVictoryPoints = new ResourcesVictoryPoints(),
                 CardVictoryPoints = new StandardVictoryPoint(),
 
-                Prerequisites = new Model.Cards.Prerequisites()
+                Prerequisites = new Model.Cards.Prerequisites
                 {
                     TagsPrerequisites = new List<TagsPrerequisite>(),
                     GlobalPrerequisites = new List<GlobalPrerequisite>()
@@ -35,14 +35,14 @@ namespace TM.Digital.Cards
             return new Patent
             {
                 Name = "Advanced alliages",
-                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
+                Prerequisites = new Prerequisites { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 BaseCost = 9,
                 Tags = new TagsList { Tags.Science },
-                MineralModifiers = new MineralModifiers()
+                MineralModifiers = new MineralModifiers
                 {
-                    SteelModifier = new MineralModifier() { ResourceType = ResourceType.Steel,Value = 1}
+                    SteelModifier = new MineralModifier { ResourceType = ResourceType.Steel,Value = 1}
                     ,
-                    TitaniumModifier = new MineralModifier() { ResourceType = ResourceType.Titanium, Value = 1 }
+                    TitaniumModifier = new MineralModifier { ResourceType = ResourceType.Titanium, Value = 1 }
                 }
                 
             };
@@ -70,7 +70,7 @@ namespace TM.Digital.Cards
                         Number = 1,Type = TileType.City,Constrains = TilePlacementCosntrains.StandardCity
                     }
                 },
-                Prerequisites = new Prerequisites()
+                Prerequisites = new Prerequisites
                 {
                     TagsPrerequisites = new List<TagsPrerequisite>(),
                     GlobalPrerequisites = new List<GlobalPrerequisite>
@@ -99,7 +99,7 @@ namespace TM.Digital.Cards
                         Amount = 3,ResourceKind =ResourceKind.Production,ResourceType = ResourceType.Energy
                     },
                 },
-                Prerequisites = new Prerequisites()
+                Prerequisites = new Prerequisites
                 {
                     GlobalPrerequisites = new List<GlobalPrerequisite>(),
                     TagsPrerequisites = new List<TagsPrerequisite> { new TagsPrerequisite { PrerequisiteKind = PrerequisiteKind.Self, Value = 2, Tag = Tags.Energy } }
@@ -114,7 +114,7 @@ namespace TM.Digital.Cards
                 Name = "Giant asteroid",
                 BaseCost = 27,
                 Tags = new TagsList { Tags.Space, Tags.Event },
-                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
+                Prerequisites = new Prerequisites { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -140,7 +140,7 @@ namespace TM.Digital.Cards
                 Name = "Idle gaz liberation",
                 BaseCost = 14,
                 Tags = new TagsList { Tags.Event },
-                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
+                Prerequisites = new Prerequisites { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 BoardEffects = new List<BoardLevelEffect> { new BoardLevelEffect { Level = 2, BoardLevelType = BoardLevelType.Terraformation } }
             };
         }
@@ -152,7 +152,7 @@ namespace TM.Digital.Cards
                 Name = "Solar wind energy",
                 BaseCost = 11,
                 Tags = new TagsList { Tags.Science, Tags.Space, Tags.Energy },
-                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
+                Prerequisites = new Prerequisites { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -171,7 +171,7 @@ namespace TM.Digital.Cards
                 Name = "3D home printing",
                 BaseCost = 10,
                 Tags = new TagsList { Tags.Building },
-                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
+                Prerequisites = new Prerequisites { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -191,7 +191,7 @@ namespace TM.Digital.Cards
                 Name = "Protected valley",
                 BaseCost = 23,
                 Tags = new TagsList { Tags.Building, Tags.Plant },
-                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
+                Prerequisites = new Prerequisites { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -213,7 +213,7 @@ namespace TM.Digital.Cards
                 Name = "Comet",
                 BaseCost = 21,
                 Tags = new TagsList { Tags.Space, Tags.Event },
-                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
+                Prerequisites = new Prerequisites { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -234,7 +234,7 @@ namespace TM.Digital.Cards
                 Name = "Giant ice asteroid",
                 BaseCost = 36,
                 Tags = new TagsList { Tags.Space, Tags.Event },
-                Prerequisites = new Prerequisites() { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
+                Prerequisites = new Prerequisites { GlobalPrerequisites = new List<GlobalPrerequisite>(), TagsPrerequisites = new List<TagsPrerequisite>() },
                 ResourcesEffects = new List<ResourceEffect>
                 {
                     new ResourceEffect
@@ -280,7 +280,7 @@ namespace TM.Digital.Cards
                 },
 
                 CardVictoryPoints = new StandardVictoryPoint { Points = 2 },
-                Prerequisites = new Prerequisites()
+                Prerequisites = new Prerequisites
                 {
                     TagsPrerequisites = new List<TagsPrerequisite>(),
                     GlobalPrerequisites = new List<GlobalPrerequisite>

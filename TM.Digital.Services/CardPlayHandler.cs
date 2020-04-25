@@ -27,7 +27,7 @@ namespace TM.Digital.Services
                 case ResourceType.Plant:
                     var convPlants = PrerequisiteHandler.GetPlantConversionRate(playerObj);
                     playerObj[ResourceType.Plant].UnitCount -= convPlants;
-                    var teffect = new TileEffect()
+                    var teffect = new TileEffect
                     {
                         Type = TileType.Forest,
                         Constrains = TilePlacementCosntrains.StandardForest,
@@ -68,22 +68,22 @@ namespace TM.Digital.Services
 
             //Reduce cost based on mineral units played
             var cost = card.ModifiedCost;
-            int mineralValue = 0;
+            //int mineralValue = 0;
 
             //for each mineral usage sent by player
             foreach (var actionPlayResourcesUsage in action.ResourcesUsages)
             {
                 //calculate mineral value
-                mineralValue +=
-                    player[actionPlayResourcesUsage.ResourceType].MoneyValueModifier *//based on mineral value modifier
-                                actionPlayResourcesUsage.UnitPlayed; //multiplied by unit played
+                //mineralValue +=
+                //    player[actionPlayResourcesUsage.ResourceType].MoneyValueModifier *//based on mineral value modifier
+                //                actionPlayResourcesUsage.UnitPlayed; //multiplied by unit played
 
                 //remove resources unit played from players resources.
                 player[actionPlayResourcesUsage.ResourceType].UnitCount -= actionPlayResourcesUsage.UnitPlayed;
             }
 
             //calculate final patent cost
-            cost = cost - mineralValue;
+            //cost = cost - mineralValue;
             //ensure it never goes below 0;
             if (cost < 0) cost = 0;
 
@@ -127,7 +127,7 @@ namespace TM.Digital.Services
         {
             return new Action<Player, Board>(async (p, b) =>
             {
-                ResourceEffectPlayerChooserList chooser = new ResourceEffectPlayerChooserList()
+                ResourceEffectPlayerChooserList chooser = new ResourceEffectPlayerChooserList
                 {
                     ChoicesList = allPlayers.Select(target =>
                     {
@@ -141,7 +141,7 @@ namespace TM.Digital.Services
                         };
                     }).ToList()
                 };
-                chooser.ChoicesList.Add(new ResourceEffectPlayerChooser()
+                chooser.ChoicesList.Add(new ResourceEffectPlayerChooser
                 {
                     TargetPlayerId = GameSession._neutralPlayerId,
                     TargetPlayerName = "Neutral Player / Nobody",

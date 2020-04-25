@@ -7,7 +7,7 @@
 
         public BoardPlaceReservedSpace Clone()
         {
-            return  new BoardPlaceReservedSpace()
+            return  new BoardPlaceReservedSpace
             {
                 IsExclusive = IsExclusive,
                 ReservedFor = ReservedFor

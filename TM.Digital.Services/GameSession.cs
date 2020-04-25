@@ -196,7 +196,32 @@ namespace TM.Digital.Services
                 await PlanCommon(hubContext, player);
             }
         }
-
+        public async Task VerifyCard(Patent card, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (Players.TryGetValue(playerId, out var player))
+            {
+                var handCard = player.HandCards.FirstOrDefault(c => c.Guid == card.Guid);
+                if (handCard != null)
+                {
+                    handCard.CanBePlayed = PrerequisiteHandler.CanPlayCard(card, Board, player);
+                    await UpdateGame(hubContext);
+                }
+            }
+        }
+        public async Task VerifyCardWithResources(PlayCardWithResources modifiers, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (Players.TryGetValue(playerId, out var player))
+            {
+                var handCard = player.HandCards.FirstOrDefault(c => c.Guid == modifiers.Patent.Guid);
+                if (handCard != null)
+                {
+                    await EffectHandler.CheckCardsReductions(player);
+                    PrerequisiteHandler.VerifyResourcesUsage(handCard, modifiers.CardMineralModifiers, player);
+                    handCard.CanBePlayed =   PrerequisiteHandler.CanPlayCard(handCard, Board, player) ;
+                    await UpdateGame(hubContext);
+                }
+            }
+        }
         private async Task PlanCommon(IHubContext<ClientNotificationHub> hubContext, Player player)
         {
             _actionPlanner.Plan(async (p, b) =>
@@ -436,6 +461,7 @@ namespace TM.Digital.Services
             await hubContext.Clients.All.SendAsync(ServerPushMethods.RecieveGameUpdate, "PlayResult",
                 JsonSerializer.Serialize(game));
         }
+
 
 
     }

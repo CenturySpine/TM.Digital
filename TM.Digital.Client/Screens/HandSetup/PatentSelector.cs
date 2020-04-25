@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Resources;
@@ -21,6 +22,11 @@ namespace TM.Digital.Client.Screens.HandSetup
             get => _isSelected;
             set { _isSelected = value; OnPropertyChanged(nameof(IsSelected)); }
         }
+
+        public void RaisePropertyChanged(string patentName)
+        {
+            OnPropertyChanged(patentName);
+        }
     }
 
     public class MineralsPatentModifiersSummary : NotifierBase
@@ -33,16 +39,16 @@ namespace TM.Digital.Client.Screens.HandSetup
         }
         public List<MineralsPatentModifier> MineralsPatentModifier { get; set; }
 
-        public int ModifiedRessourceCost
-        {
-            get => _modifiedRessourceCost;
-            set { _modifiedRessourceCost = value; OnPropertyChanged(nameof(ModifiedRessourceCost)); }
-        }
+        //public int ModifiedRessourceCost
+        //{
+        //    get => _modifiedRessourceCost;
+        //    set { _modifiedRessourceCost = value; OnPropertyChanged(nameof(ModifiedRessourceCost)); }
+        //}
     }
     public class MineralsPatentModifier : NotifierBase
     {
         private int _unitsUsed;
-
+        public event EventHandler UnitUsedChanged;
 
         public MineralsPatentModifier()
         {
@@ -65,12 +71,14 @@ namespace TM.Digital.Client.Screens.HandSetup
         {
             UnitsUsed--;
             CommandManager.InvalidateRequerySuggested();
+            OnUnitUsedChanged();
         }
 
         private void ExecuteAddUnit(object obj)
         {
             UnitsUsed++;
             CommandManager.InvalidateRequerySuggested();
+            OnUnitUsedChanged();
         }
 
         public ResourceType ResourceType { get; set; }
@@ -85,5 +93,10 @@ namespace TM.Digital.Client.Screens.HandSetup
         public RelayCommand AddUnitUsage { get; set; }
         public RelayCommand RemoveUnitUsage { get; set; }
         public int MaxUsage { get; set; }
+
+        protected virtual void OnUnitUsedChanged()
+        {
+            UnitUsedChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

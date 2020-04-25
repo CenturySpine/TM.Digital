@@ -10,7 +10,7 @@ namespace TM.Digital.Model.Board
 
         public BoardLine Clone()
         {
-            return new BoardLine()
+            return new BoardLine
             {
                 Index = Index,
                 BoardPlaces = new List<BoardPlace>(BoardPlaces.Select(p => p.Clone()))
