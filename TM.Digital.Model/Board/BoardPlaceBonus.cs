@@ -7,5 +7,14 @@ namespace TM.Digital.Model.Board
         public ResourceType BonusType { get; set; }
         
         public ResourceKind BonusKind { get; set; }
+
+        public BoardPlaceBonus Clone()
+        {
+            return new BoardPlaceBonus()
+            {
+                BonusKind = BonusKind,
+                BonusType = BonusType,
+            };
+        }
     }
 }

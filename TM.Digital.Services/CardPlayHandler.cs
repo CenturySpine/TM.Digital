@@ -17,6 +17,45 @@ namespace TM.Digital.Services
 {
     public static class CardPlayHandler
     {
+        public static async Task<List<Action<Player, Board>>> Convert(Player playerObj, ResourceHandler resources,
+            Board board)
+        {
+            List<Action<Player, Board>> currentActions = new List<Action<Player, Board>>();
+
+            switch (resources.ResourceType)
+            {
+                case ResourceType.Plant:
+                    var convPlants = PrerequisiteHandler.GetPlantConversionRate(playerObj);
+                    playerObj[ResourceType.Plant].UnitCount -= convPlants;
+                    var teffect = new TileEffect()
+                    {
+                        Type = TileType.Forest,
+                        Constrains = TilePlacementCosntrains.StandardForest,
+                        Number = 1
+                    };
+                    currentActions.Add(TileEffectAction(playerObj, teffect, board));
+                    break;
+                case ResourceType.Heat:
+
+                    //gt conversion rate
+                    var conv = PrerequisiteHandler.GetHeatConversionRate(playerObj);
+
+                    //withdraw corresponding heat units
+                    playerObj[ResourceType.Heat].UnitCount -= conv;
+
+                    //increase global parameter
+                    var temp = board.Parameters.First(p => p.Type == BoardLevelType.Temperature);
+                    temp.GlobalParameterLevel.Level += temp.GlobalParameterLevel.Increment;
+
+                    //increase players NT
+                    playerObj.TerraformationLevel += 1;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return currentActions;
+        }
         public static async Task<List<Action<Player, Board>>> Play(ActionPlay action, Player player, Board board,
             List<Player> allPlayers)
 
@@ -35,7 +74,7 @@ namespace TM.Digital.Services
             foreach (var actionPlayResourcesUsage in action.ResourcesUsages)
             {
                 //calculate mineral value
-                mineralValue += 
+                mineralValue +=
                     player[actionPlayResourcesUsage.ResourceType].MoneyValueModifier *//based on mineral value modifier
                                 actionPlayResourcesUsage.UnitPlayed; //multiplied by unit played
 
@@ -114,7 +153,7 @@ namespace TM.Digital.Services
             });
         }
 
-        private static Action<Player, Board> TileEffectAction(Player player, TileEffect choicesTileEffect, Board b)
+        private static Action<Player, Board> TileEffectAction(Player player, TileEffect choicesTileEffect, Board board)
         {
             //await async (p, b) =>
             // {
@@ -124,7 +163,7 @@ namespace TM.Digital.Services
                 await Logger.Log(player.Name,
                     $"Effect {BoardHandler.PendingTileEffect.Type}... Getting board available spaces...");
 
-                var choiceBoard = BoardHandler.GetPlacesChoices(BoardHandler.PendingTileEffect, b);
+                var choiceBoard = BoardHandler.GetPlacesChoices(BoardHandler.PendingTileEffect, b, player);
                 await Logger.Log(player.Name,
                     $"Found {choiceBoard.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => p.CanBeChosed).Count()} available places. Sending choices to player");
 
@@ -134,5 +173,7 @@ namespace TM.Digital.Services
 
             //};
         }
+
+
     }
 }

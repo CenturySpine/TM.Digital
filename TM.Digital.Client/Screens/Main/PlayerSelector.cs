@@ -29,6 +29,15 @@ namespace TM.Digital.Client.Screens.Main
             PassCommand = new RelayCommand(ExecutePass, CanExecutePass);
             SkipCommand = new RelayCommand(ExecuteSkip, CanExecuteSkip);
             SelectCardCommand = new RelayCommand(ExecutePlayCard, CanExecutePlayCard);
+            ConvertCommand = new RelayCommand(ExecuteConvert);
+        }
+
+        private async void ExecuteConvert(object obj)
+        {
+            if(obj is ResourceHandler rh)
+            {
+                await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/convert/{Player.PlayerId}", rh);
+            }
         }
 
         private static IEnumerable<PatentSelector> ConvertPatentsToSelector(Player player)
@@ -173,6 +182,8 @@ namespace TM.Digital.Client.Screens.Main
         public RelayCommand PassCommand { get; }
 
         public RelayCommand SkipCommand { get; }
+
+        public RelayCommand ConvertCommand { get; set; }
 
         private void OnPlayerSkipped(Guid playerid)
         {

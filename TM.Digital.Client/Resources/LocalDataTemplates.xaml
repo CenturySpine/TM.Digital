@@ -12,6 +12,9 @@
                     xmlns:resources="clr-namespace:TM.Digital.Ui.Resources.Resources;assembly=TM.Digital.Ui.Resources"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:tile="clr-namespace:TM.Digital.Model.Tile;assembly=TM.Digital.Model"
+                    xmlns:resources1="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model"
+                    xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model"
 
                     mc:Ignorable="d">
     <DataTemplate DataType="{x:Type handSetup:MineralsPatentModifier}">
@@ -50,25 +53,16 @@
 
     <DataTemplate DataType="{x:Type handSetup:PatentSelector}">
         <Border BorderBrush="Transparent" BorderThickness="1"  Margin="2"   Padding="2" Background="Transparent">
-            <!--<Border.Style>
-                <Style TargetType="{x:Type Border}">
-                    <Setter Property="Background" Value="White"></Setter>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Patent.CardType}" Value="{x:Static cards:CardType.Blue}">
-                            <Setter Property="Background" Value="DeepSkyBlue"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Patent.CardType}" Value="{x:Static cards:CardType.Green}">
-                            <Setter Property="Background" Value="GreenYellow"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Patent.CardType}" Value="{x:Static cards:CardType.Red}">
-                            <Setter Property="Background" Value="IndianRed"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="true">
-                            <Setter Property="Background" Value="LightGray"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>-->
+            <Border.ToolTip>
+                <Grid>
+                    <Viewbox Stretch="Uniform" StretchDirection="Both">
+                        <ContentControl Content="{Binding Patent}" >
+
+                        </ContentControl>
+                    </Viewbox>
+                </Grid>
+            </Border.ToolTip>
+
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -78,7 +72,18 @@
                 </Grid.RowDefinitions>
 
                 <!-- mineral modifiers -->
-                <ContentControl Content="{Binding MineralsPatentModifiersSummary}"></ContentControl>
+                <ContentControl Content="{Binding MineralsPatentModifiersSummary}">
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Setter Property="Visibility" Value="Visible"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSetup}" Value="true">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
 
                 <ContentControl Grid.Row="1" Content="{Binding Patent}" />
 
@@ -106,7 +111,7 @@
                 </Style>
             </Border.Style>
             <Grid>
-                
+
                 <Grid.RowDefinitions>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
@@ -114,7 +119,7 @@
                 </Grid.RowDefinitions>
 
                 <ContentControl Content="{Binding Corporation}"></ContentControl>
-                
+
 
                 <ToggleButton Grid.Row="2" Content="Select" 
                               HorizontalAlignment="Center"
@@ -275,52 +280,52 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type handSetup:GameSetupViewModel}">
 
-<Border Background="White">
-        <Border HorizontalAlignment="Center" VerticalAlignment="Center"  BorderBrush="Black" BorderThickness="1">
-            <Border.Effect>
-                <DropShadowEffect Opacity="0.4" ShadowDepth="10"></DropShadowEffect>
-            </Border.Effect>
-            <Grid>
-                <Grid.Background>
-                    <SolidColorBrush Color="WhiteSmoke" Opacity="1" />
-                </Grid.Background>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
+        <Border Background="White">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center"  BorderBrush="Black" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect Opacity="0.4" ShadowDepth="10"></DropShadowEffect>
+                </Border.Effect>
+                <Grid>
+                    <Grid.Background>
+                        <SolidColorBrush Color="WhiteSmoke" Opacity="1" />
+                    </Grid.Background>
+                    <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-                <TextBlock Text="Initial Setup" Margin="10" VerticalAlignment="Center" TextAlignment="Center"
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Initial Setup" Margin="10" VerticalAlignment="Center" TextAlignment="Center"
                            FontSize="25" FontWeight="Bold" Background="AntiqueWhite"></TextBlock>
-                <ItemsControl Grid.Row="1" Margin="10" ItemsSource="{Binding CorporationChoices}" 
+                    <ItemsControl Grid.Row="1" Margin="10" ItemsSource="{Binding CorporationChoices}" 
                               Visibility="{Binding IsInitialSetup, Converter={StaticResource boolToVisConverter}}" 
                               HorizontalAlignment="Center">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"></StackPanel>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-                <ItemsControl Margin="10" Grid.Row="2" ItemsSource="{Binding PatentChoices}" HorizontalAlignment="Center">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"></StackPanel>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-                <Button Grid.Row="3" Content="Validate" Command="{Binding CloseCommand}" HorizontalAlignment="Center" Padding="20" FontSize="20" Margin="20"></Button>
-            </Grid>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <ItemsControl Margin="10" Grid.Row="2" ItemsSource="{Binding PatentChoices}" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <Button Grid.Row="3" Content="Validate" Command="{Binding CloseCommand}" HorizontalAlignment="Center" Padding="20" FontSize="20" Margin="20"></Button>
+                </Grid>
+            </Border>
         </Border>
-</Border>
     </DataTemplate>
     <DataTemplate DataType="{x:Type main:PlayerSelector}">
-        <Grid>
+        <Grid ShowGridLines="True" Background="BurlyWood">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Grid>
+            <Grid ShowGridLines="True" Background="CadetBlue">
                 <Grid.Resources>
                     <converters:PlayedCardToTagsCountConverter x:Key="tagConverter" />
                 </Grid.Resources>
@@ -331,20 +336,27 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <UniformGrid  Margin="5" Columns="4" Rows="2">
+                <UniformGrid  Margin="5" Columns="4" Rows="2" Background="Aqua">
 
-                    <TextBlock Text="{Binding Player.Name}" Margin="2"></TextBlock>
-                    <TextBlock Text="{Binding Player.TerraformationLevel}" Margin="2" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
+                    <TextBlock Text="Corp" Margin="10,2"></TextBlock>
+                    <TextBlock Text="{Binding Player.Corporation.Name}" Margin="10,2" FontWeight="Bold" HorizontalAlignment="Left">
+                        <TextBlock.ToolTip>
+                            <ContentControl Content="{Binding Player.Corporation}"></ContentControl>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
 
-                    <TextBlock Text="Corp" Margin="2"></TextBlock>
-                    <TextBlock Text="{Binding Player.Corporation.Name}" Margin="2" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
+                    <TextBlock Text="{Binding Player.Name}" Margin="10,2"></TextBlock>
+                    <TextBlock Text="{Binding Player.TerraformationLevel, StringFormat='{}{0} NT'}" Margin="10,2" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
+
+                    <TextBlock Text="Actions" VerticalAlignment="Center" Margin="10,2"></TextBlock>
+                    <TextBlock Text="{Binding Player.RemainingActions}" Margin="10,2" VerticalAlignment="Center"></TextBlock>
+
 
                     <Button Content="Pass" Command="{Binding PassCommand}" Margin="2" Padding="5"/>
 
                     <Button Content="Skip" Command="{Binding SkipCommand}" Margin="2" Padding="5"/>
 
-                    <TextBlock Text="Actions"></TextBlock>
-                    <TextBlock Text="{Binding Player.RemainingActions}"></TextBlock>
+
                 </UniformGrid>
 
                 <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Player.Resources}" VerticalAlignment="Top" Margin="5">
@@ -367,8 +379,72 @@
                                     </Grid.RowDefinitions>
 
                                     <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0">
+
                                         <ContentControl  Content="{Binding ResourceType}" Width="25" Height="25" ContentTemplateSelector="{StaticResource resBoardSelector}"
-                                                    Margin="5" VerticalAlignment="Center" />
+                                                         Margin="5" VerticalAlignment="Center" />
+
+
+                                        <Button IsEnabled="{Binding CanConvert}" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.ConvertCommand}"
+                                                CommandParameter="{Binding .}">
+                                            <Button.Style>
+                                                <Style TargetType="{x:Type Button}">
+                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources1:ResourceType.Heat}">
+                                                            <Setter Property="Visibility" Value="Visible"></Setter>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources1:ResourceType.Plant}">
+                                                            <Setter Property="Visibility" Value="Visible"></Setter>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Grid x:Name="convertActionGrid">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <ContentControl ContentTemplate="{StaticResource dt_action}" />
+
+                                                        <Viewbox Grid.Column="1" Width="20" Height="20">
+                                                            <Viewbox.Style>
+                                                                <Style TargetType="{x:Type Viewbox}">
+                                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources1:ResourceType.Plant}">
+                                                                            <Setter Property="Visibility" Value="Visible"></Setter>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Viewbox.Style>
+                                                            <ContentControl  Content="{x:Static tile:TileType.Forest}" ContentTemplateSelector="{StaticResource tileEffectTemplateSelector}" />
+                                                        </Viewbox>
+
+                                                        <Viewbox Grid.Column="1" Width="20" Height="20">
+                                                            <Viewbox.Style>
+                                                                <Style TargetType="{x:Type Viewbox}">
+                                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources1:ResourceType.Heat}">
+                                                                            <Setter Property="Visibility" Value="Visible"></Setter>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Viewbox.Style>
+                                                            <ContentControl  Content="{x:Static board:BoardLevelType.Temperature}" ContentTemplateSelector="{StaticResource globalParamTemplateSelector}" />
+                                                        </Viewbox>
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter TargetName="convertActionGrid" Property="Opacity" Value="0.5"></Setter>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
                                         <TextBlock Text="{Binding MoneyValueModifier, StringFormat='{} + {0}'}" VerticalAlignment="Center" Margin="2">
                                             <TextBlock.Style>
                                                 <Style TargetType="{x:Type TextBlock}">
@@ -394,10 +470,10 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding Player.PlayedCards, Converter={StaticResource tagConverter}}" Margin="5">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Player.PlayedCards, Converter={StaticResource tagConverter}}" Margin="5" Height="30">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border d:DataContext="{d:DesignInstance {x:Type resources:TagsCount}}" Padding="1" CornerRadius="2" BorderBrush="Black" BorderThickness="1" Margin="1">
+                            <Border d:DataContext="{d:DesignInstance {x:Type resources:TagsCount}}" Padding="1" CornerRadius="2" BorderBrush="Black" BorderThickness="1" Margin="1" >
                                 <Grid  Margin="1">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -419,14 +495,19 @@
 
             </Grid>
 
-            <ScrollViewer  Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                <ItemsControl  ItemsSource="{Binding PatentsSelectors}" Margin="5">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"></StackPanel>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
+            <ScrollViewer  Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Left">
+                <Grid>
+                    <Viewbox>
+                        <ItemsControl  ItemsSource="{Binding PatentsSelectors}" >
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"></StackPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                        </ItemsControl>
+                    </Viewbox>
+                </Grid>
             </ScrollViewer>
         </Grid>
     </DataTemplate>

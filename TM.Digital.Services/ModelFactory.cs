@@ -32,6 +32,7 @@ namespace TM.Digital.Services
                 PlayedCards = new List<Patent>(),
                 Corporation = new Corporation(),
                 TerraformationLevel = 20,
+                
 
             };
         }

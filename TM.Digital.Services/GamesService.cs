@@ -162,5 +162,17 @@ namespace TM.Digital.Services
 
             throw Errors.ErrorGameIdNotFound(gameId);
         }
+
+        public async Task ConvertResources(ResourceHandler resources, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+                await session.ConvertResources(resources, playerId, hubContext);
+                return;
+            }
+
+            throw Errors.ErrorGameIdNotFound(gameId);
+
+        }
     }
 }
