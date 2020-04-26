@@ -300,6 +300,9 @@
                                 <DataTrigger Binding="{Binding Amount}" Value="1">
                                     <Setter Property="Visibility" Value="Collapsed"></Setter>
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding Amount}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </TextBlock.Style>
@@ -339,10 +342,30 @@
                         </Style>
                     </ContentControl.Style>
                 </ContentControl>
+
+                <ContentControl Content="{Binding TileEffect}">
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding TileEffect}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
             </StackPanel>
         </Grid>
     </DataTemplate>
-
+    <DataTemplate DataType="{x:Type tile:TileEffect}">
+        <Grid>
+            <Viewbox Height="30" Width="30">
+                <Grid>
+                    <ContentControl Content="{Binding Type}" ContentTemplateSelector="{StaticResource tileEffectTemplateSelector}" />
+                </Grid>
+            </Viewbox>
+        </Grid>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type cards:ActionFrom}">
         <Grid>
             <Border BorderThickness="1" Padding="2">
@@ -489,13 +512,32 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tile:TileEffect}">
-        <Grid>
-            <Viewbox Height="30" Width="30">
-                <Grid>
-                    <ContentControl Content="{Binding Type}" ContentTemplateSelector="{StaticResource tileEffectTemplateSelector}" />
-                </Grid>
-            </Viewbox>
+
+
+    <DataTemplate DataType="{x:Type cards:Action}">
+        <Grid Background="Transparent" ShowGridLines="False">
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Content="{Binding ActionFrom}" HorizontalAlignment="Right" Grid.Column="0" />
+            <ContentControl ContentTemplate="{StaticResource dt_action}" HorizontalAlignment="Center" Grid.Column="1" />
+
+            <ItemsControl ItemsSource="{Binding ActionTo}" Grid.Column="2">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding}" HorizontalAlignment="Left" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
     </DataTemplate>
 

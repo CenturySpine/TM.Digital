@@ -12,6 +12,7 @@
           "Newtonsoft.Json": "12.0.3",
           "TM.Digital.Cards": "1.0.0",
           "TM.Digital.Model": "1.0.0",
+          "TM.Digital.Services": "1.0.0",
           "TM.Digital.Services.Common": "1.0.0",
           "TM.Digital.Ui.Resources": "1.0.0"
         },
@@ -733,6 +734,18 @@
           "TM.Digital.Model.dll": {}
         }
       },
+      "TM.Digital.Services/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.SignalR": "1.1.0",
+          "TM.Digital.Cards": "1.0.0",
+          "TM.Digital.Model": "1.0.0",
+          "TM.Digital.Services.Common": "1.0.0",
+          "TM.Digital.Transport.Hubs": "1.0.0"
+        },
+        "runtime": {
+          "TM.Digital.Services.dll": {}
+        }
+      },
       "TM.Digital.Services.Common/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.SignalR.Core": "1.1.0",
@@ -1271,6 +1284,11 @@
       "sha512": ""
     },
     "TM.Digital.Model/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "TM.Digital.Services/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

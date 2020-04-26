@@ -49,8 +49,19 @@ namespace TM.Digital.Client.Screens.Main
             MenuVm.GameStarted += MenuVm_GameCreated;
             MenuVm.GameJoined += MenuVm_GameJoined;
             ActionChoiceViewModel.ChoiceSelected += ActionChoiceViewModel_ChoiceSelected;
+            
         }
 
+        private void ExecuteBoardAction(object obj)
+        {
+            
+            if(obj is BoardAction ba)
+            {
+
+            }
+        }
+
+        public RelayCommand ExecuteActionCommand { get; set; }
 
 
         public Board Board

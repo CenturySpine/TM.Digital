@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using TM.Digital.Model.Board;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Model.Cards
 {
-
-
     public class Card
     {
         protected bool Equals(Card other)
@@ -30,37 +28,60 @@ namespace TM.Digital.Model.Cards
             return Guid.GetHashCode();
         }
 
-        public Card()
-        {
-
-        }
-
+        [Category("Description")]
         public Guid Guid { get; set; } = Guid.NewGuid();
+
+        [Category("Description")]
         public string Name { get; set; }
+
+        [Category("Description")]
         public string OfficialNumberTag { get; set; }
 
+        [Category("Description")]
         public CardType CardType { get; set; }
 
+        [Category("Description")]
         public TagsList Tags { get; set; }
+
+        [Category("Effect")]
         public List<ResourceEffect> ResourcesEffects { get; set; } = new List<ResourceEffect>();
-     
+
+        [Category("Effect")]
         public List<ResourceEffect> ResourceEffectAlternatives { get; set; }
+
+        [Category("Effect")]
         public List<BoardLevelEffect> BoardEffects { get; set; } = new List<BoardLevelEffect>();
+
+        [Category("Effect")]
         public TagsEffects TagEffects { get; set; } = new TagsEffects();
+
+        [Category("Effect")]
         public List<TileEffect> TileEffects { get; set; } = new List<TileEffect>();
+
+        [Category("Effect")]
         public TilePassiveEffects TilePassiveEffects { get; set; } = new TilePassiveEffects();
+
+        [Category("Action")]
         public List<Action> Actions { get; set; } = new List<Action>();
+
         public ResourceType ResourceType { get; set; }
 
+        [Browsable(false)]
         public int ResourcesCount { get; set; }
 
+        [Category("Victory Points")]
         public StandardVictoryPoint CardVictoryPoints { get; set; }
 
-        public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; } 
+        [Category("Victory Points")]
+        public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
 
+        [Browsable(false)]
+        [Category("Resources Modifiers")]
         public MineralModifiers MineralModifiers { get; set; }
 
-        public ConversionRates ConversionRates { get; set; } 
+        [Browsable(false)]
+        [Category("Resources Modifiers")]
+        public ConversionRates ConversionRates { get; set; }
 
         public List<Effect> AllEffects()
         {
@@ -72,85 +93,14 @@ namespace TM.Digital.Model.Cards
                 .Concat(ConversionRates?.PlantConversion != null ? new List<Effect> { ConversionRates.PlantConversion } : new List<Effect>())
 
                 .Concat(BoardEffects)
-                .Concat((TilePassiveEffects != null && TilePassiveEffects.Any()? TilePassiveEffects.Cast<Effect>():new List<Effect>()))
+                .Concat((TilePassiveEffects != null && TilePassiveEffects.Any() ? TilePassiveEffects.Cast<Effect>() : new List<Effect>()))
 
                 .Concat(TileEffects)
                 .Concat((Actions != null && Actions.Any()) ? Actions.Cast<Effect>() : new List<Effect>())
                 .ToList();
         }
-    }
 
-    public class ConversionRates
-    {
-        public ConversionRate PlantConversion { get; set; }
-        public ConversionRate Heat { get; set; }
-    }
-
-    public class ConversionRate : Effect
-    {
-        public ResourceType ResourceType { get; set; }
-        public int Rate { get; set; }
-    }
-
-    public class MineralModifiers
-    {
-        public MineralModifier SteelModifier { get; set; }
-
-        public MineralModifier TitaniumModifier
-        { get; set; }
-    }
-
-    public class MineralModifier : Effect
-    {
-        public ResourceType ResourceType { get; set; }
-        public int Value { get; set; }
-    }
-
-    public class TagsEffects : List<TagEffect>
-    {
-    }
-
-    public class Action : Effect
-    {
-        public ActionFrom ActionFrom { get; set; }
-
-        public List<ActionTo> ActionTo { get; set; }
-
-        public ActionModifier ActionModifier { get; set; }
-    }
-
-    public class ActionModifier
-    {
-        public ActionTarget ActionTarget { get; set; }
-    }
-
-    public class ActionFrom
-    {
-        public ActionTarget ActionTarget { get; set; }
-
-        public ResourceType ResourceType { get; set; }
-        public int Amount { get; set; }
-        public ResourceKind ResourceKind { get; set; }
-    }
-
-    public class ActionTo
-    {
-        public ActionTarget ActionTarget { get; set; }
-
-        public ResourceType ResourceType { get; set; }
-
-        public BoardLevelType BoardLevelType { get; set; }
-
-        public int Amount { get; set; }
-        public ResourceKind ResourceKind { get; set; }
-    }
-
-    public enum ActionTarget
-    {
-        Self,
-        CurrentCard,
-        AnyOtherCard,
-        AnyPlayer,
-        AnyOpponent
+        public string Comment { get; set; }
+        public string Description { get; set; }
     }
 }

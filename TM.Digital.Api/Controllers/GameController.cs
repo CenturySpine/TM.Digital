@@ -9,6 +9,7 @@ using TM.Digital.Model.Player;
 using TM.Digital.Services;
 using TM.Digital.Services.Common;
 using TM.Digital.Transport.Hubs.Hubs;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Api.Controllers
 {
@@ -59,6 +60,21 @@ namespace TM.Digital.Api.Controllers
         public async Task<ActionResult> PlayCard(ActionPlay card, Guid gameId, Guid playerId)
         {
             await GamesService.Instance.Play(card, gameId, playerId, _hubContext);
+
+            return Ok();
+        }
+
+        [Route("{gameId}/boardaction/{playerId}")]
+        public async Task<ActionResult> BoardAction(BoardAction boardAction, Guid gameId, Guid playerId)
+        {
+            await GamesService.Instance.BoardAction(boardAction, gameId, playerId, _hubContext);
+
+            return Ok();
+        }
+        [Route("{gameId}/cardaction/{playerId}")]
+        public async Task<ActionResult> CardAction(Action action, Guid gameId, Guid playerId)
+        {
+            await GamesService.Instance.CardAction(action, gameId, playerId, _hubContext);
 
             return Ok();
         }

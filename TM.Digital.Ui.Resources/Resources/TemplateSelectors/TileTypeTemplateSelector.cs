@@ -11,6 +11,7 @@ namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
         public DataTemplate Ocean { get; set; }
         public DataTemplate Forest { get; set; }
         public DataTemplate NoMansLand { get; set; }
+        public DataTemplate Nuclear { get; set; }
 
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -29,7 +30,7 @@ namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
                     case TileType.Ocean:
                         return Ocean;
                     case TileType.NuclearZone:
-                        break;
+                        return Nuclear;
                     case TileType.Capital:
                         break;
                     case TileType.Volcano:

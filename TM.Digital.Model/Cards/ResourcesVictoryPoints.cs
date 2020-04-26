@@ -8,9 +8,11 @@ namespace TM.Digital.Model.Cards
         public ResourceType ResourceType { get; set; }
         public int VictoryPointRatio { get; set; }
 
+        public int Points { get; set; }
+
         public int VictoryPoint(Card card)
         {
-            return (int)Math.Floor((double)card.ResourcesCount / VictoryPointRatio);
+            return Points * (int)Math.Floor((double)card.ResourcesCount / VictoryPointRatio);
         }
     }
 }

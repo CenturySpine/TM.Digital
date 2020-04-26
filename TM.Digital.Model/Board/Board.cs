@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Model.Board
 {
@@ -14,6 +15,7 @@ namespace TM.Digital.Model.Board
 
         public int Generation { get; set; }
 
+        
         public Board Clone()
         {
             var clone = new Board
@@ -27,5 +29,23 @@ namespace TM.Digital.Model.Board
 
             return clone;
         }
+    }
+
+    public class BoardAction
+    {
+        public BoardActionType BoardActionType { get; set; }
+        public string Name { get; set; }
+        public Action Actions { get; set; }
+
+    }
+
+    public enum BoardActionType
+    {
+        PatentsSell,
+        PowerPlant,
+        Asteroid,
+        Aquifere,
+        Forest,
+        City
     }
 }

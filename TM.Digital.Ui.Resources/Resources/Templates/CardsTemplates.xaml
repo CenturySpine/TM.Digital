@@ -146,34 +146,11 @@
                         </Style>
                     </Grid.Style>
                     <ItemsControl ItemsSource="{Binding Actions}">
-                        <ItemsControl.ItemTemplate>
+                        <!--<ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Background="Transparent" ShowGridLines="False">
-                                    <Grid.ColumnDefinitions>
-
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-
-                                    <ContentControl Content="{Binding ActionFrom}" HorizontalAlignment="Right" Grid.Column="0" />
-                                    <ContentControl ContentTemplate="{StaticResource dt_action}" HorizontalAlignment="Center" Grid.Column="1" />
-
-                                    <ItemsControl ItemsSource="{Binding ActionTo}" Grid.Column="2">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal"></StackPanel>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <ContentControl Content="{Binding}" HorizontalAlignment="Left" />
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </Grid>
+                                
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
+                        </ItemsControl.ItemTemplate>-->
                     </ItemsControl>
                 </Grid>
 

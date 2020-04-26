@@ -12,14 +12,16 @@ using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Services
 {
-    public static class CardPlayHandler
+    public static class ActionPlayHandler
     {
         public static async Task<List<Action<Player, Board>>> Convert(Player playerObj, ResourceHandler resources,
             Board board)
         {
+            await Task.CompletedTask;
             List<Action<Player, Board>> currentActions = new List<Action<Player, Board>>();
 
             switch (resources.ResourceType)
@@ -172,6 +174,107 @@ namespace TM.Digital.Services
             });
 
             //};
+        }
+
+
+        public static async Task<List<Action<Player, Board>>> ExecuteBoardAction(BoardAction boardAction, Board board, Player player)
+        {
+            await Task.CompletedTask;
+            switch (boardAction.BoardActionType)
+            {
+                case BoardActionType.PatentsSell:
+                    break;
+                case BoardActionType.PowerPlant:
+                    return await PlayAction(boardAction.Actions, player, board);
+                case BoardActionType.Asteroid:
+                    return await PlayAction(boardAction.Actions, player, board);
+                case BoardActionType.Aquifere:
+                    return await PlayAction(boardAction.Actions, player, board);
+                case BoardActionType.Forest:
+                    return await PlayAction(boardAction.Actions, player, board);
+                case BoardActionType.City:
+                    return await PlayAction(boardAction.Actions, player, board);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return new List<Action<Player, Board>>();
+        }
+        public static async Task<IEnumerable<Action<Player, Board>>> ExecuteAction(Action action, Board board, Player player)
+        {
+            return await PlayAction(action, player, board);
+        }
+        public static async Task<List<Action<Player, Board>>> PlayAction(Action action, Player player, Board board)
+        {
+            await Task.CompletedTask;
+            List<Action<Player, Board>> currentActions = new List<Action<Player, Board>>();
+
+            if (action.ActionFrom != null)
+            {
+                if (action.ActionFrom.ActionTarget == ActionTarget.Self)
+                {
+                    //spend resources
+                    var resourceCost = player[action.ActionFrom.ResourceType];
+                    switch (action.ActionFrom.ResourceKind)
+                    {
+                        case ResourceKind.Unit:
+                            resourceCost.UnitCount += action.ActionFrom.Amount;
+                            break;
+                        case ResourceKind.Production:
+                            resourceCost.Production += action.ActionFrom.Amount;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    foreach (var actionTo in action.ActionTo)
+                    {
+                        if (actionTo.ActionTarget == ActionTarget.Self)
+                        {
+                            //get action benefits
+
+                            //for resources
+                            if(actionTo.ResourceType != ResourceType.None)
+                            {
+                                var resourceBenefit = player[actionTo.ResourceType];
+                                switch (actionTo.ResourceKind)
+                                {
+                                    case ResourceKind.Unit:
+                                        resourceBenefit.UnitCount += actionTo.Amount;
+                                        break;
+                                    case ResourceKind.Production:
+                                        resourceBenefit.Production += actionTo.Amount;
+                                        break;
+                                    default:
+                                        throw new ArgumentOutOfRangeException();
+                                }
+                            }
+
+                            //for tile
+                            if(actionTo.TileEffect != null)
+                            {
+                                currentActions.Add(TileEffectAction(player, actionTo.TileEffect, board));
+                            }
+
+                            //for global parameter
+                            if(actionTo.BoardLevelType != BoardLevelType.None)
+                            {
+                                var parameter = board.Parameters.FirstOrDefault(p => p.Type == actionTo.BoardLevelType);
+                                if(parameter !=null)
+                                {
+                                    var value= actionTo.Amount * parameter.GlobalParameterLevel.Increment;
+                                    ;
+                                    parameter.GlobalParameterLevel.Level += value;
+                                    player.TerraformationLevel += actionTo.Amount;
+
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return currentActions;
         }
 
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TM.Digital.Model.Board;
@@ -6,6 +7,7 @@ using TM.Digital.Model.Cards;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Services.Common;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Services
 {
@@ -111,5 +113,47 @@ namespace TM.Digital.Services
         }
 
 
+        public static async Task CanPlayBoardAction(Board board, Player player)
+        {
+            await Task.CompletedTask;
+            foreach (var playerBoardAction in player.BoardActions)
+            {
+                playerBoardAction.Actions.CanExecute = CanPlayAction(player, playerBoardAction.Actions);
+            }
+        }
+
+        public static bool CanPlayAction(Player player, Action playerBoardAction)
+        {
+            if (playerBoardAction.ActionFrom == null)
+            {
+                return true;
+            }
+            var resource = player[playerBoardAction.ActionFrom.ResourceType];
+
+            switch (playerBoardAction.ActionFrom.ResourceKind)
+            {
+                case ResourceKind.Unit:
+                    return resource.UnitCount + playerBoardAction.ActionFrom.Amount >= 0;
+
+                case ResourceKind.Production:
+                    if(resource.ResourceType == ResourceType.Money)
+                    {
+                        return resource.Production + playerBoardAction.ActionFrom.Amount >= -5;
+                    }
+                    return resource.Production + playerBoardAction.ActionFrom.Amount >= 0;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public static async Task CanPlayCardAction(Board board, Player player)
+        {
+            await Task.CompletedTask;
+            foreach (var playerAllPlayerAction in player.AllPlayerActions)
+            {
+                playerAllPlayerAction.CanExecute = CanPlayAction(player, playerAllPlayerAction);
+            }
+        }
     }
 }

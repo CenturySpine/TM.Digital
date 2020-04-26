@@ -22,9 +22,20 @@ namespace TM.Digital.Services
             foreach (var resourceCost in resourcesUnitCost)
             {
                 var playerResource = patentOwner.Resources.First((r => r.ResourceType == resourceCost.ResourceType));
-                if (playerResource.Production < Math.Abs(resourceCost.Amount))
+                var differential = playerResource.Production - Math.Abs(resourceCost.Amount);
+                if (playerResource.ResourceType != ResourceType.Money)
                 {
-                    return false;
+                    if (differential < 0)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (differential < -5)
+                    {
+                        return false;
+                    }
                 }
             }
 

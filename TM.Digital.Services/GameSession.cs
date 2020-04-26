@@ -13,6 +13,7 @@ using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Services.Common;
 using TM.Digital.Transport.Hubs.Hubs;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Services
 {
@@ -171,11 +172,35 @@ namespace TM.Digital.Services
                 await _actionPlanner.Continue(player, Board);
             }
         }
+        public async Task BoardAction(BoardAction boardAction, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (Players.TryGetValue(playerId, out var player))
+            {
+                var choices = await ActionPlayHandler.ExecuteBoardAction(boardAction, Board, player);
+                foreach (var choice in choices)
+                {
+                    _actionPlanner.Plan(choice);
+                }
+                await PlanCommon(hubContext, player);
+            }
+        }
+        public async Task CardAction(Action action, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (Players.TryGetValue(playerId, out var player))
+            {
+                var choices = await ActionPlayHandler.ExecuteAction(action, Board, player);
+                foreach (var choice in choices)
+                {
+                    _actionPlanner.Plan(choice);
+                }
+                await PlanCommon(hubContext, player);
+            }
+        }
         public async Task ConvertResources(ResourceHandler resources, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
             if (Players.TryGetValue(playerId, out var playerObj))
             {
-                var choices = await CardPlayHandler.Convert(playerObj, resources, Board);
+                var choices = await ActionPlayHandler.Convert(playerObj, resources, Board);
                 foreach (var choice in choices)
                 {
                     _actionPlanner.Plan(choice);
@@ -187,7 +212,7 @@ namespace TM.Digital.Services
         {
             if (Players.TryGetValue(playerId, out var player))
             {
-                var choices = await CardPlayHandler.Play(card, player, Board, Players.Select(r => r.Value).ToList());
+                var choices = await ActionPlayHandler.Play(card, player, Board, Players.Select(r => r.Value).ToList());
 
                 foreach (var choice in choices)
                 {
@@ -217,7 +242,7 @@ namespace TM.Digital.Services
                 {
                     await EffectHandler.CheckCardsReductions(player);
                     PrerequisiteHandler.VerifyResourcesUsage(handCard, modifiers.CardMineralModifiers, player);
-                    handCard.CanBePlayed =   PrerequisiteHandler.CanPlayCard(handCard, Board, player) ;
+                    handCard.CanBePlayed = PrerequisiteHandler.CanPlayCard(handCard, Board, player);
                     await UpdateGame(hubContext);
                 }
             }
@@ -227,6 +252,16 @@ namespace TM.Digital.Services
             _actionPlanner.Plan(async (p, b) =>
             {
                 await EffectHandler.CheckCardsReductions(p);
+                await _actionPlanner.Continue(p, b);
+            });
+            _actionPlanner.Plan(async (p, b) =>
+            {
+                await PrerequisiteHandler.CanPlayBoardAction(b, p);
+                await _actionPlanner.Continue(p, b);
+            });
+            _actionPlanner.Plan(async (p, b) =>
+            {
+                await PrerequisiteHandler.CanPlayCardAction(b, p);
                 await _actionPlanner.Continue(p, b);
             });
             _actionPlanner.Plan(async (p, b) =>
@@ -281,6 +316,8 @@ namespace TM.Digital.Services
 
                 await EffectHandler.CheckCardsReductions(player);
                 await PrerequisiteHandler.CanPlayCards(Board, player);
+                await PrerequisiteHandler.CanConvertResources(Board, player);
+                await PrerequisiteHandler.CanPlayBoardAction(Board, player);
 
                 player.IsReady = true;
                 await Logger.Log(player.Name, $"Ready");
@@ -436,20 +473,6 @@ namespace TM.Digital.Services
             return null;
         }
 
-        //private async Task VerifyRemainingAction(Player player, IHubContext<ClientNotificationHub> hubContext)
-        //{
-        //    if (RemainingActions.Any())
-        //    {
-        //        var action = RemainingActions.Dequeue();
-        //        action.Invoke(player, Board);
-        //    }
-        //    else
-        //    {
-        //        await Logger.Log(player.Name, $"All actions choices done. Sending game update to all players");
-
-        //        await UpdateGame(hubContext);
-        //    }
-        //}
 
         private async Task UpdateGame(IHubContext<ClientNotificationHub> hubContext)
         {

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TM.Digital.Client.Screens.HandSetup;
+using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Transport;
 using TM.Digital.Ui.Resources.ViewModelCore;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Client.Screens.Main
 {
@@ -31,7 +33,22 @@ namespace TM.Digital.Client.Screens.Main
             SelectCardCommand = new RelayCommand(ExecutePlayCard/*, CanExecutePlayCard*/);
             VerifyCardCommand = new RelayCommand(ExecuteVerify);
             ConvertCommand = new RelayCommand(ExecuteConvert);
+            ExecuteActionCommand = new RelayCommand(ExecuteBoardAction);
         }
+
+        private async void ExecuteBoardAction(object obj)
+        {
+            if (obj is BoardAction boardAction)
+            {
+                await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/boardaction/{Player.PlayerId}", boardAction);
+            }
+            if (obj is Action cardAction)
+            {
+                await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/cardaction/{Player.PlayerId}", cardAction);
+            }
+        }
+
+        public RelayCommand ExecuteActionCommand { get; set; }
 
         private async void ExecuteVerify(object obj)
         {
@@ -39,6 +56,7 @@ namespace TM.Digital.Client.Screens.Main
             {
                 await TmDigitalClientRequestHandler.Instance.Post($"game/{GameId}/verify/{Player.PlayerId}", patent.Patent);
             }
+
         }
 
         public RelayCommand VerifyCardCommand { get; set; }
@@ -63,7 +81,7 @@ namespace TM.Digital.Client.Screens.Main
                     Patent = c,
                 };
 
-                if (c.Tags.Contains(Tags.Space))
+                if (c.Tags!=null && c.Tags.Contains(Tags.Space))
                 {
                     var modSpace = new MineralsPatentModifier
                     {
@@ -74,7 +92,7 @@ namespace TM.Digital.Client.Screens.Main
                     modSpace.UnitUsedChanged += ModSpace_UnitUsedChanged;
                     patentSelect.MineralsPatentModifiersSummary.MineralsPatentModifier.Add(modSpace);
                 }
-                if (c.Tags.Contains(Tags.Building))
+                if (c.Tags != null && c.Tags.Contains(Tags.Building))
                 {
                     var modSteel = new MineralsPatentModifier
                     {

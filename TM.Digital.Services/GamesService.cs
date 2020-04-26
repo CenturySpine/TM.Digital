@@ -11,6 +11,7 @@ using TM.Digital.Model.Player;
 using TM.Digital.Services.Common;
 using TM.Digital.Transport.Hubs;
 using TM.Digital.Transport.Hubs.Hubs;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Services
 {
@@ -196,6 +197,28 @@ namespace TM.Digital.Services
 
             throw Errors.ErrorGameIdNotFound(gameId);
 
+        }
+
+        public async Task BoardAction(BoardAction boardAction, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+                await session.BoardAction(boardAction, playerId, hubContext);
+                return;
+            }
+
+            throw Errors.ErrorGameIdNotFound(gameId);
+        }
+
+        public async Task CardAction(Action action, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        {
+            if (_currentSessions.TryGetValue(gameId, out var session))
+            {
+                await session.CardAction(action, playerId, hubContext);
+                return;
+            }
+
+            throw Errors.ErrorGameIdNotFound(gameId);
         }
     }
 }

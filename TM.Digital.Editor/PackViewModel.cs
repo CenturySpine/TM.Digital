@@ -27,26 +27,33 @@ namespace TM.Digital.Editor
         private string _name;
         private string _search;
         private string _destinationPack;
+        private string _selectedSort;
 
 
         public PackViewModel(ExtensionPack extensionPack)
         {
             Search = string.Empty;
             Name = extensionPack.Name.ToString();
+            SortMembers = new ObservableCollection<string>()
+            {
+                "OfficialNumberTag",
+                "Name",
+                "CardType"
+            };
             Corporations = new ObservableCollection<Corporation>(extensionPack.Corporations);
             CorporationView = CollectionViewSource.GetDefaultView(Corporations);
             CorporationView.Filter = FilterCard;
-            CorporationView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
+            //CorporationView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
 
             Patents = new ObservableCollection<Patent>(extensionPack.Patents);
             PatentsView = CollectionViewSource.GetDefaultView(Patents);
             PatentsView.Filter = FilterCard;
-            PatentsView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
+            //PatentsView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
 
             Preludes = new ObservableCollection<Prelude>(extensionPack.Preludes);
             PreludesView = CollectionViewSource.GetDefaultView(Preludes);
             PreludesView.Filter = FilterCard;
-            PreludesView.SortDescriptions.Add(new SortDescription("OfficialNumberTag",ListSortDirection.Ascending));
+            //PreludesView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
 
             Refresh = new RelayCommand(ExecuteRefresh);
             AddCorporationCommand = new RelayCommand(ExecuteAddcorporation);
@@ -55,8 +62,23 @@ namespace TM.Digital.Editor
 
 
             Deletecommand = new RelayCommand(ExecuteDelete);
+            SelectedSort = "Name";
+        }
+        private void ApplySort()
+        {
+            Sort(CorporationView);
+            Sort(PatentsView);
+            Sort(PreludesView);
         }
 
+        private void Sort(ICollectionView view)
+        {
+            using (view.DeferRefresh())
+            {
+                view.SortDescriptions.Clear();
+                view.SortDescriptions.Add(new SortDescription(SelectedSort, ListSortDirection.Ascending));
+            }
+        }
 
 
         private bool FilterCard(object obj)
@@ -182,8 +204,8 @@ namespace TM.Digital.Editor
             {
                 CorporationView.Refresh();
             }
-   
-            
+
+
         }
 
 
@@ -198,6 +220,17 @@ namespace TM.Digital.Editor
         public RelayCommand AddPreludeCommand { get; set; }
 
         public RelayCommand Refresh { get; }
+
+        public ObservableCollection<string> SortMembers { get; set; }
+        public string SelectedSort
+        {
+            get => _selectedSort;
+            set
+            {
+                _selectedSort = value; OnPropertyChanged();
+                ApplySort();
+            }
+        }
 
 
     }

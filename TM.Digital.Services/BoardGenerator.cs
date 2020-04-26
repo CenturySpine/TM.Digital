@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using TM.Digital.Model.Board;
+using TM.Digital.Model.Cards;
 using TM.Digital.Model.Resources;
+using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Services
 {
@@ -146,7 +148,9 @@ namespace TM.Digital.Services
                 {
                     new BoardPlace {Index = new PlaceCoordinates {Y = 99, X=0},Name = "Phobos Space Haven",Reserved = new BoardPlaceReservedSpace {ReservedFor = ReservedFor.Phobos}},
                     new BoardPlace {Index = new PlaceCoordinates {Y = 99, X=1} ,Name = "Ganymede Colony",Reserved = new BoardPlaceReservedSpace {ReservedFor = ReservedFor.Ganymede}},
-                }
+                },
+
+                
             };
 
             return board;

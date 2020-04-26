@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
+using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Model.Player
 {
@@ -23,12 +28,23 @@ namespace TM.Digital.Model.Player
         public bool IsReady { get; set; }
 
         public string Color { get; set; }
+        public List<BoardAction> BoardActions { get; set; }
 
         public ResourceHandler this[ResourceType r]
         {
             get { return Resources.First(h => h.ResourceType == r); }
         }
-    
+
+        [XmlIgnore]
+        [JsonIgnore]
+        public List<Action> AllPlayerActions
+        {
+            get
+            {
+                return
+                    PlayedCards.Where(c=>c.Actions != null && c.Actions.Any()).SelectMany(pc => pc.Actions).ToList();
+            }
+        }
 
     }
 }
