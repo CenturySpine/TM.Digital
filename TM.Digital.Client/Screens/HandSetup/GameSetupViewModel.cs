@@ -1,30 +1,48 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TM.Digital.Client.Screens.ActionChoice;
+using TM.Digital.Client.Screens.Main;
+using TM.Digital.Client.Screens.Wait;
+using TM.Digital.Client.Services;
+using TM.Digital.Model;
 using TM.Digital.Model.Game;
+using TM.Digital.Model.Player;
+using TM.Digital.Transport;
 using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Client.Screens.HandSetup
 {
-    public class GameSetupViewModel : GameBoardBaseViewModel
+    public class GameSetupViewModel : GameBoardBaseViewModel, IComponentConfigurable
     {
-        private bool _isVisible;
+        private readonly IApiProxy _apiProxy;
+        private readonly PlayerSelector _playerSelector;
+        private readonly WaitingGameScreenViewModel _waitVm;
         private bool _isInitialSetup;
+        private bool _isVisible;
 
-        public GameSetupViewModel()
+        public GameSetupViewModel(WaitingGameScreenViewModel waitVm, IApiProxy apiProxy, PlayerSelector playerSelector)
         {
+            _waitVm = waitVm;
+            _apiProxy = apiProxy;
+            _playerSelector = playerSelector;
             SelectCardCommand = new RelayCommand(ExecuteSelectCorporation, CanExecuteSelectCard);
             CloseCommand = new RelayCommand(ExecuteClose, CanExecuteClose);
             CorporationChoices = new ObservableCollection<CorporationSelector>();
             PatentChoices = new ObservableCollection<PatentSelector>();
         }
 
-        public event SetupCompletedEventHandler Setupcompleted;
+        public RelayCommand CloseCommand { get; set; }
 
-        protected override bool CanExecuteSelectCard(object obj)
+        public ObservableCollection<CorporationSelector> CorporationChoices { get; set; }
+
+        public bool IsInitialSetup
         {
-            return true;
+            get => _isInitialSetup;
+            set { _isInitialSetup = value; OnPropertyChanged(nameof(IsInitialSetup)); }
         }
 
         public bool IsVisible
@@ -33,21 +51,23 @@ namespace TM.Digital.Client.Screens.HandSetup
             set { _isVisible = value; OnPropertyChanged(nameof(IsVisible)); }
         }
 
-        private bool CanExecuteClose(object arg)
-        {
-            return CorporationChoices.Count(c => c.IsSelected) == 1 || !IsInitialSetup;
-        }
-
-        private void ExecuteClose(object obj)
-        {
-            IsVisible = false;
-            OnSetupCompleted(this);
-        }
-
-        public RelayCommand CloseCommand { get; set; }
-
-        public ObservableCollection<CorporationSelector> CorporationChoices { get; set; }
         public ObservableCollection<PatentSelector> PatentChoices { get; set; }
+
+        public void RegisterSubscriptions(HubConnection hubConnection)
+        {
+            hubConnection.On<string, string>(ServerPushMethods.SetupChoice, (user, message) =>
+            {
+                if (Guid.Parse(user) == GameData.PlayerId)
+                {
+                    Setup(message);
+                }
+            });
+        }
+
+        protected override bool CanExecuteSelectCard(object obj)
+        {
+            return true;
+        }
 
         protected override void ExecuteSelectCorporation(object obj)
         {
@@ -67,36 +87,63 @@ namespace TM.Digital.Client.Screens.HandSetup
             }
         }
 
-        public void Setup(GameSetup gameSetup, bool isInitialSetup)
+        private bool CanExecuteClose(object arg)
+        {
+            return CorporationChoices.Count(c => c.IsSelected) == 1 || !IsInitialSetup;
+        }
+
+        private void ExecuteClose(object obj)
+        {
+            IsVisible = false;
+            GameSetupVm_SetupCompleted();
+        }
+
+        private async void GameSetupVm_SetupCompleted()
+        {
+            _waitVm.Open("Waiting for other players to finish their setup");
+
+            if (CorporationChoices.Any() || !IsInitialSetup)
+            {
+                var gSetup = new GameSetupSelection
+                {
+                    Corporation = CorporationChoices.ToDictionary(k => k.Corporation.Guid.ToString(), v => v.IsSelected),
+                    BoughtCards = PatentChoices.ToDictionary(k => k.Patent.Guid.ToString(), v => v.IsSelected),
+                    PlayerId = GameData.PlayerId,
+                    GameId = GameData.GameId,
+                };
+
+                var gameResult2 =
+                   await _apiProxy.SendSetup(gSetup);
+                    
+                _playerSelector.Update(gameResult2);
+            }
+        }
+
+        private void Setup(GameSetup gameSetup, bool isInitialSetup)
         {
             IsInitialSetup = isInitialSetup;
-            PlayerId = gameSetup.PlayerId;
-            GameId = gameSetup.GameId;
+            GameData.PlayerId = gameSetup.PlayerId;
+            GameData.GameId = gameSetup.GameId;
+            CorporationChoices.Clear();
+            PatentChoices.Clear();
             foreach (var gameSetupCorporation in gameSetup.Corporations)
             {
                 CorporationChoices.Add(new CorporationSelector { Corporation = gameSetupCorporation });
             }
             foreach (var gameSetupPatent in gameSetup.Patents)
             {
-                PatentChoices.Add(new PatentSelector { Patent = gameSetupPatent, IsSetup = true});
+                PatentChoices.Add(new PatentSelector { Patent = gameSetupPatent, IsSetup = true });
             }
 
             IsVisible = true;
         }
 
-        public Guid GameId { get; set; }
-
-        public bool IsInitialSetup
+        private void Setup(string message)
         {
-            get => _isInitialSetup;
-            set { _isInitialSetup = value; OnPropertyChanged(nameof(IsInitialSetup)); }
-        }
+            var gameResult2 = JsonConvert.DeserializeObject<GameSetup>(message);
+            _waitVm.Close();
 
-        public Guid PlayerId { get; set; }
-
-        protected virtual void OnSetupCompleted(GameSetupViewModel vm)
-        {
-            Setupcompleted?.Invoke(vm);
+            Setup(gameResult2, gameResult2.IsInitialSetup);
         }
     }
 }

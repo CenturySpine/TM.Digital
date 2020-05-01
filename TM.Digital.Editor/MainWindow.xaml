@@ -14,11 +14,64 @@
         d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
+        <Style TargetType="TabItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border Name="Border" BorderThickness="1,1,1,1" BorderBrush="Gray" CornerRadius="0,0,0,0" Margin="0">
+                            <ContentPresenter x:Name="ContentSite"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              ContentSource="Header"
+                                              Margin="10,2" TextBlock.FontWeight="Bold"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="LightBlue" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="Border" Property="Background" Value="White" />
+                                <Setter TargetName="Border" Property="Opacity" Value="0.2" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style  TargetType="{x:Type TabControl}">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Template" >
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <UniformGrid Grid.Row="0" Columns="{Binding Items.Count, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" IsItemsHost="True">
+                                <!--<TabPanel />-->
+                            </UniformGrid>
+                            <Border Grid.Row="1" 
+                                    BorderBrush="LightGray" 
+                                    BorderThickness="1,0,1,1" 
+                                    
+                                    
+                                    
+                                    >
+                                <!--Using ContentSource set to SelectedContent we will focus the content of the tabitem -->
+                                <ContentPresenter ContentSource="SelectedContent" HorizontalAlignment="Stretch"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <DataTemplate DataType="{x:Type local:PackViewModel}">
             <Grid>
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="0.5*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
@@ -27,41 +80,125 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition  />
                     </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Search : "></TextBlock>
+                    <UniformGrid Columns="3">
+                        <UniformGrid Columns="2">
+                        <TextBlock Text="Filter : " VerticalAlignment="Center" Margin="5"></TextBlock>
                         <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged, Delay=500}" Margin="5"
-                                 Width="500"></TextBox>
-                        <TextBlock Text="Sort By : "></TextBlock>
-                        <ComboBox SelectedItem="{Binding SelectedSort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding SortMembers}">
-                            <!--<ComboBox.Items>
-                                <ComboBoxItem Content="Official card number" IsSelected="True"/>
-                                <ComboBoxItem Content="Card Name" />
-                                <ComboBoxItem Content="Tag" />
-                                <ComboBoxItem Content="Card Type" />
-</ComboBox.Items>-->
+                                  VerticalAlignment="Center"></TextBox>
+                        </UniformGrid>
+                        <UniformGrid Columns="2" HorizontalAlignment="Center">
+                        <CheckBox Content="With Comment" IsThreeState="True" VerticalAlignment="Center" VerticalContentAlignment="Center" IsChecked="{Binding FilterWithComments}"/>
+</UniformGrid>
+                        <UniformGrid Columns="2" HorizontalAlignment="Center">
+<TextBlock Text="Sort By : " VerticalAlignment="Center" Margin="5"></TextBlock>
+                        <ComboBox SelectedItem="{Binding SelectedSort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding SortMembers}" VerticalAlignment="Center" Margin="5">
+
                         </ComboBox>
-                    </StackPanel>
-                    <TabControl Grid.Row="1">
-                        <TabItem Header="Corporations">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition Height="Auto"></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <ListBox ItemsSource="{Binding CorporationView}" SelectedItem="{Binding SelectedObject}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                    <ListBox.ItemContainerStyle>
+                            </UniformGrid>
+                    </UniformGrid>
+                    <TabControl Grid.Row="1" >
+                        <TabControl.Resources>
+                            <Style TargetType="{x:Type ListBox}">
+                                <Setter Property="BorderBrush" Value="Transparent"></Setter>
+                                <Setter Property="BorderThickness" Value="0"></Setter>
+                                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"></Setter>
+                                <Setter Property="SelectedItem" Value="{Binding SelectedObject}"></Setter>
+                                <Setter Property="Margin" Value="5"></Setter>
+                                <Setter Property="ItemContainerStyle">
+                                    <Setter.Value>
                                         <Style TargetType="{x:Type ListBoxItem}">
                                             <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                                            <Setter Property="Margin" Value="5"></Setter>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <Border Name="Border" Padding="5" SnapsToDevicePixels="true">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsSelected" Value="true">
+                                                                <Setter TargetName="Border" Property="Background" >
+                                                                    <Setter.Value>
+                                                                        <SolidColorBrush Color="DarkOrange" Opacity="0.5"></SolidColorBrush>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Setter TargetName="Border" Property="BorderThickness" Value="2"></Setter>
+                                                                <Setter TargetName="Border" Property="BorderBrush" Value="DarkGray"></Setter>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+</Setter>
                                         </Style>
-                                    </ListBox.ItemContainerStyle>
-                                    <ListBox.ItemsPanel>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
                                         <ItemsPanelTemplate>
                                             <WrapPanel />
                                         </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                </ListBox>
-                                <UniformGrid Grid.Row="1" Columns="2">
-                                    <Button  Margin="5" Padding="5" Content="Add corporation" Command="{Binding AddCorporationCommand}"></Button>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                            <DataTemplate x:Key="cardSummary">
+                                <Border BorderBrush="Black" BorderThickness="1" Margin="5">
+                                    <Grid HorizontalAlignment="Stretch"   Margin="2"  Height="30">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.Background>
+                                            <SolidColorBrush Color="DarkOrange" Opacity="0.5" />
+                                        </Grid.Background>
+
+                                        <Grid>
+                                            <Rectangle Margin="5" Opacity="0.6">
+                                                <Rectangle.Style>
+                                                    <Style TargetType="{x:Type Rectangle}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding CardType}" Value="{x:Static cards:CardType.Red}">
+                                                                <Setter Property="Fill" Value="Red"></Setter>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding CardType}" Value="{x:Static cards:CardType.Blue}">
+                                                                <Setter Property="Fill" Value="DeepSkyBlue"></Setter>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding CardType}" Value="{x:Static cards:CardType.Green}">
+                                                                <Setter Property="Fill" Value="Green"></Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Rectangle.Style>
+                                            </Rectangle>
+
+                                            <TextBlock Text="{Binding Name}" Margin="5,5" FontSize="15"  
+                                               VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Left"/>
+                                        </Grid>
+
+
+                                        <TextBlock Grid.Column="1" Text="{Binding OfficialNumberTag}" Margin="5,2" FontSize="14"
+                                                   VerticalAlignment="Center" FontStyle="Italic" HorizontalAlignment="Left"/>
+
+                                        <ContentControl Grid.Column="2" Content="{Binding Prerequisites}" HorizontalAlignment="Center"/>
+                                        <ContentControl Grid.Column="3" Content="{Binding Tags}" HorizontalAlignment="Right" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </TabControl.Resources>
+                        <TabItem Header="Corporations">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ContentControl ContentTemplate="{StaticResource cardSummary}" Content="{Binding SelectedObject}"/>
+
+                                <ListBox Grid.Row="1" ItemsSource="{Binding Corporations}" />
+
+                                <UniformGrid Grid.Row="2" Rows="1">
+                                    <Button  Margin="5" Padding="5" Content="Add" Command="{Binding AddCorporationCommand}"></Button>
                                     <Button  Margin="5" Padding="5" Content="Delete" Command="{Binding Deletecommand}"></Button>
 
                                     <Button  Margin="5" Padding="5" Content="Move To" Command="{Binding DataContext.MoveToCommand,RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
@@ -76,22 +213,17 @@
                         <TabItem Header="Patents">
                             <Grid Grid.Row="1">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <ListBox  ItemsSource="{Binding PatentsView}" SelectedItem="{Binding SelectedObject}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="{x:Type ListBoxItem}">
-                                            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                    <ListBox.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel />
-                                        </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                </ListBox>
-                                <UniformGrid Grid.Row="1" Columns="2">
+
+                                <ContentControl ContentTemplate="{StaticResource cardSummary}" Content="{Binding SelectedObject}"/>
+
+                                <ListBox Grid.Row="1" ItemsSource="{Binding PatentsView}" />
+
+                                <UniformGrid Grid.Row="2" Rows="1"
+                                >
                                     <Button  Margin="5" Padding="5" Content="Add" Command="{Binding AddPatentCommand}"></Button>
                                     <Button  Margin="5" Padding="5" Content="Delete" Command="{Binding Deletecommand}"></Button>
                                     <Button  Margin="5" Padding="5" Content="Move To" Command="{Binding DataContext.MoveToCommand,RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
@@ -106,19 +238,16 @@
                         <TabItem Header="Preludes">
                             <Grid>
                                 <Grid.RowDefinitions>
-
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <ListBox Grid.Row="0" ItemsSource="{Binding PreludesView}" SelectedItem="{Binding SelectedObject}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                    <ListBox.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel />
-                                        </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                </ListBox>
-                                <UniformGrid Grid.Row="1" Columns="2">
+                                <ContentControl ContentTemplate="{StaticResource cardSummary}" Content="{Binding SelectedObject}"/>
+
+                                <ListBox Grid.Row="1" ItemsSource="{Binding PreludesView}" />
+
+                                <UniformGrid Grid.Row="2" Rows="1">
                                     <Button  Margin="5" Padding="5" Content="Add" Command="{Binding AddPreludeCommand}"></Button>
                                     <Button  Margin="5" Padding="5" Content="Delete" Command="{Binding Deletecommand}"></Button>
                                     <Button  Margin="5" Padding="5" Content="Move To" Command="{Binding DataContext.MoveToCommand,RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
@@ -132,15 +261,19 @@
                         </TabItem>
                     </TabControl>
                 </Grid>
-                <Grid Grid.Column="1">
+                <GridSplitter Grid.Column="1" Width="4" Margin="2,5" HorizontalAlignment="Center"
+                              >
+                    
+                </GridSplitter>
+                <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
                     <dxprg:PropertyGridControl  x:Name="editorGrid" AllowExpanding="Force" SelectedObject="{Binding SelectedObject}"
                                                 SortMode="Definitions"
-                                            SelectionChanged="EditorGrid_OnSelectionChanged" />
-                    <Button Grid.Row="1" Content="Refresh object" Command="{Binding Refresh}"></Button>
+                                            SelectionChanged="EditorGrid_OnSelectionChanged" Margin="5"/>
+                    <!--<Button Grid.Row="1" Content="Refresh object" Command="{Binding Refresh}" Margin="5"></Button>-->
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -157,7 +290,7 @@
             <Button Content="Load" Margin="5" Padding="5,3" Command="{Binding LoadDataCommand}"></Button>
         </StackPanel>
 
-        <TabControl Grid.Row="1">
+        <TabControl Grid.Row="1"  >
             <TabItem Header="Cards pack editor">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -188,7 +321,7 @@
                      
                         ></Button>
                         <TextBlock Grid.Column="1" Text="Save location" VerticalAlignment="Center" Margin="5"></TextBlock>
-                        <TextBox Grid.Column="2" Margin="5" Text="{Binding SavePackageLocation, UpdateSourceTrigger=PropertyChanged, Delay=500}">
+                        <TextBox Grid.Column="2" Margin="5" Text="{Binding SavePackageLocation, UpdateSourceTrigger=PropertyChanged, Delay=500}" VerticalContentAlignment="Center">
                         </TextBox>
                     </Grid>
                 </Grid>

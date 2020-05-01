@@ -46,11 +46,8 @@ namespace TM.Digital.Services
                     playerObj[ResourceType.Heat].UnitCount -= conv;
 
                     //increase global parameter
-                    var temp = board.Parameters.First(p => p.Type == BoardLevelType.Temperature);
-                    temp.GlobalParameterLevel.Level += temp.GlobalParameterLevel.Increment;
+                   await BoardEffectHandler.IncreaseParameterLevel(board,BoardLevelType.Temperature,playerObj,1);
 
-                    //increase players NT
-                    playerObj.TerraformationLevel += 1;
                     break;
 
                 default:
@@ -58,11 +55,11 @@ namespace TM.Digital.Services
             }
             return currentActions;
         }
-        public static async Task<List<Action<Player, Board>>> Play(ActionPlay action, Player player, Board board,
+        public static async Task<List<Action<Player, Board>>> Play(CardActionPlay cardAction, Player player, Board board,
             List<Player> allPlayers)
 
         {
-            var card = action.Patent;
+            var card = cardAction.Patent;
 
             List<Action<Player, Board>> currentActions = new List<Action<Player, Board>>();
 
@@ -73,7 +70,7 @@ namespace TM.Digital.Services
             //int mineralValue = 0;
 
             //for each mineral usage sent by player
-            foreach (var actionPlayResourcesUsage in action.ResourcesUsages)
+            foreach (var actionPlayResourcesUsage in cardAction.ResourcesUsages)
             {
                 //calculate mineral value
                 //mineralValue +=
@@ -98,14 +95,13 @@ namespace TM.Digital.Services
             //resources effects for self
             foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == ActionTarget.Self))
             {
-                await EffectHandler.HandleResourceEffect(player, cardResourceEffect);
+                await EffectHandler.HandleResourceEffect(player, cardResourceEffect, allPlayers, board);
             }
 
             //resources effect for others
             foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == ActionTarget.AnyPlayer))
             {
                 currentActions.Add(ResourceEffectActionChoice(cardResourceEffect, allPlayers));
-                //await EffectHandler.HandleResourceEffect(player, cardResourceEffect);
             }
 
             foreach (var boardLevelEffect in card.BoardEffects)
@@ -161,11 +157,26 @@ namespace TM.Digital.Services
             // {
             return new Action<Player, Board>(async (p, b) =>
             {
-                BoardHandler.PendingTileEffect = choicesTileEffect;
-                await Logger.Log(player.Name,
-                    $"Effect {BoardHandler.PendingTileEffect.Type}... Getting board available spaces...");
 
-                var choiceBoard = BoardHandler.GetPlacesChoices(BoardHandler.PendingTileEffect, b, player);
+                //special cases for oceans
+                if (choicesTileEffect.Type == TileType.Ocean)
+                {
+                    if (BoardEffectHandler.HasReachedMaxParam(board, BoardLevelType.Oceans))
+                    {
+                        return;
+                    }
+
+                }
+                BoardTilesHandler.PendingTileEffect = choicesTileEffect;
+                await Logger.Log(player.Name,
+                    $"Effect {BoardTilesHandler.PendingTileEffect.Type}... Getting board available spaces...");
+
+                var choiceBoard = BoardTilesHandler.GetPlacesChoices(BoardTilesHandler.PendingTileEffect, b, player);
+                if (choiceBoard == null) // no more space giving constraints
+                {
+                    return;
+                }
+
                 await Logger.Log(player.Name,
                     $"Found {choiceBoard.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => p.CanBeChosed).Count()} available places. Sending choices to player");
 
@@ -199,11 +210,19 @@ namespace TM.Digital.Services
             }
             return new List<Action<Player, Board>>();
         }
-        public static async Task<IEnumerable<Action<Player, Board>>> ExecuteAction(Action action, Board board, Player player)
+        public static async Task<IEnumerable<Action<Player, Board>>> ExecuteAction(Action action, Board board, Player player, CardDrawer cardDrawer)
         {
-            return await PlayAction(action, player, board);
+            var choices = await PlayAction(action, player, board, cardDrawer);
+
+            var targetCard = player.PlayedCards.FirstOrDefault(c => c.Guid == action.CardId);
+            if (targetCard != null)
+            {
+                targetCard.ActionPlayed = true;
+            }
+
+            return choices;
         }
-        public static async Task<List<Action<Player, Board>>> PlayAction(Action action, Player player, Board board)
+        public static async Task<List<Action<Player, Board>>> PlayAction(Action action, Player player, Board board, CardDrawer cardDrawer = null)
         {
             await Task.CompletedTask;
             List<Action<Player, Board>> currentActions = new List<Action<Player, Board>>();
@@ -233,7 +252,15 @@ namespace TM.Digital.Services
                             //get action benefits
 
                             //for resources
-                            if(actionTo.ResourceType != ResourceType.None)
+                            if (actionTo.ResourceType == ResourceType.Card && cardDrawer != null)
+                            {
+                                for (int i = 0; i < actionTo.Amount; i++)
+                                {
+                                    player.HandCards.Add(cardDrawer.DrawPatent());
+                                }
+
+                            }
+                            else if (actionTo.ResourceType != ResourceType.None)
                             {
                                 var resourceBenefit = player[actionTo.ResourceType];
                                 switch (actionTo.ResourceKind)
@@ -250,24 +277,27 @@ namespace TM.Digital.Services
                             }
 
                             //for tile
-                            if(actionTo.TileEffect != null)
+                            if (actionTo.TileEffect != null)
                             {
                                 currentActions.Add(TileEffectAction(player, actionTo.TileEffect, board));
                             }
 
                             //for global parameter
-                            if(actionTo.BoardLevelType != BoardLevelType.None)
+                            if (actionTo.BoardLevelType != BoardLevelType.None)
                             {
-                                var parameter = board.Parameters.FirstOrDefault(p => p.Type == actionTo.BoardLevelType);
-                                if(parameter !=null)
-                                {
-                                    var value= actionTo.Amount * parameter.GlobalParameterLevel.Increment;
-                                    ;
-                                    parameter.GlobalParameterLevel.Level += value;
-                                    player.TerraformationLevel += actionTo.Amount;
+                                await BoardEffectHandler.IncreaseParameterLevel(board, actionTo.BoardLevelType,player, actionTo.Amount);
+
+                                //var parameter = board.Parameters.FirstOrDefault(p => p.Type == actionTo.BoardLevelType);
+                                //if (parameter != null)
+                                //{
+                                //    var value = actionTo.Amount * parameter.GlobalParameterLevel.Increment;
 
 
-                                }
+                                //    parameter.GlobalParameterLevel.Level += value;
+                                //    player.TerraformationLevel += actionTo.Amount;
+
+
+                                //}
                             }
                         }
                     }

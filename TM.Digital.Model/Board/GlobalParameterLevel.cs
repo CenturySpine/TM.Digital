@@ -1,4 +1,8 @@
-﻿namespace TM.Digital.Model.Board
+﻿using System.Collections.Generic;
+using TM.Digital.Model.Effects;
+using TM.Digital.Model.Tile;
+
+namespace TM.Digital.Model.Board
 {
     public class GlobalParameterLevel
     {
@@ -8,6 +12,7 @@
         public int Increment { get; set; }
         public int Min { get; set; }
 
+        public List<BoardParameterThresold> BoardParameterThresolds { get; set; }
         public GlobalParameterLevel Clone()
         {
             return new GlobalParameterLevel
@@ -19,5 +24,19 @@
                 BoardLevelType = BoardLevelType
             };
         }
+
+
+    }
+
+
+    public class BoardParameterThresold
+    {
+        public int Value { get; set; }
+
+        public TileEffect TileEffect { get; set; }
+
+        public ResourceEffect ResourceEffect { get; set; }
+
+        public BoardLevelEffect BoardLevelEffect { get; set; }
     }
 }

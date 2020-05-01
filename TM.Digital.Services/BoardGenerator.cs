@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 
@@ -19,17 +20,52 @@ namespace TM.Digital.Services
                     new BoardParameter
                     {
                         Type = BoardLevelType.Temperature,
-                        GlobalParameterLevel = new GlobalParameterLevel {BoardLevelType = BoardLevelType.Temperature,Level = -30,Min=-30,Increment = 2, Max = 8}
+                        GlobalParameterLevel = new GlobalParameterLevel {BoardLevelType = BoardLevelType.Temperature,Level = -30,Min=-30,Increment = 2, Max = 8,BoardParameterThresolds = new List<BoardParameterThresold>
+                        {
+                            new BoardParameterThresold()
+                            {
+                                Value = -24,ResourceEffect = new ResourceEffect()
+                                {
+                                    ResourceType = ResourceType.Heat,ResourceKind = ResourceKind.Production,Amount = 1
+                                }
+                            },
+                            new BoardParameterThresold()
+                            {
+                                Value = -20,ResourceEffect = new ResourceEffect()
+                                {
+                                    ResourceType = ResourceType.Heat,ResourceKind = ResourceKind.Production,Amount = 1
+                                }
+                            },
+                            new BoardParameterThresold()
+                            {
+                                Value = 0,TileEffect = new TileEffect()
+                                {
+                                    Type = TileType.Ocean,
+                                    Number = 1,
+                                    Constrains = TilePlacementCosntrains.ReservedForOcean
+                                }
+                            },
+                        }}
                     },
                     new BoardParameter
                     {
                         Type = BoardLevelType.Oxygen,
-                        GlobalParameterLevel = new GlobalParameterLevel {BoardLevelType = BoardLevelType.Oxygen,Level = 0, Min=0,Increment = 1, Max = 14}
+                        GlobalParameterLevel = new GlobalParameterLevel {BoardLevelType = BoardLevelType.Oxygen,Level = 0, Min=0,Increment = 1, Max = 14, BoardParameterThresolds =  new List<BoardParameterThresold>()
+                        {
+                            new BoardParameterThresold()
+                            {
+                                Value = 8,
+                                BoardLevelEffect = new BoardLevelEffect()
+                                {
+                                    Level = 1,BoardLevelType = BoardLevelType.Temperature
+                                }
+                            }
+                        }}
                     },
                     new BoardParameter
                     {
                         Type = BoardLevelType.Oceans,
-                        GlobalParameterLevel = new GlobalParameterLevel {BoardLevelType = BoardLevelType.Oceans,Level = 0,Min=0,Increment = 1, Max = 9}
+                        GlobalParameterLevel = new GlobalParameterLevel {BoardLevelType = BoardLevelType.Oceans,Level = 0,Min=0,Increment = 1, Max = 9, BoardParameterThresolds = new List<BoardParameterThresold>()}
                     },
                 },
                 BoardLines = new List<BoardLine>
@@ -150,7 +186,7 @@ namespace TM.Digital.Services
                     new BoardPlace {Index = new PlaceCoordinates {Y = 99, X=1} ,Name = "Ganymede Colony",Reserved = new BoardPlaceReservedSpace {ReservedFor = ReservedFor.Ganymede}},
                 },
 
-                
+
             };
 
             return board;

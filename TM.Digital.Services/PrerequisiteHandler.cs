@@ -6,6 +6,7 @@ using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
+using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
 using Action = TM.Digital.Model.Cards.Action;
 
@@ -118,33 +119,54 @@ namespace TM.Digital.Services
             await Task.CompletedTask;
             foreach (var playerBoardAction in player.BoardActions)
             {
-                playerBoardAction.Actions.CanExecute = CanPlayAction(player, playerBoardAction.Actions);
+                playerBoardAction.Actions.CanExecute = CanPlayAction(player, playerBoardAction.Actions, board);
             }
         }
 
-        public static bool CanPlayAction(Player player, Action playerBoardAction)
+        public static bool CanPlayAction(Player player, Action playerBoardAction, Board board)
         {
+            foreach (var actionTo in playerBoardAction.ActionTo)
+            {
+                if (actionTo.TileEffect != null)
+                {
+                    if (actionTo.TileEffect.Type == TileType.Ocean)
+                    {
+                        if (BoardEffectHandler.HasReachedMaxParam(board, BoardLevelType.Oceans)) return false;
+                    }
+
+                    if (BoardTilesHandler.GetPlacesChoices(actionTo.TileEffect, board, player) == null) return false;
+                }
+            }
+
             if (playerBoardAction.ActionFrom == null)
             {
-                return true;
+                return !playerBoardAction.Played;
             }
+
             var resource = player[playerBoardAction.ActionFrom.ResourceType];
 
+            bool resourceVerify;
             switch (playerBoardAction.ActionFrom.ResourceKind)
             {
                 case ResourceKind.Unit:
-                    return resource.UnitCount + playerBoardAction.ActionFrom.Amount >= 0;
-
+                    resourceVerify = resource.UnitCount + playerBoardAction.ActionFrom.Amount >= 0;
+                    break;
                 case ResourceKind.Production:
-                    if(resource.ResourceType == ResourceType.Money)
+                    if (resource.ResourceType == ResourceType.Money)
                     {
-                        return resource.Production + playerBoardAction.ActionFrom.Amount >= -5;
+                        resourceVerify = resource.Production + playerBoardAction.ActionFrom.Amount >= -5;
                     }
-                    return resource.Production + playerBoardAction.ActionFrom.Amount >= 0;
+                    else
+                    {
+                        resourceVerify = resource.Production + playerBoardAction.ActionFrom.Amount >= 0;
+                    }
+                    break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            return resourceVerify && !playerBoardAction.Played;
         }
 
         public static async Task CanPlayCardAction(Board board, Player player)
@@ -152,7 +174,7 @@ namespace TM.Digital.Services
             await Task.CompletedTask;
             foreach (var playerAllPlayerAction in player.AllPlayerActions)
             {
-                playerAllPlayerAction.CanExecute = CanPlayAction(player, playerAllPlayerAction);
+                playerAllPlayerAction.CanExecute = CanPlayAction(player, playerAllPlayerAction, board);
             }
         }
     }

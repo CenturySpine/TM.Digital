@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
 using TM.Digital.Model;
@@ -10,15 +8,14 @@ using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Editor
 {
-
     public class PackPresenter
     {
         public string Name { get; set; }
         public PackViewModel Content { get; set; }
     }
+
     public class PackViewModel : NotifierBase
     {
-
         private object _selectedObject;
         private ExtensionPack _pack;
         private ObservableCollection<Corporation> _corporations;
@@ -28,7 +25,7 @@ namespace TM.Digital.Editor
         private string _search;
         private string _destinationPack;
         private string _selectedSort;
-
+        private bool _filterWithComments;
 
         public PackViewModel(ExtensionPack extensionPack)
         {
@@ -56,14 +53,15 @@ namespace TM.Digital.Editor
             //PreludesView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
 
             Refresh = new RelayCommand(ExecuteRefresh);
-            AddCorporationCommand = new RelayCommand(ExecuteAddcorporation);
+
+            AddCorporationCommand = new RelayCommand(ExecuteAddCorporation);
             AddPatentCommand = new RelayCommand(ExecuteAddPatent);
             AddPreludeCommand = new RelayCommand(ExecuteAddPrelude);
-
 
             Deletecommand = new RelayCommand(ExecuteDelete);
             SelectedSort = "Name";
         }
+
         private void ApplySort()
         {
             Sort(CorporationView);
@@ -80,15 +78,43 @@ namespace TM.Digital.Editor
             }
         }
 
-
         private bool FilterCard(object obj)
         {
             if (obj is Card c)
             {
-                return string.IsNullOrEmpty(c.Name) && string.IsNullOrEmpty(Search) || !string.IsNullOrEmpty(c.Name) && c.Name.ToUpper().Contains(Search.ToUpper());
+                return
+
+                    string.IsNullOrEmpty(c.Name)
+                    && string.IsNullOrEmpty(Search)
+                    && (!FilterWithComments || string.IsNullOrEmpty(c.Comment))
+
+                   ||
+
+                   !string.IsNullOrEmpty(c.Name)
+                   && c.Name.ToUpper().Contains(Search.ToUpper())
+                   && (!FilterWithComments || !string.IsNullOrEmpty(c.Comment))
+
+                   ||
+
+                   !string.IsNullOrEmpty(c.OfficialNumberTag)
+                   && c.OfficialNumberTag.ToUpper().Contains(Search.ToUpper())
+                   && (!FilterWithComments || !string.IsNullOrEmpty(c.Comment))
+                    ;
             }
 
             return false;
+        }
+
+        public bool FilterWithComments
+        {
+            get => _filterWithComments;
+            set
+            {
+                _filterWithComments = value; OnPropertyChanged();
+                CorporationView?.Refresh();
+                PatentsView?.Refresh();
+                PreludesView?.Refresh();
+            }
         }
 
         public string Search
@@ -111,7 +137,6 @@ namespace TM.Digital.Editor
 
         private void ExecuteDelete(object obj)
         {
-
             if (SelectedObject == null)
             {
                 return;
@@ -152,27 +177,21 @@ namespace TM.Digital.Editor
 
         public ObservableCollection<Prelude> Preludes
         {
-            get { return _preludes; }
+            get => _preludes;
             set { _preludes = value; OnPropertyChanged(); }
         }
 
         private void ExecuteAddPatent(object obj)
         {
-            var patent = new Patent
-            {
-
-            };
+            var patent = new Patent();
             Patents.Add(patent);
             PatentsView.Refresh();
             SelectedObject = patent;
         }
 
-        private void ExecuteAddcorporation(object obj)
+        private void ExecuteAddCorporation(object obj)
         {
-            var corp = new Corporation
-            {
-
-            };
+            var corp = new Corporation();
             Corporations.Add(corp);
             CorporationView.Refresh();
             SelectedObject = corp;
@@ -181,9 +200,6 @@ namespace TM.Digital.Editor
         private void ExecuteAddPrelude(object obj)
         {
             var corp = new Prelude();
-            {
-
-            };
             Preludes.Add(corp);
             PreludesView.Refresh();
             SelectedObject = corp;
@@ -191,7 +207,6 @@ namespace TM.Digital.Editor
 
         private void ExecuteRefresh(object obj)
         {
-
             if (SelectedObject is Prelude)
             {
                 PreludesView.Refresh();
@@ -204,10 +219,7 @@ namespace TM.Digital.Editor
             {
                 CorporationView.Refresh();
             }
-
-
         }
-
 
         public object SelectedObject
         {
@@ -222,6 +234,7 @@ namespace TM.Digital.Editor
         public RelayCommand Refresh { get; }
 
         public ObservableCollection<string> SortMembers { get; set; }
+
         public string SelectedSort
         {
             get => _selectedSort;
@@ -231,7 +244,5 @@ namespace TM.Digital.Editor
                 ApplySort();
             }
         }
-
-
     }
 }

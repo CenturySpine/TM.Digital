@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
+using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
 
 namespace TM.Digital.Services
@@ -13,17 +16,66 @@ namespace TM.Digital.Services
 
     public static class EffectHandler
     {
-        public static async Task HandleResourceEffect(Model.Player.Player player, ResourceEffect effect)
+
+        private static int ComputeModifierValue(Player player, ResourceEffect effect, List<Player> allPlayers,
+            Board board)
+        {
+            var mod = effect.EffectModifier;
+            if (mod != null)
+            {
+                //List<Card> cards = new List<Card>();
+                List<BoardPlace> places = new List<BoardPlace>();
+                List<Tags> tags = new List<Tags>();
+                switch (mod.ModifierFrom)
+                {
+                    case ActionTarget.Self:
+                        //cards = player.AllPlayedCards;
+                        places = BoardTilesHandler.GetPlayerTiles(board, player.PlayerId, mod.EffectModifierLocationConstraint);
+                        tags = player.AllPlayedCards.SelectMany(c => c.Tags).ToList();
+                        break;
+                    case ActionTarget.CurrentCard:
+                        break;
+                    case ActionTarget.AnyOtherCard:
+                        break;
+                    case ActionTarget.AnyPlayer:
+                        //var cards = allPlayers.SelectMany(p => p.AllPlayedCards).ToList();
+                        places = allPlayers.Select(p => p.PlayerId).SelectMany(b => BoardTilesHandler.GetPlayerTiles(board, b, mod.EffectModifierLocationConstraint)).ToList();
+                        tags = allPlayers.SelectMany(c => c.AllPlayedCards.SelectMany(p=>p.Tags)).ToList();
+                        break;
+                    case ActionTarget.AnyOpponent:
+                       //var cards = allPlayers.Except(new List<Player> { player }).SelectMany(p => p.AllPlayedCards).ToList();
+                        places = allPlayers.Except(new List<Player> { player }).Select(p => p.PlayerId).SelectMany(b => BoardTilesHandler.GetPlayerTiles(board, b, mod.EffectModifierLocationConstraint)).ToList();
+                        tags = allPlayers.Except(new List<Player> { player }).SelectMany(c => c.AllPlayedCards.SelectMany(p => p.Tags)).ToList();
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                if(mod.TagsModifier != Tags.None)
+                {
+                    var tagNumber = tags.Count(t => t == mod.TagsModifier);
+                    return (int)Math.Floor((double)tagNumber / mod.ModifierRatio);
+                }
+                if(mod.TileModifier != TileType.None)
+                {
+                    var tileNumber = places.Count(t => t.PlayedTile.Type == mod.TileModifier);
+                    return (int)Math.Floor((double)tileNumber / mod.ModifierRatio);
+                }
+            }
+            return 1;
+        }
+        public static async Task HandleResourceEffect(Player player, ResourceEffect effect, List<Player> allPlayers, Board board)
         {
 
             var resource = player.Resources.FirstOrDefault(r => r.ResourceType == effect.ResourceType);
 
             if (resource != null)
             {
+                var modifierValue = ComputeModifierValue(player, effect, allPlayers, board);
                 if (effect.ResourceKind == ResourceKind.Production)
                 {
 
-                    resource.Production += effect.Amount;
+                    resource.Production += effect.Amount * modifierValue;
 
                     //never go below -5 for money production
                     if (resource.ResourceType == ResourceType.Money && resource.Production < -5)
@@ -39,7 +91,7 @@ namespace TM.Digital.Services
                 }
                 else
                 {
-                    resource.UnitCount += effect.Amount;
+                    resource.UnitCount += effect.Amount * modifierValue;
 
                     if (resource.UnitCount < 0) resource.UnitCount = 0;
                     await Logger.Log(player.Name, $"Resource {resource.ResourceType} Unit modified for {effect.Amount}, new value {resource.UnitCount}");
@@ -49,14 +101,14 @@ namespace TM.Digital.Services
         }
 
         public static async Task HandleInitialPatentBuy(Model.Player.Player player, List<Patent> selectionBoughtCards,
-            Corporation selectionCorporation)
+            Corporation selectionCorporation, Board board, List<Player> allPlayers)
         {
             var playersMoney = player.Resources.First(r => r.ResourceType == ResourceType.Money);
             if (selectionCorporation != null)
             {
                 foreach (var selectionCorporationResourcesEffect in selectionCorporation.ResourcesEffects)
                 {
-                    await HandleResourceEffect(player, selectionCorporationResourcesEffect);
+                    await HandleResourceEffect(player, selectionCorporationResourcesEffect, allPlayers, board);
                 }
                 await Logger.Log(player.Name, $"Initial money count {playersMoney.UnitCount}");
             }

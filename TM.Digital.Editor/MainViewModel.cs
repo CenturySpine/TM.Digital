@@ -192,7 +192,8 @@ namespace TM.Digital.Editor
             }
             try
             {
-                using (var streamWriter = new StreamWriter($"{SavePackageLocation}\\{DateTime.Now.Ticks}_{packs}", false))
+                string path = $"{SavePackageLocation}\\{DateTime.Now.Ticks}_{packs}";
+                using (var streamWriter = new StreamWriter(path, false))
                 {
                     var h = new CardReferencesHolder
                     {
@@ -207,6 +208,7 @@ namespace TM.Digital.Editor
 
                     streamWriter.Write(System.Text.Json.JsonSerializer.Serialize(h));
                 }
+                MessageBox.Show($"File saved : {path}", "Save successful", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {

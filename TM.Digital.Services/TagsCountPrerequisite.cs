@@ -15,6 +15,7 @@ namespace TM.Digital.Services
         {
             var playerTagsCount = patentOwner.PlayedCards.Concat(new List<Card>{ patentOwner.Corporation }) // players cards + corporation
                 .Where(c => c.CardType != CardType.Red)//different from event/red
+                .Where(c=>c.Tags!=null && c.Tags.Any())
                 .SelectMany(c => c.Tags)//Select ALL tags
                 .GroupBy(r => r)//group selection by tag type
                 .Select(grp => new { Tag = grp.Key, Count = grp.Count() })//returns object [tag type,count]

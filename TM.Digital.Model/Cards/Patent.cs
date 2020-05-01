@@ -27,5 +27,7 @@ namespace TM.Digital.Model.Cards
         {
             get { return BaseCost == ModifiedCost; }
         }
+
+        
     }
 }

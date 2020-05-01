@@ -2,7 +2,7 @@
 
 namespace TM.Digital.Model.Cards
 {
-    public class ActionPlay
+    public class CardActionPlay
     {
         public Patent Patent { get; set; }
 

@@ -102,5 +102,8 @@ namespace TM.Digital.Model.Cards
 
         public string Comment { get; set; }
         public string Description { get; set; }
+        [Browsable(false)]
+
+        public bool ActionPlayed { get; set; }
     }
 }

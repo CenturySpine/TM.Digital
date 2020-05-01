@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
@@ -12,7 +13,7 @@ using TM.Digital.Transport.Hubs;
 
 namespace TM.Digital.Services
 {
-    public static class BoardHandler
+    public static class BoardTilesHandler
     {
         public static List<BoardPlace> SpacesWithNothingAround(List<BoardPlace> nonOccupiedSpaces, Model.Board.Board board)
         {
@@ -218,27 +219,27 @@ namespace TM.Digital.Services
         public static Board GetPlacesChoices(TileEffect first, Board board, Player player)
         {
             List<BoardPlace> choicePlaces;
-            var nonOccupiedSpaces = BoardHandler.GetNonOccupiedSpaces(board);
+            var nonOccupiedSpaces = BoardTilesHandler.GetNonOccupiedSpaces(board);
             switch (first.Constrains)
             {
                 case TilePlacementCosntrains.None:
-                    choicePlaces = BoardHandler.AnyNonReservedSpace(nonOccupiedSpaces);
+                    choicePlaces = BoardTilesHandler.AnyNonReservedSpace(nonOccupiedSpaces);
                     break;
 
                 case TilePlacementCosntrains.ReservedForOcean:
-                    choicePlaces = BoardHandler.GetOceansSpaces(nonOccupiedSpaces);
+                    choicePlaces = BoardTilesHandler.GetOceansSpaces(nonOccupiedSpaces);
                     break;
 
                 case TilePlacementCosntrains.StandardCity:
-                    choicePlaces = BoardHandler.GetCitySpaces(board, nonOccupiedSpaces);
+                    choicePlaces = BoardTilesHandler.GetCitySpaces(board, nonOccupiedSpaces);
                     break;
 
                 case TilePlacementCosntrains.VolcanicSpace:
-                    choicePlaces = BoardHandler.VolcanicSpaces(nonOccupiedSpaces);
+                    choicePlaces = BoardTilesHandler.VolcanicSpaces(nonOccupiedSpaces);
                     break;
 
                 case TilePlacementCosntrains.NothingAround:
-                    choicePlaces = BoardHandler.SpacesWithNothingAround(nonOccupiedSpaces, board);
+                    choicePlaces = BoardTilesHandler.SpacesWithNothingAround(nonOccupiedSpaces, board);
                     break;
                 case TilePlacementCosntrains.StandardForest:
                     choicePlaces = GetPlayerOwnedPlacesSurroundings(player, board);
@@ -253,6 +254,11 @@ namespace TM.Digital.Services
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+
+            if (!choicePlaces.Any())
+            {
+                return null;
             }
 
             foreach (var choicePlace in choicePlaces)
@@ -319,15 +325,17 @@ namespace TM.Digital.Services
                 //terraformation bonuses
                 if (pendingTileEffect.Type == TileType.Ocean)
                 {
-                    await Logger.Log(playerId.Name, $"Ocean placed, increasing global parameter and player's terraformation level");
-                    board.Parameters.First(p => p.Type == BoardLevelType.Oceans).GlobalParameterLevel.Level += 1;
-                    playerId.TerraformationLevel += 1;
+                    //await Logger.Log(playerId.Name, $"Ocean placed, increasing global parameter and player's terraformation level");
+                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Oceans, playerId, 1);
+                    //board.Parameters.First(p => p.Type == BoardLevelType.Oceans).GlobalParameterLevel.Level += 1;
+                    //playerId.TerraformationLevel += 1;
                 }
                 if (pendingTileEffect.Type == TileType.Forest)
                 {
-                    await Logger.Log(playerId.Name, $"Forest placed, increasing global parameter and player's terraformation level");
-                    board.Parameters.First(p => p.Type == BoardLevelType.Oxygen).GlobalParameterLevel.Level += 1;
-                    playerId.TerraformationLevel += 1;
+                    //await Logger.Log(playerId.Name, $"Forest placed, increasing global parameter and player's terraformation level");
+                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Oxygen, playerId, 1);
+                    //board.Parameters.First(p => p.Type == BoardLevelType.Oxygen).GlobalParameterLevel.Level += 1;
+                    //playerId.TerraformationLevel += 1;
                 }
 
                 allPlaces.ForEach(p => p.CanBeChosed = false);
@@ -335,5 +343,25 @@ namespace TM.Digital.Services
         }
 
         public static TileEffect PendingTileEffect { get; set; }
+
+        public static List<BoardPlace> GetPlayerTiles(Board board, Guid playerPlayerId,
+            EffectModifierLocationConstraint locationConstraint)
+        {
+            switch (locationConstraint)
+            {
+                case EffectModifierLocationConstraint.None:
+                    break;
+                case EffectModifierLocationConstraint.Anywhere:
+                    return board.BoardLines.SelectMany(bl => bl.BoardPlaces).Concat(board.IsolatedPlaces).Where(p => p.PlayedTile != null && p.PlayedTile.Owner.HasValue && p.PlayedTile.Owner.Value == playerPlayerId).ToList();
+                case EffectModifierLocationConstraint.OnMars:
+                    return board.BoardLines.SelectMany(bl => bl.BoardPlaces).Where(p => p.PlayedTile != null && p.PlayedTile.Owner.HasValue && p.PlayedTile.Owner.Value == playerPlayerId).ToList();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(locationConstraint), locationConstraint, null);
+            }
+            return new List<BoardPlace>();
+        }
+
+
+
     }
 }

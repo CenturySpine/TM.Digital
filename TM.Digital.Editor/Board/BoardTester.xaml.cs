@@ -55,8 +55,8 @@ namespace TM.Digital.Editor.Board
 
 
             var currentBoard = Board.Clone();
-            BoardHandler.PendingTileEffect = Tile;
-            var choiceBoard = BoardHandler.GetPlacesChoices(BoardHandler.PendingTileEffect, currentBoard, Player);
+            BoardTilesHandler.PendingTileEffect = Tile;
+            var choiceBoard = BoardTilesHandler.GetPlacesChoices(BoardTilesHandler.PendingTileEffect, currentBoard, Player);
             Board = choiceBoard;
 
             
@@ -80,8 +80,8 @@ namespace TM.Digital.Editor.Board
                 {
                     var currentBoard = Board.Clone();
                     SelectedPlace = bp;
-                    var indexes = BoardHandler.GetPlaceSurroundingsIndexes(bp, currentBoard);
-                    var bps = BoardHandler.GetTilesFromIndexes(indexes, currentBoard);
+                    var indexes = BoardTilesHandler.GetPlaceSurroundingsIndexes(bp, currentBoard);
+                    var bps = BoardTilesHandler.GetTilesFromIndexes(indexes, currentBoard);
                     foreach (var boardPlace in bps)
                     {
                         boardPlace.CanBeChosed = true;
@@ -91,7 +91,7 @@ namespace TM.Digital.Editor.Board
                 else
                 {
                     var currentBoard = Board.Clone();
-                    await BoardHandler.PlaceTileOnBoard(bp, Player, BoardHandler.PendingTileEffect, currentBoard,
+                    await BoardTilesHandler.PlaceTileOnBoard(bp, Player, BoardTilesHandler.PendingTileEffect, currentBoard,
                         new CardDrawer());
                     Board = currentBoard;
                 }

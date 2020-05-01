@@ -69,7 +69,7 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type board:BoardPlace}">
         <Button
-                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.SelectBoardPlace}"
+                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.BoardViewModel.SelectBoardPlace}"
                 CommandParameter="{Binding}">
             <Button.Template>
                 <ControlTemplate TargetType="{x:Type Button}">

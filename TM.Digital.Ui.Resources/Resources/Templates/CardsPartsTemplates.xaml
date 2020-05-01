@@ -65,7 +65,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            
+
 
         </Grid>
     </DataTemplate>
@@ -445,7 +445,19 @@
                                 <Grid>
 
 
-                                    <TextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold" FontSize="10"></TextBlock>
+                                    <TextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold" 
+                                               FontSize="10">
+                                        <!--<TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text" Value="{Binding Value}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMax}" Value="true">
+                                                        <Setter Property="Text" Value="{Binding Value, StringFormat='max {0}'}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>-->
+                                    </TextBlock>
 
                                 </Grid>
                             </Border>
@@ -481,7 +493,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <Border BorderBrush="Black" BorderThickness="1" Width="60"  VerticalAlignment="Center">
+                            <Border BorderBrush="Black" BorderThickness="1" Width="78"  VerticalAlignment="Center">
                                 <Border.Style>
                                     <Style TargetType="{x:Type Border}">
                                         <Setter Property="Background" Value="Gold"></Setter>
@@ -497,7 +509,51 @@
                                     </Style>
                                 </Border.Style>
 
-                                <TextBlock Text="{Binding Value}"  VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold" FontSize="10"></TextBlock>
+                                <TextBlock   VerticalAlignment="Center"  
+                                           FontWeight="Bold" FontSize="10">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Text" Value="{Binding Value}" />
+                                            <Setter Property="Margin" Value="10,0,0,0"></Setter>
+                                            <Style.Triggers>
+
+                                                <DataTrigger Binding="{Binding Parameter}" Value="{x:Static board:BoardLevelType.Oxygen}">
+                                                    <Setter Property="Text" Value="{Binding Value, StringFormat='{}{0} %'}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Parameter}" Value="{x:Static board:BoardLevelType.Temperature}">
+                                                    <Setter Property="Text" Value="{Binding Value, StringFormat='{}{0} °C'}" />
+                                                </DataTrigger>
+
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Parameter}" Value="{x:Static board:BoardLevelType.Oxygen}" />
+                                                        <Condition Binding="{Binding IsMax}" Value="true" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Text" Value="{Binding Value, StringFormat='{}max {0}%'}" />
+                                                    <Setter Property="Margin" Value="6,0,0,0"></Setter>
+                                                </MultiDataTrigger>
+
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Parameter}" Value="{x:Static board:BoardLevelType.Temperature}" />
+                                                        <Condition Binding="{Binding IsMax}" Value="true" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Text" Value="{Binding Value, StringFormat='{}max {0}°C'}" />
+                                                    <Setter Property="Margin" Value="2,0,0,0"></Setter>
+                                                </MultiDataTrigger>
+
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Parameter}" Value="{x:Static board:BoardLevelType.Oceans}" />
+                                                        <Condition Binding="{Binding IsMax}" Value="true" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Text" Value="{Binding Value, StringFormat='{}max {0}'}" />
+                                                    <Setter Property="Margin" Value="2,0,0,0"></Setter>
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
 
 
 

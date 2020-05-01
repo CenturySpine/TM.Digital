@@ -9,7 +9,6 @@ namespace TM.Digital.Services
 {
     public class GlobalCheckPrerequisite : IPrerequisiteStrategy
     {
-        Dictionary<BoardLevelType,Func<GlobalPrerequisite,Board, bool>> _strategies = new Dictionary<BoardLevelType, Func<GlobalPrerequisite, Board, bool>>();
         public bool CanPlayCard(Patent inputPatent, Board currentBoardState, Player patentOwner)
         {
             if (inputPatent.Prerequisites?.GlobalPrerequisites != null)

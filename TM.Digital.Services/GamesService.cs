@@ -9,7 +9,6 @@ using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Services.Common;
-using TM.Digital.Transport.Hubs;
 using TM.Digital.Transport.Hubs.Hubs;
 using Action = TM.Digital.Model.Cards.Action;
 
@@ -63,7 +62,7 @@ namespace TM.Digital.Services
             return null;
         }
 
-        public async Task Play(ActionPlay card, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        public async Task Play(CardActionPlay card, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
             if (_currentSessions.TryGetValue(gameId, out var session))
             {
@@ -133,7 +132,7 @@ namespace TM.Digital.Services
         {
             if (_currentSessions.TryGetValue(gameId, out var session))
             {
-                return await session.Skip(playerId,hubContext);
+                return await session.Skip(playerId, hubContext);
             }
 
             return false;
@@ -150,9 +149,9 @@ namespace TM.Digital.Services
         }
 
         public async Task SelectActionTarget(
-            ResourceEffectPlayerChooser place, 
-            Guid gameId, 
-            Guid playerId, 
+            ResourceEffectPlayerChooser place,
+            Guid gameId,
+            Guid playerId,
             IHubContext<ClientNotificationHub> hubContext)
         {
             if (_currentSessions.TryGetValue(gameId, out var session))
@@ -166,14 +165,16 @@ namespace TM.Digital.Services
 
         public async Task ConvertResources(ResourceHandler resources, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
-            if (_currentSessions.TryGetValue(gameId, out var session))
+            await TryExecuteAsync(async () =>
             {
-                await session.ConvertResources(resources, playerId, hubContext);
-                return;
-            }
+                if (_currentSessions.TryGetValue(gameId, out var session))
+                {
+                    await session.ConvertResources(resources, playerId, hubContext);
+                    return;
+                }
 
-            throw Errors.ErrorGameIdNotFound(gameId);
-
+                throw Errors.ErrorGameIdNotFound(gameId);
+            });
         }
 
         public async Task VerifyCard(Patent card, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
@@ -189,36 +190,59 @@ namespace TM.Digital.Services
 
         public async Task VerifyCardWithResources(PlayCardWithResources modifiers, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
-            if (_currentSessions.TryGetValue(gameId, out var session))
+            await TryExecuteAsync(async () =>
+           {
+               if (_currentSessions.TryGetValue(gameId, out var session))
+               {
+                   await session.VerifyCardWithResources(modifiers, playerId, hubContext);
+                   return;
+               }
+
+               throw Errors.ErrorGameIdNotFound(gameId);
+           });
+        }
+
+        private async Task TryExecuteAsync(Func<Task> asyncAction)
+        {
+            try
             {
-                await session.VerifyCardWithResources(modifiers, playerId, hubContext);
-                return;
+                await asyncAction();
             }
-
-            throw Errors.ErrorGameIdNotFound(gameId);
-
+            catch (Exception ex)
+            {
+                //Log(ex);
+                //throw;
+                await Logger.Log("Error", ex.ToString());
+            }
         }
 
         public async Task BoardAction(BoardAction boardAction, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
-            if (_currentSessions.TryGetValue(gameId, out var session))
+            await TryExecuteAsync(async () =>
             {
-                await session.BoardAction(boardAction, playerId, hubContext);
-                return;
-            }
+                if (_currentSessions.TryGetValue(gameId, out var session))
+                {
+                    await session.BoardAction(boardAction, playerId, hubContext);
+                    return;
+                }
 
-            throw Errors.ErrorGameIdNotFound(gameId);
+                throw Errors.ErrorGameIdNotFound(gameId);
+            });
         }
 
-        public async Task CardAction(Action action, Guid gameId, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        public async Task CardAction(Action action, Guid gameId, Guid playerId,
+            IHubContext<ClientNotificationHub> hubContext)
         {
-            if (_currentSessions.TryGetValue(gameId, out var session))
-            {
-                await session.CardAction(action, playerId, hubContext);
-                return;
-            }
+            await TryExecuteAsync(async () =>
+  {
+      if (_currentSessions.TryGetValue(gameId, out var session))
+      {
+          await session.CardAction(action, playerId, hubContext);
+          return;
+      }
 
-            throw Errors.ErrorGameIdNotFound(gameId);
+      throw Errors.ErrorGameIdNotFound(gameId);
+  });
         }
     }
 }

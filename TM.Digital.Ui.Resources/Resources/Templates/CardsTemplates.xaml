@@ -23,7 +23,7 @@
     </Style>
 
     <DataTemplate DataType="{x:Type cards:Patent}">
-        <Border  Height="350" Width="200">
+        <Border  Height="350" Width="200" >
             <Border.Background>
                 <SolidColorBrush Color="LightGray" Opacity="0.5"></SolidColorBrush>
             </Border.Background>
@@ -249,7 +249,11 @@
         </Border>
     </DataTemplate>
     <DataTemplate DataType="{x:Type corporations:Prelude}">
-        <Border Style="{StaticResource CardHorizontalOuterDisplayStyle}">
+        <Border Style="{StaticResource CardHorizontalOuterDisplayStyle}" >
+            <Border.Background>
+                <SolidColorBrush Color="LightGray" Opacity="0.5"></SolidColorBrush>
+            </Border.Background>
+
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"></RowDefinition>
@@ -346,6 +350,10 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type corporations:Corporation}">
         <Border Style="{StaticResource CardHorizontalOuterDisplayStyle}">
+            <Border.Background>
+                <SolidColorBrush Color="LightGray" Opacity="0.5"></SolidColorBrush>
+            </Border.Background>
+
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"></RowDefinition>

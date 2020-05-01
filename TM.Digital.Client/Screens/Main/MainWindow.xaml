@@ -18,19 +18,9 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="2">
-            <!--<Grid.Style>
-                <Style TargetType="{x:Type Grid}">
-                    <Setter Property="IsEnabled" Value="True" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsBoardLocked}" Value="true">
-                            <Setter Property="IsEnabled" Value="false" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Style>-->
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="0.4*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" ShowGridLines="True">
@@ -41,11 +31,11 @@
 
                 <Grid Background="CadetBlue" ShowGridLines="True">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="0.4*"/>
                         <ColumnDefinition  />
                     </Grid.ColumnDefinitions>
 
-                    <ContentControl Grid.Column="1" Content="{Binding Board}" HorizontalAlignment="Center" >
+                    <ContentControl Grid.Column="1" Content="{Binding BoardViewModel.Board}" HorizontalAlignment="Center" >
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Setter Property="IsEnabled" Value="True" />
@@ -58,97 +48,41 @@
                         </ContentControl.Style>
                     </ContentControl>
 
-                    <Grid Grid.Column="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition  />
-                        </Grid.RowDefinitions>
-                        <ItemsControl  ItemsSource="{Binding CurrentPlayer.Player.BoardActions}" Margin="5"
-                                       VerticalAlignment="Bottom" Background="Aqua">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Command="{Binding  DataContext.CurrentPlayer.ExecuteActionCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                        CommandParameter="{Binding}"
-                IsEnabled="{Binding Actions.CanExecute}">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Grid ShowGridLines="True" x:Name="actionGrid">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="200" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5"></TextBlock>
-                                                    <ContentControl Grid.Column="0" Content="{Binding Actions}"></ContentControl>
-                                                </Grid>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsEnabled" Value="false">
-                                                        <Setter TargetName="actionGrid" Property="Opacity" Value="0.5"></Setter>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
 
-                        <ItemsControl Grid.Row="1" ItemsSource="{Binding CurrentPlayer.Player.AllPlayerActions}"
-                                      Background="Chartreuse">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Command="{Binding  DataContext.CurrentPlayer.ExecuteActionCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                        CommandParameter="{Binding}"
-                IsEnabled="{Binding CanExecute}">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Grid ShowGridLines="True" x:Name="actionGrid">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="200" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    
-                                                    <ContentControl Grid.Column="0" Content="{Binding .}"></ContentControl>
-                                                </Grid>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsEnabled" Value="false">
-                                                        <Setter TargetName="actionGrid" Property="Opacity" Value="0.5"></Setter>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+
+                    <Grid Grid.Column="0">
+
+                        <ContentControl Content="{Binding PlayerSelector}" Grid.Row="0">
+                            <ContentControl.Style>
+                                <Style TargetType="{x:Type ContentControl}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsBoardLocked}" Value="true">
+                                            <Setter Property="IsEnabled" Value="false" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
+
                     </Grid>
                 </Grid>
 
-                <Expander Grid.Column="1" ExpandDirection="Right" IsExpanded="False">
-                    <ListBox  ItemsSource="{Binding Logs}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Background="Aqua">
-                                    <TextBlock Text="{Binding}" TextWrapping="Wrap"></TextBlock>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Expander>
             </Grid>
 
 
-            <ContentControl Content="{Binding CurrentPlayer}" Grid.Row="1">
-                <ContentControl.Style>
-                    <Style TargetType="{x:Type ContentControl}">
-                        <Setter Property="IsEnabled" Value="True" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsBoardLocked}" Value="true">
-                                <Setter Property="IsEnabled" Value="false" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ContentControl.Style>
-            </ContentControl>
+            <Expander Grid.Row="1"  IsExpanded="False">
+                <ListBox  ItemsSource="{Binding Logger.Logs}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="Aqua">
+                                <TextBlock Text="{Binding}" TextWrapping="Wrap"></TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Expander>
+
         </Grid>
 
         <ContentControl Grid.Row="0" Grid.RowSpan="3" Content="{Binding MenuVm}">

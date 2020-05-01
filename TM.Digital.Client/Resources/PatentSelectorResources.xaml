@@ -1,0 +1,68 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:TM.Digital.Client.Resources"
+                    xmlns:handSetup="clr-namespace:TM.Digital.Client.Screens.HandSetup">
+
+    <DataTemplate DataType="{x:Type handSetup:PatentSelector}">
+        <Border BorderBrush="Transparent" BorderThickness="1"  Margin="2"   Padding="2" Background="Transparent">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- mineral modifiers -->
+                <ContentControl Content="{Binding MineralsPatentModifiersSummary}">
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Setter Property="Visibility" Value="Visible"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSetup}" Value="true">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+
+                <ContentControl Grid.Row="1" Content="{Binding Patent}" />
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <ToggleButton  Content="Select"
+                              HorizontalAlignment="Center"
+                              Padding="20,5"
+                              Margin="0,5"
+                              Command="{Binding DataContext.SelectCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                              CommandParameter="{Binding}"
+
+                              IsChecked="{Binding IsSelected, Mode=OneWay}">
+                        <ToggleButton.Style>
+                            <Style TargetType="{x:Type ToggleButton}">
+                                <Setter Property="IsEnabled" Value="true" />
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsSetup}" Value="false"></Condition>
+                                            <Condition Binding="{Binding Patent.CanBePlayed}" Value="false"></Condition>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+                    <Button  Content="Verify"
+                               HorizontalAlignment="Center"
+                               Padding="20,5"
+                               Margin="0,5"
+                               Command="{Binding DataContext.VerifyCardCommand,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                               CommandParameter="{Binding}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

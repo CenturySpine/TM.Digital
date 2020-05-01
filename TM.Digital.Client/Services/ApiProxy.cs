@@ -1,16 +1,26 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TM.Digital.Client.Screens.ActionChoice;
+using TM.Digital.Client.Screens.HandSetup;
+using TM.Digital.Model.Board;
+using TM.Digital.Model.Cards;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Transport;
+using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Client.Services
 {
     public class ApiProxy : IApiProxy
     {
-        public async Task<Player> JoinGame(Guid selectedSessionGameSessionId, string playerName)
+        public async Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers)
         {
-            return await TmDigitalClientRequestHandler.Instance.Request<Player>($"game/join/{selectedSessionGameSessionId}/{playerName}");
+            return await TmDigitalClientRequestHandler.Instance.Request<GameSessionInformation>($"game/create/{playerName}/{numberOfPlayers}");
+        }
+
+        public async Task<Board> GetBoard()
+        {
+            return await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
         }
 
         public async Task<GameSessions> GetGameSessions()
@@ -18,14 +28,70 @@ namespace TM.Digital.Client.Services
             return await TmDigitalClientRequestHandler.Instance.Request<GameSessions>("game/sessions");
         }
 
-        public async Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers)
+        public async Task<Player> JoinGame(Guid selectedSessionGameSessionId, string playerName)
         {
-            return await TmDigitalClientRequestHandler.Instance.Request<GameSessionInformation>($"game/create/{playerName}/{numberOfPlayers}");
+            return await TmDigitalClientRequestHandler.Instance.Request<Player>($"game/join/{selectedSessionGameSessionId}/{playerName}");
         }
 
-        public async Task<bool> StartGame(Guid sessionGameSessionId)
+        public async Task Pass()
         {
-            return await TmDigitalClientRequestHandler.Instance.Request<bool>($"game/start/{sessionGameSessionId}");
+            await TmDigitalClientRequestHandler.Instance.Request<bool>($"game/{GameData.GameId}/pass/{GameData.PlayerId}");
+        }
+
+        public async Task PlaceTile(BoardPlace bp)
+        {
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/placetile/{GameData.PlayerId}", bp);
+        }
+
+        public async Task PlayBoardAction(BoardAction boardAction)
+        {
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/boardaction/{GameData.PlayerId}", boardAction);
+        }
+
+        public async Task PlayCard(CardActionPlay cardAction)
+        {
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/play/{GameData.PlayerId}", cardAction);
+        }
+
+        public async Task PlayCardAction(Action cardAction)
+        {
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/cardaction/{GameData.PlayerId}", cardAction);
+        }
+
+        public async Task PlayConvertResourcesAction(ResourceHandler rh)
+        {
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/convert/{GameData.PlayerId}", rh);
+        }
+
+        public async Task SelectEffectTarget(ResourceEffectPlayerChooser choice)
+        {
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/selectactiontarget/{GameData.PlayerId}", choice);
+        }
+
+        public async Task<Player> SendSetup(GameSetupSelection gSetup)
+        {
+            return await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>(
+                "game/addplayer/setupplayer", gSetup);
+        }
+
+        public async Task Skip()
+        {
+            await TmDigitalClientRequestHandler.Instance.Request<bool>($"game/{GameData.GameId}/skip/{GameData.PlayerId}");
+        }
+
+        public async Task<bool> StartGame(Guid selectedSessionGameSessionId)
+        {
+            return await TmDigitalClientRequestHandler.Instance.Request<bool>($"game/start/{selectedSessionGameSessionId}");
+        }
+
+        public async Task VerifyCardPlayability(PatentSelector patent)
+        {
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/verify/{GameData.PlayerId}", patent.Patent);
+        }
+
+        public async Task VerifyResourcesModifiedCostCardPlayability(PlayCardWithResources mod)
+        {
+            await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/verifywithresources/{GameData.PlayerId}", mod);
         }
     }
 }

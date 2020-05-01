@@ -24,11 +24,16 @@ namespace TM.Digital.Client
             ctn.Register<MainWindowViewModel>(Lifestyle.Singleton);
             ctn.Register<MainWindow>(Lifestyle.Transient);
 
-            ctn.Register<GameSetupViewModel>(Lifestyle.Transient);
+            //ctn.Register<GameSetupViewModel>(Lifestyle.Transient);
             ctn.Register<MainMenuViewModel>(Lifestyle.Singleton);
             ctn.Register<WaitingGameScreenViewModel>(Lifestyle.Singleton);
             ctn.Register<ActionChoiceViewModel>(Lifestyle.Singleton);
+            ctn.Register<GameSetupViewModel>(Lifestyle.Singleton);
             ctn.Register<IApiProxy, ApiProxy>(Lifestyle.Singleton);
+            ctn.Register<LoggerViewModel>(Lifestyle.Singleton);
+            ctn.Register<GameUpdateService>(Lifestyle.Singleton);
+            ctn.Register<BoardViewModel>(Lifestyle.Singleton);
+            ctn.Register<PlayerSelector>(Lifestyle.Singleton);
 
             //ctn.Register<PopupService>(Lifestyle.Singleton);
 

@@ -147,9 +147,9 @@ namespace TM.Digital.Services
         {
             if (Players.TryGetValue(playerId, out var player))
             {
-                await Logger.Log(player.Name, $"Placing tile '{BoardHandler.PendingTileEffect.Type}' on place '{place.Index}'");
-                await BoardHandler.PlaceTileOnBoard(place, player, BoardHandler.PendingTileEffect, Board, _cardDrawer);
-                BoardHandler.PendingTileEffect = null;
+                await Logger.Log(player.Name, $"Placing tile '{BoardTilesHandler.PendingTileEffect.Type}' on place '{place.Index}'");
+                await BoardTilesHandler.PlaceTileOnBoard(place, player, BoardTilesHandler.PendingTileEffect, Board, _cardDrawer);
+                BoardTilesHandler.PendingTileEffect = null;
                 await _actionPlanner.Continue(player, Board);
             }
         }
@@ -165,7 +165,7 @@ namespace TM.Digital.Services
                     {
                         await Logger.Log(player.Name, $"Selected action target : {targetPlayer.Name}");
 
-                        await EffectHandler.HandleResourceEffect(targetPlayer, place.ResourceHandler);
+                        await EffectHandler.HandleResourceEffect(targetPlayer, place.ResourceHandler,Players.Select(p=>p.Value).ToList(), Board);
                     }
                 }
 
@@ -188,7 +188,7 @@ namespace TM.Digital.Services
         {
             if (Players.TryGetValue(playerId, out var player))
             {
-                var choices = await ActionPlayHandler.ExecuteAction(action, Board, player);
+                var choices = await ActionPlayHandler.ExecuteAction(action, Board, player, _cardDrawer);
                 foreach (var choice in choices)
                 {
                     _actionPlanner.Plan(choice);
@@ -208,7 +208,7 @@ namespace TM.Digital.Services
                 await PlanCommon(hubContext, playerObj);
             }
         }
-        public async Task PlayCard(ActionPlay card, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
+        public async Task PlayCard(CardActionPlay card, Guid playerId, IHubContext<ClientNotificationHub> hubContext)
         {
             if (Players.TryGetValue(playerId, out var player))
             {
@@ -312,7 +312,7 @@ namespace TM.Digital.Services
 
                 await Logger.Log(player.Name, $"Patent bought : {selection.BoughtCards.Count}");
 
-                await EffectHandler.HandleInitialPatentBuy(player, _cardDrawer.DispatchPatents(selection.BoughtCards), selectedCorpo);
+                await EffectHandler.HandleInitialPatentBuy(player, _cardDrawer.DispatchPatents(selection.BoughtCards), selectedCorpo,Board, Players.Select(p=>p.Value).ToList());
 
                 await EffectHandler.CheckCardsReductions(player);
                 await PrerequisiteHandler.CanPlayCards(Board, player);
@@ -340,7 +340,7 @@ namespace TM.Digital.Services
                 if (playing != Guid.Empty)
                 {
                     player.RemainingActions = 0;
-                    await SendPleyrsPlaying(hubContext, playing);
+                    await SendPlayersPlaying(hubContext, playing);
                 }
                 else
                 {
@@ -374,6 +374,11 @@ namespace TM.Digital.Services
                         resourceHandler.UnitCount += resourceHandler.Production;
                     }
                 }
+
+                foreach (var valueHandCard in player.Value.HandCards)
+                {
+                    valueHandCard.ActionPlayed = false;
+                }
             }
 
             PlayerTack.NewGeneration();
@@ -381,7 +386,7 @@ namespace TM.Digital.Services
             await UpdateGame(hubContext);
         }
 
-        private async Task SendPleyrsPlaying(IHubContext<ClientNotificationHub> hubContext, Guid playing)
+        private async Task SendPlayersPlaying(IHubContext<ClientNotificationHub> hubContext, Guid playing)
         {
             if (Players.TryGetValue(playing, out var nextPlayer))
             {
@@ -411,7 +416,7 @@ namespace TM.Digital.Services
             {
                 var playing = await PlayerTack.PickNextPlayer();
 
-                await SendPleyrsPlaying(hubContext, playing);
+                await SendPlayersPlaying(hubContext, playing);
             }
         }
 
@@ -463,7 +468,7 @@ namespace TM.Digital.Services
                     }
                 }
 
-                for (int i = 0; i < (isInitialSetup ? 4 : 2); i++)
+                for (int i = 0; i < (isInitialSetup ? 10 : 4); i++)
                 {
                     gs.Patents.Add(_cardDrawer.DrawPatent());
                 }

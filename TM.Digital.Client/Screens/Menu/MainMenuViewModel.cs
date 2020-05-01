@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.AspNetCore.SignalR.Client;
+using TM.Digital.Client.Screens.ActionChoice;
 using TM.Digital.Client.Screens.Main;
+using TM.Digital.Client.Screens.Wait;
 using TM.Digital.Client.Services;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
@@ -9,32 +13,33 @@ using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Client.Screens.Menu
 {
-    public sealed class MainMenuViewModel : NotifierBase
+    public sealed class MainMenuViewModel : NotifierBase, IComponentConfigurable
+
     {
         private readonly IApiProxy _apiCaller;
+        private readonly WaitingGameScreenViewModel _waitViewModel;
+        private readonly BoardViewModel _board;
         private bool _isGameCreationVisible;
         private bool _isSessionListVisible;
         private bool _isVisible;
-        private int _numberOfPlayers = 2;
+        private int _numberOfPlayers = 1;
         private string _playerName;
         private GameSessionInformation _selectedSession;
 
-        public MainMenuViewModel(IApiProxy apiCaller)
+        public MainMenuViewModel(IApiProxy apiCaller, WaitingGameScreenViewModel waitViewModel, BoardViewModel board)
         {
             PlayerName = "Bruno"+DateTime.Now.Millisecond;
             _apiCaller = apiCaller;
+            _waitViewModel = waitViewModel;
+            _board = board;
             GameSessionInformation = new ObservableCollection<GameSessionInformation>();
 
             ShowCreateGameCommand = new RelayCommand(ExecuteShowCreateGame);
-            CreateGameCommand = new RelayCommand(ExecuteCreatetGame, CanExecuteStartGame);
+            CreateGameCommand = new RelayCommand(ExecuteCreateGame, CanExecuteStartGame);
 
             ListGameSessionsCommand = new RelayCommand(ExecuteListGames, CanExecuteListGames);
             JoinGameCommand = new RelayCommand(ExecuteJoinGame, CanExecuteJoinGame);
         }
-
-        public event GameJoinSuccessEventHandler GameJoined;
-
-        public event GameCreatedEventHandler GameStarted;
 
         public RelayCommand CreateGameCommand { get; set; }
         public ObservableCollection<GameSessionInformation> GameSessionInformation { get; set; }
@@ -81,15 +86,7 @@ namespace TM.Digital.Client.Screens.Menu
 
         public RelayCommand ShowCreateGameCommand { get; set; }
 
-        private void OnGameCreated(GameSessionInformation gameId)
-        {
-            GameStarted?.Invoke(gameId);
-        }
 
-        private void OnGameJoined(Player joindplayer)
-        {
-            GameJoined?.Invoke(joindplayer);
-        }
 
         private bool CanExecuteJoinGame(object arg)
         {
@@ -105,8 +102,30 @@ namespace TM.Digital.Client.Screens.Menu
         {
             return !string.IsNullOrEmpty(PlayerName) && NumberOfPlayers > 0 && NumberOfPlayers <= 5;
         }
+        private async Task MenuVm_GameCreated(GameSessionInformation gameSessionInformation)
+        {
+            //IsGameOwner = true;//TODO enable game start
+            await _board.GetBoard();
 
-        private void ExecuteCreatetGame(object obj)
+            _waitViewModel.Session = gameSessionInformation;
+            _waitViewModel.IsOwner = true;
+
+            //IsBoardLocked = true;
+            GameData.PlayerId = gameSessionInformation.OwnerId;
+            _waitViewModel.Open("Awaiting players...");
+        }
+
+        private async Task MenuVm_GameJoined(Player joindPlayer)
+        {
+            await _board.GetBoard();
+            _waitViewModel.IsOwner = false;
+
+            //IsBoardLocked = true;
+
+            GameData.PlayerId = joindPlayer.PlayerId;
+            _waitViewModel.Open("....Waiting for game owner to start game...");
+        }
+        private void ExecuteCreateGame(object obj)
         {
             if (!CreateGameCommand.CanExecute(null))
                 return;
@@ -117,7 +136,7 @@ namespace TM.Digital.Client.Screens.Menu
                 IsGameCreationVisible = false;
                 IsSessionListVisible = false;
                 IsVisible = false;
-                OnGameCreated(gameId);
+                await MenuVm_GameCreated(gameId);
             });
         }
 
@@ -149,7 +168,7 @@ namespace TM.Digital.Client.Screens.Menu
                     IsGameCreationVisible = false;
                     IsSessionListVisible = false;
                     IsVisible = false;
-                    OnGameJoined(joinResult);
+                    await MenuVm_GameJoined(joinResult);
                 }
                 else
                 {
@@ -181,6 +200,16 @@ namespace TM.Digital.Client.Screens.Menu
         {
             IsGameCreationVisible = true;
             IsSessionListVisible = false;
+        }
+
+        public void RegisterSubscriptions(HubConnection hubConnection)
+        {
+            
+        }
+
+        public void Show()
+        {
+            IsVisible = true;
         }
     }
 }
