@@ -18,12 +18,13 @@ namespace TM.Digital.Services
 
                     if (patentPrerequisite.IsMax)
                     {
-                        if (boardParam.GlobalParameterLevel.Level > patentPrerequisite.Value)
+                        if (boardParam.Levels.Where(l => l.IsFilled).Max(l => l.Level) > patentPrerequisite.Value)
                             return false;
+
                         return true;
                     }
 
-                    if (boardParam.GlobalParameterLevel.Level < patentPrerequisite.Value)
+                    if (boardParam.Levels.Where(l => l.IsFilled).Max(l => l.Level) < patentPrerequisite.Value)
                         return false;
                 }
 

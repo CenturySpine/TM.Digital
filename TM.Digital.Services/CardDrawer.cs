@@ -33,7 +33,7 @@ namespace TM.Digital.Services
         public async Task LoadResources()
         {
             //C:\Users\bruno\Source\Repos\TM.Digital\PackageData
-            var pack = await PackSerializer.GtPacks(@"C:\Users\bruno\Source\Repos\TM.Digital\PackageData");
+            var pack = await PackSerializer.GetPacks(@"C:\Users\bruno\Source\Repos\TM.Digital\PackageData");
             _allCorporations = new List<Corporation>(pack.Packs.SelectMany(p => p.Corporations));
             _allPatents = new List<Patent>(pack.Packs.SelectMany(p => p.Patents));
             _allCorporations.Shuffle();

@@ -13,5 +13,17 @@ namespace TM.Digital.Model.Effects
         public ActionTarget EffectDestination { get; set; }
 
         public EffectModifier EffectModifier { get; set; }
+
+        public ResourceEffect Clone()
+        {
+            return new ResourceEffect()
+            {
+                ResourceKind =   ResourceKind,
+                ResourceType = ResourceType,
+                Amount = Amount,
+                EffectDestination = EffectDestination,
+                EffectModifier = EffectModifier?.Clone(),
+            };
+        }
     }
 }

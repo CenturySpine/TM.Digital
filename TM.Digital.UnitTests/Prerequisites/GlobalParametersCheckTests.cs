@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TM.Digital.Cards;
 using TM.Digital.Model.Board;
@@ -25,7 +22,16 @@ namespace TM.Digital.UnitTests.Prerequisites
 
         }
 
-
+        private void FillParameters(BoardParameter first, int i)
+        {
+            foreach (var globalParameterLevel in first.Levels)
+            {
+                if (globalParameterLevel.Level <= i)
+                {
+                    globalParameterLevel.IsFilled = true;
+                }
+            }
+        }
         [TestMethod]
         public void TestTemperatureMinNotReached()
         {
@@ -37,16 +43,16 @@ namespace TM.Digital.UnitTests.Prerequisites
                 PrerequisiteKind = PrerequisiteKind.Board
             });
 
-            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel
-            {
-                Level = -8
-            };
+            FillParameters(board.Parameters.First(p => p.Type == BoardLevelType.Temperature), -8);
+
 
 
             var result = _target.CanPlayCard(patent, board, ModelFactory.NewPlayer("", false));
 
             Assert.IsFalse(result);
         }
+
+
 
         [TestMethod]
         public void TestTemperatureMaxOverReached()
@@ -59,11 +65,8 @@ namespace TM.Digital.UnitTests.Prerequisites
                 Parameter = BoardLevelType.Temperature,
                 PrerequisiteKind = PrerequisiteKind.Board
             });
+            FillParameters(board.Parameters.First(p => p.Type == BoardLevelType.Temperature), -4);
 
-            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel
-            {
-                Level = -4
-            };
 
 
             var result = _target.CanPlayCard(patent, board, ModelFactory.NewPlayer("", false));
@@ -83,10 +86,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 PrerequisiteKind = PrerequisiteKind.Board
             });
 
-            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel
-            {
-                Level = -4
-            };
+            FillParameters(board.Parameters.First(p => p.Type == BoardLevelType.Temperature), -4);
 
 
             var result = _target.CanPlayCard(patent, board, ModelFactory.NewPlayer("", false));
@@ -106,10 +106,7 @@ namespace TM.Digital.UnitTests.Prerequisites
                 PrerequisiteKind = PrerequisiteKind.Board
             });
 
-            board.Parameters.First(p => p.Type == BoardLevelType.Temperature).GlobalParameterLevel = new GlobalParameterLevel
-            {
-                Level = -8
-            };
+            FillParameters(board.Parameters.First(p => p.Type == BoardLevelType.Temperature), -8);
 
 
             var result = _target.CanPlayCard(patent, board, ModelFactory.NewPlayer("", false));

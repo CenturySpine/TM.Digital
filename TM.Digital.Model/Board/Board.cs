@@ -7,6 +7,7 @@ namespace TM.Digital.Model.Board
 {
     public class Board
     {
+        public string Name { get; set; }
         public List<BoardLine> BoardLines { get; set; }
 
         public List<BoardPlace> IsolatedPlaces { get; set; }
@@ -20,6 +21,7 @@ namespace TM.Digital.Model.Board
         {
             var clone = new Board
             {
+                Name = Name,
                 Parameters = new List<BoardParameter>(Parameters.Select(p=>p.Clone())),
                 Generation = this.Generation,
                 IsolatedPlaces = new List<BoardPlace>(this.IsolatedPlaces.Select(p=>p.Clone())),

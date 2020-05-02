@@ -14,5 +14,17 @@ namespace TM.Digital.Model.Effects
         public int ModifierRatio { get; set; }
 
         public EffectModifierLocationConstraint EffectModifierLocationConstraint { get; set; }
+
+        public EffectModifier Clone()
+        {
+            return new EffectModifier()
+                {
+                    TileModifier = TileModifier,
+                    ModifierFrom = ModifierFrom,
+                    ModifierRatio =  ModifierRatio,
+                    EffectModifierLocationConstraint = EffectModifierLocationConstraint,
+                    TagsModifier = TagsModifier
+            };
+        }
     }
 }

@@ -5,30 +5,66 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TM.Digital.Editor.Board"
              xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid"
+             xmlns:viewModelCore="clr-namespace:TM.Digital.Ui.Resources.ViewModelCore;assembly=TM.Digital.Ui.Resources"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance {x:Type local:BoardTesterViewModel}}">
+             d:DataContext="{d:DesignInstance {x:Type local:BoardViewModel}}">
+    <UserControl.Resources>
+
+
+    </UserControl.Resources>
     <Grid ShowGridLines="True">
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="0.8*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ContentControl Content="{Binding Board,Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></ContentControl>
+        <ContentControl Content="{Binding SelectedObject,Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></ContentControl>
 
-        <StackPanel Grid.Column="1" Background="Bisque">
-            <CheckBox Content="Surrounding test mode" Margin="5" IsChecked="{Binding SurroundingTestMode}"></CheckBox>
+        <Grid Grid.Column="1" Background="Bisque">
+            <Grid.Resources>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Margin" Value="5" />
+                </Style>
+                <Style TargetType="{x:Type ComboBox}">
+                    <Setter Property="Margin" Value="5" />
+                </Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Margin" Value="5" />
+                </Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Margin" Value="5" />
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Button Content="Load" Command="{Binding LoadCommand}"></Button>
+            <UniformGrid Grid.Row="1" Columns="2">
+                <ComboBox x:Name="boardPicker"  ItemsSource="{Binding AllBoards}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedObject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></ComboBox>
+                <Button Content="Select" Command="{Binding SelectBoardCommand}" CommandParameter="{Binding ElementName=boardPicker, Path=SelectedItem}"></Button>
+            </UniformGrid>
+            <Button Grid.Row="2" Content="New board" Command="{Binding NewBoardCommand}"></Button>
+            <!--<CheckBox Content="Surrounding test mode" Margin="5" IsChecked="{Binding SurroundingTestMode}"></CheckBox>
             <Button Content="New tile" Margin="2"
                     Command="{Binding Newtilecommand}" ></Button>
             <Button Content="Place" Margin="2"
-                    Command="{Binding GetAuthorizedPlacesCommand}" ></Button>
-            <!--<Button Content="Place ocean" Margin="2"
-                    Command="{Binding PlaceForestCommand}"
-                    ></Button>
-            <Button Content="Place city" Margin="2"></Button>-->
-            <dxprg:PropertyGridControl  x:Name="editorGrid" AllowExpanding="Force" SelectedObject="{Binding Tile, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
-                                        Margin="2"
-                                         />
+                    Command="{Binding GetAuthorizedPlacesCommand}" ></Button>-->
 
-        </StackPanel>
+            <dxprg:PropertyGridControl Grid.Row="3" x:Name="editorGrid" AllowExpanding="Force" SelectedObject="{Binding SelectedObject, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
+                                       SelectionChanged="EditorGrid_OnSelectionChanged"
+            ></dxprg:PropertyGridControl>
+
+            <!--<TextBlock Grid.Row="4" Text="Board Name"/>
+            <TextBox Grid.Row="5" Text="{Binding BoardName}"></TextBox>-->
+            <Button Grid.Row="5" Content="Save Board" Command="{Binding SavBoardCommand}"></Button>
+            <Button Grid.Row="6" Content="Delete Board" Command="{Binding DeleteBoardCommand}"></Button>
+        </Grid>
     </Grid>
 </UserControl>

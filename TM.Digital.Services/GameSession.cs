@@ -165,7 +165,7 @@ namespace TM.Digital.Services
                     {
                         await Logger.Log(player.Name, $"Selected action target : {targetPlayer.Name}");
 
-                        await EffectHandler.HandleResourceEffect(targetPlayer, place.ResourceHandler,Players.Select(p=>p.Value).ToList(), Board);
+                        await EffectHandler.HandleResourceEffect(targetPlayer, place.ResourceHandler, Players.Select(p => p.Value).ToList(), Board, _cardDrawer);
                     }
                 }
 
@@ -200,7 +200,7 @@ namespace TM.Digital.Services
         {
             if (Players.TryGetValue(playerId, out var playerObj))
             {
-                var choices = await ActionPlayHandler.Convert(playerObj, resources, Board);
+                var choices = await ActionPlayHandler.Convert(playerObj, resources, Board, _cardDrawer);
                 foreach (var choice in choices)
                 {
                     _actionPlanner.Plan(choice);
@@ -212,7 +212,7 @@ namespace TM.Digital.Services
         {
             if (Players.TryGetValue(playerId, out var player))
             {
-                var choices = await ActionPlayHandler.Play(card, player, Board, Players.Select(r => r.Value).ToList());
+                var choices = await ActionPlayHandler.Play(card, player, Board, Players.Select(r => r.Value).ToList(), _cardDrawer);
 
                 foreach (var choice in choices)
                 {
@@ -312,7 +312,7 @@ namespace TM.Digital.Services
 
                 await Logger.Log(player.Name, $"Patent bought : {selection.BoughtCards.Count}");
 
-                await EffectHandler.HandleInitialPatentBuy(player, _cardDrawer.DispatchPatents(selection.BoughtCards), selectedCorpo,Board, Players.Select(p=>p.Value).ToList());
+                await EffectHandler.HandleInitialPatentBuy(player, _cardDrawer.DispatchPatents(selection.BoughtCards), selectedCorpo, Board, Players.Select(p => p.Value).ToList(), _cardDrawer);
 
                 await EffectHandler.CheckCardsReductions(player);
                 await PrerequisiteHandler.CanPlayCards(Board, player);

@@ -263,9 +263,12 @@ namespace TM.Digital.Services
 
             foreach (var choicePlace in choicePlaces)
             {
-                choicePlace.CanBeChosed = true;
+                choicePlace.CanBeChoosed = true;
             }
-
+            foreach (var boardPlace in nonOccupiedSpaces.Except(choicePlaces))
+            {
+                boardPlace.CanBeChoosed = false;
+            }
             return board;
         }
 
@@ -288,26 +291,29 @@ namespace TM.Digital.Services
                 {
                     await Logger.Log(playerId.Name, $"Evaluating tile placement bonuses...");
 
-                    var bonusGroup = targetTile.PlacementBonus.GroupBy(b => b.BonusType);
+                    var bonusGroup = targetTile.PlacementBonus;
+
                     foreach (var bonus in bonusGroup)
                     {
-                        var resource = playerId.Resources.FirstOrDefault(t => t.ResourceType == bonus.Key);
-                        if (resource != null)
-                        {
-                            resource.UnitCount += bonus.Count();
-                            await Logger.Log(playerId.Name, $"Resource '{resource.ResourceType}' bonus of {bonus.Count()} units");
-                        }
-                        else
-                        {
-                            if (bonus.Key == ResourceType.Card)
-                            {
-                                for (int i = 0; i < bonus.Count(); i++)
-                                {
-                                    playerId.HandCards.Add(cardDrawer.DrawPatent());
-                                    await Logger.Log(playerId.Name, $"Drawing 1 card from deck");
-                                }
-                            }
-                        }
+                        await EffectHandler.HandleResourceEffect(playerId, bonus, new List<Player>(), board,
+                            cardDrawer);
+                        //var resource = playerId.Resources.FirstOrDefault(t => t.ResourceType == bonus.Key);
+                        //if (resource != null)
+                        //{
+                        //    resource.UnitCount += bonus.Count();
+                        //    await Logger.Log(playerId.Name, $"Resource '{resource.ResourceType}' bonus of {bonus.Count()} units");
+                        //}
+                        //else
+                        //{
+                        //    if (bonus.Key == ResourceType.Card)
+                        //    {
+                        //        for (int i = 0; i < bonus.Count(); i++)
+                        //        {
+                        //            playerId.HandCards.Add(cardDrawer.DrawPatent());
+                        //            await Logger.Log(playerId.Name, $"Drawing 1 card from deck");
+                        //        }
+                        //    }
+                        //}
                     }
                 }
 
@@ -326,19 +332,19 @@ namespace TM.Digital.Services
                 if (pendingTileEffect.Type == TileType.Ocean)
                 {
                     //await Logger.Log(playerId.Name, $"Ocean placed, increasing global parameter and player's terraformation level");
-                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Oceans, playerId, 1);
+                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Oceans, playerId, 1,cardDrawer);
                     //board.Parameters.First(p => p.Type == BoardLevelType.Oceans).GlobalParameterLevel.Level += 1;
                     //playerId.TerraformationLevel += 1;
                 }
                 if (pendingTileEffect.Type == TileType.Forest)
                 {
                     //await Logger.Log(playerId.Name, $"Forest placed, increasing global parameter and player's terraformation level");
-                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Oxygen, playerId, 1);
+                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Oxygen, playerId, 1, cardDrawer);
                     //board.Parameters.First(p => p.Type == BoardLevelType.Oxygen).GlobalParameterLevel.Level += 1;
                     //playerId.TerraformationLevel += 1;
                 }
 
-                allPlaces.ForEach(p => p.CanBeChosed = false);
+                allPlaces.ForEach(p => p.CanBeChoosed = false);
             }
         }
 

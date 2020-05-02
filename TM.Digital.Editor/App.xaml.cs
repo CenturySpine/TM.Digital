@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using TM.Digital.Editor.Board;
 
 namespace TM.Digital.Editor
 {
@@ -11,7 +12,9 @@ namespace TM.Digital.Editor
         {
             base.OnStartup(e);
             var mainVm = new MainViewModel();
+            mainVm.BoardViewModel = new BoardViewModel();
             await mainVm.Initialize();
+            await mainVm.BoardViewModel.Initialize();
             
             var main = new MainWindow(mainVm);
 

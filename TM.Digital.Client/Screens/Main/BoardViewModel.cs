@@ -32,7 +32,7 @@ namespace TM.Digital.Client.Screens.Main
         {
             if (arg is BoardPlace bp)
             {
-                return bp.CanBeChosed;
+                return bp.CanBeChoosed;
             }
 
             return false;

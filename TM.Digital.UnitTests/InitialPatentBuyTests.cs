@@ -40,7 +40,7 @@ namespace TM.Digital.UnitTests
                     ResourceType = ResourceType.Money,ResourceKind = ResourceKind.Unit,Amount = 44
                 }
              }
-                }, BoardGenerator.Instance.Original(), new List<Player>());
+                }, BoardGenerator.Instance.Original(), new List<Player>(), new CardDrawer());
             t.Wait();
             Assert.AreEqual(38, PlayerResource(ResourceType.Money).UnitCount);
         }

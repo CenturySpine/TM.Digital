@@ -11,5 +11,14 @@ namespace TM.Digital.Model.Effects
 
         public EffectModifier EffectModifier { get; set; }
 
+        public BoardLevelEffect Clone()
+        {
+            return new BoardLevelEffect()
+            {
+                BoardLevelType = BoardLevelType,
+                Level = Level,
+                EffectModifier = EffectModifier?.Clone()
+            };
+        }
     }
 }

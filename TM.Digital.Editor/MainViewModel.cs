@@ -13,22 +13,50 @@ using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Editor
 {
-    public class EditorConfig
+    public class PackManagerViewModelBase: NotifierBase
     {
-        public string PackageLocation { get; set; }
-        public string SavePackageLocation { get; set; }
-    }
+        protected const string packs = "packs.json";
+        protected void SaveConfig()
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(_config);
+            using (var sw = new StreamWriter("editorConfig.json", false))
+            {
+                sw.Write(json);
+            }
+        }
+        protected  void Save(CardReferencesHolder h)
+        {
+            if (string.IsNullOrEmpty(SavePackageLocation))
+            {
+                MessageBox.Show("Invalid save location");
+                return;
+            }
+            try
+            {
+                string path = $"{SavePackageLocation}\\{DateTime.Now.Ticks}_{packs}";
+                using (var streamWriter = new StreamWriter(path, false))
+                {
 
-    public class MainViewModel : NotifierBase
-    {
-        private const string packs = "packs.json";
 
-        private ObservableCollection<PackPresenter> _packs;
-        private PackPresenter _destinationPack;
-        private string _packageLocation;
-        private EditorConfig _config;
-        private string _savePackageLocation;
+                    streamWriter.Write(System.Text.Json.JsonSerializer.Serialize(h));
+                }
+                MessageBox.Show($"File saved : {path}", "Save successful", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
 
+                MessageBox.Show(ex.ToString(), "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        protected async Task<CardReferencesHolder> Load()
+        {
+
+            string directory = _config.PackageLocation;
+
+           var all = await PackSerializer.GetPacks(directory);
+           return all;
+        }
         public string SavePackageLocation
         {
             get => _savePackageLocation;
@@ -40,6 +68,61 @@ namespace TM.Digital.Editor
                 SaveConfig();
             }
         }
+        public async Task Initialize()
+        {
+            try
+            {
+                if (File.Exists("editorConfig.json"))
+                {
+                    _config = System.Text.Json.JsonSerializer.Deserialize<EditorConfig>(
+                        await File.ReadAllTextAsync("editorConfig.json"));
+                }
+                else
+                {
+                    _config = new EditorConfig { PackageLocation = Environment.CurrentDirectory };
+                    SaveConfig();
+                }
+
+                _packageLocation = _config.PackageLocation;
+                _savePackageLocation = _config.SavePackageLocation;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        public string PackageLocation
+        {
+            get => _packageLocation;
+            set
+            {
+                _packageLocation = value;
+                _config.PackageLocation = value;
+                OnPropertyChanged();
+                SaveConfig();
+            }
+        }
+        protected string _packageLocation;
+        protected EditorConfig _config;
+        protected string _savePackageLocation;
+    }
+    public class EditorConfig
+    {
+        public string PackageLocation { get; set; }
+        public string SavePackageLocation { get; set; }
+    }
+
+    public class MainViewModel : PackManagerViewModelBase
+    {
+        
+
+        private ObservableCollection<PackPresenter> _packs;
+        private PackPresenter _destinationPack;
+        private BoardViewModel _boardViewModel;
+
+
+
 
         public ObservableCollection<PackPresenter> Packs
         {
@@ -61,26 +144,7 @@ namespace TM.Digital.Editor
 
         public RelayCommand SaveCommand { get; set; }
 
-        public string PackageLocation
-        {
-            get => _packageLocation;
-            set
-            {
-                _packageLocation = value;
-                _config.PackageLocation = value;
-                OnPropertyChanged();
-                SaveConfig();
-            }
-        }
 
-        private void SaveConfig()
-        {
-            var json = System.Text.Json.JsonSerializer.Serialize(_config);
-            using (var sw = new StreamWriter("editorConfig.json", false))
-            {
-                sw.Write(json);
-            }
-        }
 
         //SelectedObject = all;
 
@@ -131,24 +195,27 @@ namespace TM.Digital.Editor
 
             SelectBoardPlace = new RelayCommand(ExecuteSelectBoardPlace);
 
-            BoardViewModel = new BoardTesterViewModel();
+            
         }
 
-        public BoardTesterViewModel BoardViewModel { get; set; }
+        public BoardViewModel BoardViewModel
+        {
+            get => _boardViewModel;
+            set { _boardViewModel = value;OnPropertyChanged(); }
+        }
 
         private void ExecuteSelectBoardPlace(object obj)
         {
 
-            BoardViewModel.SelectPlace(obj);
+            //BoardViewModel.SelectPlace(obj);
         }
 
         private async void ExecuteLoadData(object obj)
         {
 
-            CardReferencesHolder all;
-            string directory = _config.PackageLocation;
+            
+            CardReferencesHolder all= await Load(); 
 
-            all = await PackSerializer.GtPacks(directory);
             Packs = new ObservableCollection<PackPresenter>(all.Packs.Select(r => new PackPresenter
             {
                 Content = new PackViewModel(r),
@@ -158,63 +225,21 @@ namespace TM.Digital.Editor
 
         public RelayCommand LoadDataCommand { get; set; }
 
-        public async Task Initialize()
-        {
-            try
-            {
-                if (File.Exists("editorConfig.json"))
-                {
-                    _config = System.Text.Json.JsonSerializer.Deserialize<EditorConfig>(
-                        await File.ReadAllTextAsync("editorConfig.json"));
-                }
-                else
-                {
-                    _config = new EditorConfig { PackageLocation = Environment.CurrentDirectory };
-                    SaveConfig();
-                }
 
-                _packageLocation = _config.PackageLocation;
-                _savePackageLocation = _config.SavePackageLocation;
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
 
         private void ExecuteSave(object obj)
         {
-            if (string.IsNullOrEmpty(SavePackageLocation))
+            var h = new CardReferencesHolder
             {
-                MessageBox.Show("Invalid save location");
-                return;
-            }
-            try
-            {
-                string path = $"{SavePackageLocation}\\{DateTime.Now.Ticks}_{packs}";
-                using (var streamWriter = new StreamWriter(path, false))
+                Packs = Packs.Select(r => new ExtensionPack
                 {
-                    var h = new CardReferencesHolder
-                    {
-                        Packs = Packs.Select(r => new ExtensionPack
-                        {
-                            Name = (Extensions)Enum.Parse(typeof(Extensions), r.Name),
-                            Patents = r.Content.Patents.ToList(),
-                            Corporations = r.Content.Corporations.ToList(),
-                            Preludes = r.Content.Preludes.ToList(),
-                        }).ToList()
-                    };
-
-                    streamWriter.Write(System.Text.Json.JsonSerializer.Serialize(h));
-                }
-                MessageBox.Show($"File saved : {path}", "Save successful", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-
-                MessageBox.Show(ex.ToString(), "Save Error",MessageBoxButton.OK,MessageBoxImage.Error);
-            }
+                    Name = (Extensions)Enum.Parse(typeof(Extensions), r.Name),
+                    Patents = r.Content.Patents.ToList(),
+                    Corporations = r.Content.Corporations.ToList(),
+                    Preludes = r.Content.Preludes.ToList(),
+                }).ToList()
+            };
+            Save(h);
         }
 
         public RelayCommand SelectBoardPlace { get; set; }

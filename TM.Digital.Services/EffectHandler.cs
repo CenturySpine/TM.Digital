@@ -64,11 +64,20 @@ namespace TM.Digital.Services
             }
             return 1;
         }
-        public static async Task HandleResourceEffect(Player player, ResourceEffect effect, List<Player> allPlayers, Board board)
+        public static async Task HandleResourceEffect(Player player, ResourceEffect effect, List<Player> allPlayers,
+            Board board, CardDrawer cardDrawer)
         {
 
+            
+            if (effect.ResourceType == ResourceType.Card)
+            {
+                for (int i = 0; i < effect.Amount; i++)
+                {
+                    player.HandCards.Add(cardDrawer.DrawPatent());
+                    await Logger.Log(player.Name, $"Drawing 1 card from deck");
+                }
+            }
             var resource = player.Resources.FirstOrDefault(r => r.ResourceType == effect.ResourceType);
-
             if (resource != null)
             {
                 var modifierValue = ComputeModifierValue(player, effect, allPlayers, board);
@@ -101,14 +110,14 @@ namespace TM.Digital.Services
         }
 
         public static async Task HandleInitialPatentBuy(Model.Player.Player player, List<Patent> selectionBoughtCards,
-            Corporation selectionCorporation, Board board, List<Player> allPlayers)
+            Corporation selectionCorporation, Board board, List<Player> allPlayers, CardDrawer cardDrawer)
         {
             var playersMoney = player.Resources.First(r => r.ResourceType == ResourceType.Money);
             if (selectionCorporation != null)
             {
                 foreach (var selectionCorporationResourcesEffect in selectionCorporation.ResourcesEffects)
                 {
-                    await HandleResourceEffect(player, selectionCorporationResourcesEffect, allPlayers, board);
+                    await HandleResourceEffect(player, selectionCorporationResourcesEffect, allPlayers, board, cardDrawer);
                 }
                 await Logger.Log(player.Name, $"Initial money count {playersMoney.UnitCount}");
             }

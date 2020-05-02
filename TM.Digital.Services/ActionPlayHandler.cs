@@ -19,7 +19,7 @@ namespace TM.Digital.Services
     public static class ActionPlayHandler
     {
         public static async Task<List<Action<Player, Board>>> Convert(Player playerObj, ResourceHandler resources,
-            Board board)
+            Board board,CardDrawer cardDrawer)
         {
             await Task.CompletedTask;
             List<Action<Player, Board>> currentActions = new List<Action<Player, Board>>();
@@ -46,7 +46,7 @@ namespace TM.Digital.Services
                     playerObj[ResourceType.Heat].UnitCount -= conv;
 
                     //increase global parameter
-                   await BoardEffectHandler.IncreaseParameterLevel(board,BoardLevelType.Temperature,playerObj,1);
+                   await BoardEffectHandler.IncreaseParameterLevel(board,BoardLevelType.Temperature,playerObj,1, cardDrawer);
 
                     break;
 
@@ -56,7 +56,7 @@ namespace TM.Digital.Services
             return currentActions;
         }
         public static async Task<List<Action<Player, Board>>> Play(CardActionPlay cardAction, Player player, Board board,
-            List<Player> allPlayers)
+            List<Player> allPlayers, CardDrawer cardDrawer)
 
         {
             var card = cardAction.Patent;
@@ -95,7 +95,7 @@ namespace TM.Digital.Services
             //resources effects for self
             foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == ActionTarget.Self))
             {
-                await EffectHandler.HandleResourceEffect(player, cardResourceEffect, allPlayers, board);
+                await EffectHandler.HandleResourceEffect(player, cardResourceEffect, allPlayers, board, cardDrawer);
             }
 
             //resources effect for others
@@ -106,7 +106,7 @@ namespace TM.Digital.Services
 
             foreach (var boardLevelEffect in card.BoardEffects)
             {
-                await BoardEffectHandler.HandleBoardEffect(boardLevelEffect, board, player);
+                await BoardEffectHandler.HandleBoardEffect(boardLevelEffect, board, player, cardDrawer);
             }
 
             if (card.TileEffects.Any())
@@ -178,7 +178,7 @@ namespace TM.Digital.Services
                 }
 
                 await Logger.Log(player.Name,
-                    $"Found {choiceBoard.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => p.CanBeChosed).Count()} available places. Sending choices to player");
+                    $"Found {choiceBoard.BoardLines.SelectMany(r => r.BoardPlaces).Where(p => p.CanBeChoosed).Count()} available places. Sending choices to player");
 
                 await Hubconcentrator.Hub.Clients.All.SendAsync(ServerPushMethods.PlaceTileRequest,
                     $"{p.PlayerId}", JsonSerializer.Serialize(choiceBoard));
@@ -285,7 +285,7 @@ namespace TM.Digital.Services
                             //for global parameter
                             if (actionTo.BoardLevelType != BoardLevelType.None)
                             {
-                                await BoardEffectHandler.IncreaseParameterLevel(board, actionTo.BoardLevelType,player, actionTo.Amount);
+                                await BoardEffectHandler.IncreaseParameterLevel(board, actionTo.BoardLevelType,player, actionTo.Amount, cardDrawer);
 
                                 //var parameter = board.Parameters.FirstOrDefault(p => p.Type == actionTo.BoardLevelType);
                                 //if (parameter != null)

@@ -12,7 +12,7 @@ namespace TM.Digital.Services.Common
 {
     public class PackSerializer
     {
-        public static async Task<CardReferencesHolder> GtPacks(string directory)
+        public static async Task<CardReferencesHolder> GetPacks(string directory)
         {
             DirectoryInfo di = new DirectoryInfo(directory);
             CardReferencesHolder all;
