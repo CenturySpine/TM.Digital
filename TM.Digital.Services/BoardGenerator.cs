@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
@@ -95,21 +97,7 @@ namespace TM.Digital.Services
             return new List<BoardParameterThresold>();
         }
 
-        public Board NewBoard()
-        {
-            var board = new Board
-            {
-                Parameters = new List<BoardParameter>
-                {
-                    ParameterGenerator(BoardLevelType.Temperature, -30, 8, 2),
-                    ParameterGenerator(BoardLevelType.Oxygen, 0, 14, 1),
-                    ParameterGenerator(BoardLevelType.Oceans, 0, 9, 1),
-                },
-            };
-            return board;
-        }
-
-        public Board Original()
+        public Board BoardShell()
         {
             var board = new Board
             {
@@ -239,6 +227,18 @@ namespace TM.Digital.Services
             };
 
             return board;
+        }
+
+        public void LoadBoard(CardReferencesHolder pack)
+        {
+            AllBoards = new List<Board>(pack.Boards);
+        }
+
+        public List<Board> AllBoards { get; set; }
+
+        public Board GetBoard(string boardName)
+        {
+            return AllBoards.FirstOrDefault(b => b.Name.Equals(boardName));
         }
     }
 }

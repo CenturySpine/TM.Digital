@@ -19,12 +19,38 @@ namespace TM.Digital.Services
         public static GamesService Instance { get; } = new GamesService();
 
         private readonly Dictionary<Guid, GameSession> _currentSessions = new Dictionary<Guid, GameSession>();
+        private bool _initialized;
+        private CardReferencesHolder pack;
 
-        public async Task<GameSessionInformation> CreateGame(string playerName, int numberOfPlayer)
+        public async Task<bool> EnsureInit()
         {
+            try
+            {
+                if (!_initialized)
+                {
+                    pack = await PackSerializer.GetPacks(@"C:\Users\bruno\Source\Repos\TM.Digital\PackageData");
+                    BoardGenerator.Instance.LoadBoard(pack);
+                    _initialized = true;
+                }
+            }
+            catch (Exception e)
+            {
+
+                await Logger.Log("na", e.ToString());
+                return false;
+            }
+
+            return _initialized;
+        }
+        public async Task<GameSessionInformation> CreateGame(string playerName, int numberOfPlayer,
+            string selectedBoardName)
+        {
+            if(!_initialized)
+                return new GameSessionInformation();
+
             GameSession gs = new GameSession { Id = Guid.NewGuid(), OwnerName = playerName, Players = new Dictionary<Guid, Player>() };
 
-            await gs.Initialize();
+            await gs.Initialize(pack, BoardGenerator.Instance.GetBoard(selectedBoardName));
 
             gs.NumberOfPlayers = numberOfPlayer;
 
@@ -39,7 +65,8 @@ namespace TM.Digital.Services
                     Owner = gs.OwnerName,
                     OwnerId = gs.OwnerId,
                     GameSessionId = gs.Id,
-                    NumnerOfPlayers = gs.NumberOfPlayers
+                    NumnerOfPlayers = gs.NumberOfPlayers,
+                    Board = selectedBoardName,
                 };
         }
 
@@ -244,5 +271,7 @@ namespace TM.Digital.Services
       throw Errors.ErrorGameIdNotFound(gameId);
   });
         }
+
+
     }
 }

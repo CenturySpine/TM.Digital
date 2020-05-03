@@ -27,7 +27,7 @@ namespace TM.Digital.Editor.Board
         public BoardViewModel()
         {
             _boardGen = BoardGenerator.Instance;
-            SelectedObject = _boardGen.Original();
+            SelectedObject = _boardGen.BoardShell();
 
             //GetAuthorizedPlacesCommand = new RelayCommand(ExecuteGetAuthorizedPlaces);
             Player = ModelFactory.NewPlayer("test", false);
@@ -105,7 +105,7 @@ namespace TM.Digital.Editor.Board
 
         private void ExecuteNewBoard(object obj)
         {
-            var b = BoardGenerator.Instance.Original();
+            var b = BoardGenerator.Instance.BoardShell();
 
             AllBoards.Add(b);
             SelectedObject = SelectedObject;

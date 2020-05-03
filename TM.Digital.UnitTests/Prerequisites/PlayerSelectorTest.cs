@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TM.Digital.Cards;
 using TM.Digital.Client.Screens.ActionChoice;
@@ -28,7 +29,8 @@ namespace TM.Digital.UnitTests.Prerequisites
             throw new NotImplementedException();
         }
 
-        public Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers)
+        public Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers,
+            string selectedBoardName)
         {
             throw new NotImplementedException();
         }
@@ -48,7 +50,7 @@ namespace TM.Digital.UnitTests.Prerequisites
             throw new NotImplementedException();
         }
 
-        public Task<Board> GetBoard()
+        public Task<Board> GetBoard(string boardName)
         {
             throw new NotImplementedException();
         }
@@ -97,6 +99,16 @@ namespace TM.Digital.UnitTests.Prerequisites
         {
             throw new NotImplementedException();
         }
+
+        public Task<List<Board>> GetBoards()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> EnsureInit()
+        {
+            throw new NotImplementedException();
+        }
     }
     [TestClass]
     public class PlayerSelectorTest 
@@ -120,53 +132,9 @@ namespace TM.Digital.UnitTests.Prerequisites
             GameData.GameId = Guid.NewGuid();
             _api = new ApiPorxyMock();
             _playerSelector = new PlayerSelector(_api);
+            _playerSelector.Update(player);
         }
 
-        [TestMethod]
-        public void TestPatentCostBaseNotEnough()
-        {
-            _playerSelector.Player[ResourceType.Money].UnitCount = 20;
-
-
-            var baseResult = _playerSelector.SelectCardCommand.CanExecute(_playerSelector.PatentsSelectors[0]);
-            Assert.IsFalse(baseResult);
-        }
-
-        [TestMethod]
-        public void TestPatentCostBaseEnough()
-        {
-            _playerSelector.Player[ResourceType.Money].UnitCount = 35;
-            
-            var baseResult = _playerSelector.SelectCardCommand.CanExecute(_playerSelector.PatentsSelectors[0]);
-            Assert.IsTrue(baseResult);
-        }
-
-        [TestMethod]
-        public void TestPatentCostBaseEnoughWithModifiers()
-        {
-            _playerSelector.Player[ResourceType.Money].UnitCount = 20;
-
-
-            _playerSelector.PatentsSelectors[0].MineralsPatentModifiersSummary.MineralsPatentModifier[0].UnitsUsed = 3;//+9
-            _playerSelector.PatentsSelectors[0].MineralsPatentModifiersSummary.MineralsPatentModifier[1].UnitsUsed = 3;//+6
-            //total value should be 20 + 9 + 6 = 35
-
-            var baseResult = _playerSelector.SelectCardCommand.CanExecute(_playerSelector.PatentsSelectors[0]);
-            Assert.IsTrue(baseResult);
-        }
-
-        [TestMethod]
-        public void TestPatentCostBaseNotEnoughWithModifiers()
-        {
-            _playerSelector.Player[ResourceType.Money].UnitCount = 20;
-
-
-            _playerSelector.PatentsSelectors[0].MineralsPatentModifiersSummary.MineralsPatentModifier[0].UnitsUsed = 2;//+6
-            _playerSelector.PatentsSelectors[0].MineralsPatentModifiersSummary.MineralsPatentModifier[1].UnitsUsed = 3;//+6
-            //total value should be 20 + 6 + 6 = 32
-
-            var baseResult = _playerSelector.SelectCardCommand.CanExecute(_playerSelector.PatentsSelectors[0]);
-            Assert.IsFalse(baseResult);
-        }
+     
     }
 }

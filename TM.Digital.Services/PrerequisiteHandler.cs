@@ -12,6 +12,14 @@ using Action = TM.Digital.Model.Cards.Action;
 
 namespace TM.Digital.Services
 {
+
+    public class GameConstants
+    {
+        public const int TitaniumValue = 3;
+        public const int SteelValue = 2;
+        public const int HeatconversionRatio = 8;
+        public const int PlantConversionRatio = 8;
+    }
     public static class PrerequisiteHandler
     {
         public static async Task CanPlayCards(Model.Board.Board board, Model.Player.Player player)
@@ -64,7 +72,7 @@ namespace TM.Digital.Services
                     .Select(p => p.Heat)
                     .Min(t => t.Rate)
                 : 0;
-            if (heatConversion == 0) heatConversion = 8;
+            if (heatConversion == 0) heatConversion = GameConstants.HeatconversionRatio;
             return heatConversion;
         }
 
@@ -79,7 +87,7 @@ namespace TM.Digital.Services
                     .Min(t => t.Rate)
                 : 0;
 
-            if (plantConversion == 0) plantConversion = 8;
+            if (plantConversion == 0) plantConversion = GameConstants.PlantConversionRatio;
             return plantConversion;
         }
 
@@ -96,6 +104,7 @@ namespace TM.Digital.Services
             if (titaniumUsage != null)
             {
                 var titaniumModofiers = player[ResourceType.Titanium].MoneyValueModifier;
+                if (titaniumModofiers < GameConstants.TitaniumValue) throw new ArgumentException($"Titanium value modifier can't be inferior to {GameConstants.TitaniumValue}");
 
                 titaniumUsageValue = titaniumUsage.UnitPlayed * titaniumModofiers;
             }
@@ -103,6 +112,7 @@ namespace TM.Digital.Services
             if (steelUsage != null)
             {
                 var stellModifiers = player[ResourceType.Steel].MoneyValueModifier;
+                if (stellModifiers < GameConstants.SteelValue) throw new ArgumentException($"Titanium value modifier can't be inferior to {GameConstants.TitaniumValue}");
 
                 steelUsageValue = steelUsage.UnitPlayed * stellModifiers;
             }

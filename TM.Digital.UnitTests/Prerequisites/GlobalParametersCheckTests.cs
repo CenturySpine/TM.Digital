@@ -18,7 +18,7 @@ namespace TM.Digital.UnitTests.Prerequisites
         public void Setup()
         {
             _target = new GlobalCheckPrerequisite();
-            board = BoardGenerator.Instance.Original();
+            board = BoardGenerator.Instance.BoardShell();
 
         }
 

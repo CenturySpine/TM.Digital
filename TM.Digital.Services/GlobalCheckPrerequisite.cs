@@ -16,16 +16,21 @@ namespace TM.Digital.Services
                 {
                     var boardParam = currentBoardState.Parameters.First(p => p.Type == patentPrerequisite.Parameter);
 
+                    var filledLevels = boardParam.Levels.Where(l => l.IsFilled).ToList();
+
                     if (patentPrerequisite.IsMax)
                     {
-                        if (boardParam.Levels.Where(l => l.IsFilled).Max(l => l.Level) > patentPrerequisite.Value)
-                            return false;
+                        if (!filledLevels.Any())
+                            return true;
 
-                        return true;
+                        return !(filledLevels.Max(l => l.Level) > patentPrerequisite.Value);
                     }
 
-                    if (boardParam.Levels.Where(l => l.IsFilled).Max(l => l.Level) < patentPrerequisite.Value)
+                    if (!filledLevels.Any())
                         return false;
+
+
+                    return filledLevels.Max(l => l.Level) >= patentPrerequisite.Value;
                 }
 
             return true;

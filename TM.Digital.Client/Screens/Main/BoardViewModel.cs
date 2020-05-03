@@ -65,9 +65,9 @@ namespace TM.Digital.Client.Screens.Main
             Board = gameResult2;
             CommandManager.InvalidateRequerySuggested();
         }
-        public async Task GetBoard()
+        public async Task GetBoard(string board)
         {
-            Board = await _apiProxy.GetBoard();
+            Board = await _apiProxy.GetBoard(board);
 
         }
         public void Update(Board gameResult2Board)

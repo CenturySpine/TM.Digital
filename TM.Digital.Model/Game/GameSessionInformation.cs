@@ -10,5 +10,6 @@ namespace TM.Digital.Model.Game
 
         public int NumnerOfPlayers { get; set; }
         public Guid OwnerId { get; set; }
+        public string Board { get; set; }
     }
 }

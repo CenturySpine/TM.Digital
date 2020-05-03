@@ -15,7 +15,7 @@ namespace TM.Digital.UnitTests
         public void TestMaxParameter()
 
         {
-            var board = BoardGenerator.Instance.Original();
+            var board = BoardGenerator.Instance.BoardShell();
 
             for (var index = 0; index < board.Parameters[0].Levels.Count; index++)
             {

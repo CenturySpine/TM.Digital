@@ -158,7 +158,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding Player.PlayedCards, Converter={StaticResource TagConverter}}" Margin="5" Height="30">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Player, Converter={StaticResource TagConverter}}" Margin="5" Height="30">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border d:DataContext="{d:DesignInstance {x:Type resources:TagsCount}}" Padding="1" CornerRadius="2" BorderBrush="Black" BorderThickness="1" Margin="1" 

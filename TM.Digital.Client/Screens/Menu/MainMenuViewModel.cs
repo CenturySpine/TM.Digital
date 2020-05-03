@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -7,6 +9,7 @@ using TM.Digital.Client.Screens.ActionChoice;
 using TM.Digital.Client.Screens.Main;
 using TM.Digital.Client.Screens.Wait;
 using TM.Digital.Client.Services;
+using TM.Digital.Model.Board;
 using TM.Digital.Model.Game;
 using TM.Digital.Model.Player;
 using TM.Digital.Ui.Resources.ViewModelCore;
@@ -25,10 +28,12 @@ namespace TM.Digital.Client.Screens.Menu
         private int _numberOfPlayers = 1;
         private string _playerName;
         private GameSessionInformation _selectedSession;
+        private List<Board> _boardsChoices;
+        private Board _selectedBoard;
 
         public MainMenuViewModel(IApiProxy apiCaller, WaitingGameScreenViewModel waitViewModel, BoardViewModel board)
         {
-            PlayerName = "Bruno"+DateTime.Now.Millisecond;
+            PlayerName = "Bruno" + DateTime.Now.Millisecond;
             _apiCaller = apiCaller;
             _waitViewModel = waitViewModel;
             _board = board;
@@ -105,7 +110,7 @@ namespace TM.Digital.Client.Screens.Menu
         private async Task MenuVm_GameCreated(GameSessionInformation gameSessionInformation)
         {
             //IsGameOwner = true;//TODO enable game start
-            await _board.GetBoard();
+            await _board.GetBoard(gameSessionInformation.Board);
 
             _waitViewModel.Session = gameSessionInformation;
             _waitViewModel.IsOwner = true;
@@ -115,9 +120,9 @@ namespace TM.Digital.Client.Screens.Menu
             _waitViewModel.Open("Awaiting players...");
         }
 
-        private async Task MenuVm_GameJoined(Player joindPlayer)
+        private async Task MenuVm_GameJoined(Player joindPlayer, string selectedSessionBoard)
         {
-            await _board.GetBoard();
+            await _board.GetBoard(selectedSessionBoard);
             _waitViewModel.IsOwner = false;
 
             //IsBoardLocked = true;
@@ -132,11 +137,15 @@ namespace TM.Digital.Client.Screens.Menu
 
             CallErrorHandler.Handle(async () =>
             {
-                var gameId = await _apiCaller.CreateNewGame(PlayerName, NumberOfPlayers);
+
+
+
+                var gameId = await _apiCaller.CreateNewGame(PlayerName, NumberOfPlayers, SelectedBoard.Name);
                 IsGameCreationVisible = false;
                 IsSessionListVisible = false;
                 IsVisible = false;
                 await MenuVm_GameCreated(gameId);
+
             });
         }
 
@@ -168,7 +177,7 @@ namespace TM.Digital.Client.Screens.Menu
                     IsGameCreationVisible = false;
                     IsSessionListVisible = false;
                     IsVisible = false;
-                    await MenuVm_GameJoined(joinResult);
+                    await MenuVm_GameJoined(joinResult, SelectedSession.Board);
                 }
                 else
                 {
@@ -177,34 +186,57 @@ namespace TM.Digital.Client.Screens.Menu
             });
         }
 
-        private void ExecuteListGames(object obj)
+        private async void ExecuteListGames(object obj)
         {
-            IsGameCreationVisible = false;
-            IsSessionListVisible = true;
-
-            CallErrorHandler.Handle(async () =>
+            bool init = await _apiCaller.EnsureInit();
+            if (init)
             {
-                var sessions = await _apiCaller.GetGameSessions();
-
-                GameSessionInformation.Clear();
-                foreach (var gameSession in sessions.GameSessionsList)
-                {
-                    GameSessionInformation.Add(gameSession);
-                }
-
+                IsGameCreationVisible = false;
                 IsSessionListVisible = true;
-            });
+
+                CallErrorHandler.Handle(async () =>
+                {
+                    var sessions = await _apiCaller.GetGameSessions();
+
+                    GameSessionInformation.Clear();
+                    foreach (var gameSession in sessions.GameSessionsList)
+                    {
+                        GameSessionInformation.Add(gameSession);
+                    }
+
+                    IsSessionListVisible = true;
+                });
+            }
         }
 
-        private void ExecuteShowCreateGame(object obj)
+        private async void ExecuteShowCreateGame(object obj)
         {
-            IsGameCreationVisible = true;
-            IsSessionListVisible = false;
+            bool init = await _apiCaller.EnsureInit();
+            if (init)
+            {
+                
+                BoardsChoices = new List<Board>(await _apiCaller.GetBoards());
+                SelectedBoard = BoardsChoices.First();
+                IsGameCreationVisible = true;
+                IsSessionListVisible = false;
+            }
+        }
+
+        public List<Board> BoardsChoices
+        {
+            get => _boardsChoices;
+            set { _boardsChoices = value; OnPropertyChanged(); }
+        }
+
+        public Board SelectedBoard
+        {
+            get => _selectedBoard;
+            set { _selectedBoard = value; OnPropertyChanged(); }
         }
 
         public void RegisterSubscriptions(HubConnection hubConnection)
         {
-            
+
         }
 
         public void Show()

@@ -95,17 +95,20 @@ namespace TM.Digital.Services
         public string OwnerName { get; set; }
         public Dictionary<Guid, Player> Players { get; set; }
 
-        internal async Task Initialize()
+        internal async Task Initialize(CardReferencesHolder pack, Board getBoard)
         {
+
             await Logger.Log("na", "Initializing...");
+            Board = getBoard;
             _actionPlanner = new ActionPlanner();
             _actionPlanner.ActionFinished += _actionPlanner_ActionFinished;
+
             _cardDrawer = new CardDrawer();
-            await _cardDrawer.LoadResources();
+             _cardDrawer.LoadResources(pack);
 
             _playerRandomization = new Random((int)(DateTime.Now.Millisecond / 3.5));
 
-            Board = BoardGenerator.Instance.Original();
+            
             PlayerTack = new PlayersTracking();
         }
 
@@ -297,36 +300,45 @@ namespace TM.Digital.Services
         {
             if (Players.TryGetValue(selection.PlayerId, out var player))
             {
-                Corporation selectedCorpo = null;
-                if (selection.Corporation != null && selection.Corporation.Any())
+                try
                 {
-                    var selected = selection.Corporation.FirstOrDefault(t => t.Value);
-                    selectedCorpo = _cardDrawer.PickCorporation(Guid.Parse(selected.Key));
-                    await Logger.Log(player.Name, $"Receiving player setup. chosen corporation = '{selectedCorpo.Name}'");
-                    player.Corporation = selectedCorpo;
-                    //foreach (var corporationEffect in selectedCorpo.ResourcesEffects)
-                    //{
-                    //    await EffectHandler.HandleResourceEffect(player, corporationEffect);
-                    //}
+                    Corporation selectedCorpo = null;
+                    if (selection.Corporation != null && selection.Corporation.Any())
+                    {
+                        var selected = selection.Corporation.FirstOrDefault(t => t.Value);
+                        selectedCorpo = _cardDrawer.PickCorporation(Guid.Parse(selected.Key));
+                        await Logger.Log(player.Name, $"Receiving player setup. chosen corporation = '{selectedCorpo.Name}'");
+                        player.Corporation = selectedCorpo;
+                        //foreach (var corporationEffect in selectedCorpo.ResourcesEffects)
+                        //{
+                        //    await EffectHandler.HandleResourceEffect(player, corporationEffect);
+                        //}
+                    }
+
+                    await Logger.Log(player.Name, $"Patent bought : {selection.BoughtCards.Count}");
+
+                    await EffectHandler.HandleInitialPatentBuy(player, _cardDrawer.DispatchPatents(selection.BoughtCards), selectedCorpo, Board, Players.Select(p => p.Value).ToList(), _cardDrawer);
+
+                    await EffectHandler.CheckCardsReductions(player);
+                    await PrerequisiteHandler.CanPlayCards(Board, player);
+                    await PrerequisiteHandler.CanConvertResources(Board, player);
+                    await PrerequisiteHandler.CanPlayBoardAction(Board, player);
+
+                    player.IsReady = true;
+                    await Logger.Log(player.Name, $"Ready");
+                    if (Players.All(p => p.Value.IsReady))
+                    {
+                        await Logger.Log("na", $"All players ready... launching game");
+                        await Launch(hubContext);
+                    }
+                    return player;
                 }
-
-                await Logger.Log(player.Name, $"Patent bought : {selection.BoughtCards.Count}");
-
-                await EffectHandler.HandleInitialPatentBuy(player, _cardDrawer.DispatchPatents(selection.BoughtCards), selectedCorpo, Board, Players.Select(p => p.Value).ToList(), _cardDrawer);
-
-                await EffectHandler.CheckCardsReductions(player);
-                await PrerequisiteHandler.CanPlayCards(Board, player);
-                await PrerequisiteHandler.CanConvertResources(Board, player);
-                await PrerequisiteHandler.CanPlayBoardAction(Board, player);
-
-                player.IsReady = true;
-                await Logger.Log(player.Name, $"Ready");
-                if (Players.All(p => p.Value.IsReady))
+                catch (Exception ex)
                 {
-                    await Logger.Log("na", $"All players ready... launching game");
-                    await Launch(hubContext);
+
+                    await Logger.Log("erro", ex.ToString());
+                    return null;
                 }
-                return player;
             }
             return null;
         }
@@ -481,6 +493,10 @@ namespace TM.Digital.Services
 
         private async Task UpdateGame(IHubContext<ClientNotificationHub> hubContext)
         {
+            foreach (var boardPlace in Board.BoardLines.SelectMany(b=>b.BoardPlaces))
+            {
+                boardPlace.CanBeChoosed = false;
+            }
             var game = new Game
             {
                 Board = Board,

@@ -25,10 +25,16 @@ namespace TM.Digital.Api.Controllers
             _hubContext = hubContext;
         }
 
-        [Route("create/{playerName}/{numberofplayer:int}")]
-        public async Task<GameSessionInformation> CreateGame(string playerName, int numberofplayer)
+        [Route("ensureinit")]
+        public async Task<bool> EnsureInit()
         {
-            return await GamesService.Instance.CreateGame(playerName, numberofplayer);
+            return await GamesService.Instance.EnsureInit();
+        }
+
+        [Route("create/{playerName}/{numberofplayer:int}/{selectedBoardName}")]
+        public async Task<GameSessionInformation> CreateGame(string playerName, int numberofplayer, string selectedBoardName)
+        {
+            return await GamesService.Instance.CreateGame(playerName, numberofplayer, selectedBoardName);
         }
 
         [Route("sessions")]
@@ -53,7 +59,8 @@ namespace TM.Digital.Api.Controllers
         [Route("addplayer/setupplayer")]
         public async Task<Player> SetupPlayer(GameSetupSelection selection)
         {
-            return await GamesService.Instance.SetupPlayer(selection, _hubContext);
+            var p= await GamesService.Instance.SetupPlayer(selection, _hubContext);
+            return p;
         }
 
         [Route("{gameId}/play/{playerId}")]

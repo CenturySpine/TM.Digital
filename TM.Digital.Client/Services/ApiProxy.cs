@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TM.Digital.Client.Screens.ActionChoice;
 using TM.Digital.Client.Screens.HandSetup;
@@ -13,14 +14,15 @@ namespace TM.Digital.Client.Services
 {
     public class ApiProxy : IApiProxy
     {
-        public async Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers)
+        public async Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers,
+            string selectedBoardName)
         {
-            return await TmDigitalClientRequestHandler.Instance.Request<GameSessionInformation>($"game/create/{playerName}/{numberOfPlayers}");
+            return await TmDigitalClientRequestHandler.Instance.Request<GameSessionInformation>($"game/create/{playerName}/{numberOfPlayers}/{selectedBoardName}");
         }
 
-        public async Task<Board> GetBoard()
+        public async Task<Board> GetBoard(string boardName)
         {
-            return await TmDigitalClientRequestHandler.Instance.Request<Board>("marsboard/original");
+            return await TmDigitalClientRequestHandler.Instance.Request<Board>($"marsboard/{boardName}");
         }
 
         public async Task<GameSessions> GetGameSessions()
@@ -68,10 +70,20 @@ namespace TM.Digital.Client.Services
             await TmDigitalClientRequestHandler.Instance.Post($"game/{GameData.GameId}/selectactiontarget/{GameData.PlayerId}", choice);
         }
 
+        public async Task<List<Board>> GetBoards()
+        {
+            return await TmDigitalClientRequestHandler.Instance.Request<List<Board>>("marsboard/boardslist");
+
+        }
+
+        public async Task<bool> EnsureInit()
+        {
+            return await TmDigitalClientRequestHandler.Instance.Request<bool>("game/ensureinit");
+        }
+
         public async Task<Player> SendSetup(GameSetupSelection gSetup)
         {
-            return await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>(
-                "game/addplayer/setupplayer", gSetup);
+            return await TmDigitalClientRequestHandler.Instance.Post<GameSetupSelection, Player>("game/addplayer/setupplayer", gSetup);
         }
 
         public async Task Skip()

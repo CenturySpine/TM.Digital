@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TM.Digital.Client.Screens.HandSetup;
 using TM.Digital.Model.Board;
@@ -15,12 +16,12 @@ namespace TM.Digital.Client.Services
 
         Task<GameSessions> GetGameSessions();
 
-        Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers);
+        Task<GameSessionInformation> CreateNewGame(string playerName, int numberOfPlayers, string selectedBoardName);
 
         Task<bool> StartGame(Guid selectedSessionGameSessionId);
         Task<Player> SendSetup(GameSetupSelection gSetup);
         Task PlaceTile(BoardPlace bp);
-        Task<Board> GetBoard();
+        Task<Board> GetBoard(string boardName);
         Task Skip();
         Task Pass();
         Task PlayBoardAction(BoardAction boardAction);
@@ -30,5 +31,7 @@ namespace TM.Digital.Client.Services
         Task VerifyCardPlayability(PatentSelector patent);
         Task VerifyResourcesModifiedCostCardPlayability(PlayCardWithResources mod);
         Task SelectEffectTarget(ResourceEffectPlayerChooser choice);
+        Task<List<Board>> GetBoards();
+        Task<bool> EnsureInit();
     }
 }

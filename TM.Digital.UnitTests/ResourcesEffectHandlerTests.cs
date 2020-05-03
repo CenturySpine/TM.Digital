@@ -18,7 +18,7 @@ namespace TM.Digital.UnitTests
         public void Setup()
         {
             SetupPlayer();
-            _board = BoardGenerator.Instance.Original();
+            _board = BoardGenerator.Instance.BoardShell();
         }
         [TestMethod]
         public void BasicResourcesUnitEffect()

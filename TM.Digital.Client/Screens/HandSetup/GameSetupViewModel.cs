@@ -101,22 +101,25 @@ namespace TM.Digital.Client.Screens.HandSetup
         private async void GameSetupVm_SetupCompleted()
         {
             _waitVm.Open("Waiting for other players to finish their setup");
-
-            if (CorporationChoices.Any() || !IsInitialSetup)
+            CallErrorHandler.Handle(async () =>
             {
-                var gSetup = new GameSetupSelection
+                if (CorporationChoices.Any() || !IsInitialSetup)
                 {
-                    Corporation = CorporationChoices.ToDictionary(k => k.Corporation.Guid.ToString(), v => v.IsSelected),
-                    BoughtCards = PatentChoices.ToDictionary(k => k.Patent.Guid.ToString(), v => v.IsSelected),
-                    PlayerId = GameData.PlayerId,
-                    GameId = GameData.GameId,
-                };
+                    var gSetup = new GameSetupSelection
+                    {
+                        Corporation =
+                            CorporationChoices.ToDictionary(k => k.Corporation.Guid.ToString(), v => v.IsSelected),
+                        BoughtCards = PatentChoices.ToDictionary(k => k.Patent.Guid.ToString(), v => v.IsSelected),
+                        PlayerId = GameData.PlayerId,
+                        GameId = GameData.GameId,
+                    };
 
-                var gameResult2 =
-                   await _apiProxy.SendSetup(gSetup);
-                    
-                _playerSelector.Update(gameResult2);
-            }
+                    var gameResult2 =
+                        await _apiProxy.SendSetup(gSetup);
+
+                    _playerSelector.Update(gameResult2);
+                }
+            });
         }
 
         private void Setup(GameSetup gameSetup, bool isInitialSetup)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TM.Digital.Cards;
+using TM.Digital.Model;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
 using TM.Digital.Services.Common;
@@ -13,27 +14,27 @@ namespace TM.Digital.Services
     {
         private List<Corporation> _allCorporations = new List<Corporation>
         {
-            CorporationsFactory.Arklight(),CorporationsFactory.CheungShingMars(),CorporationsFactory.InterPlanetaryCinematics(), CorporationsFactory.Teractor(), CorporationsFactory.PhobLog(),
+            //CorporationsFactory.Arklight(),CorporationsFactory.CheungShingMars(),CorporationsFactory.InterPlanetaryCinematics(), CorporationsFactory.Teractor(), CorporationsFactory.PhobLog(),
         };
 
         private List<Patent> _allPatents = new List<Patent>
         {
-            PatentFactory.BubbleCity(),
-            PatentFactory.FusionEnergy(),
-            PatentFactory.GiantAsteroid(),
-            PatentFactory.IdleGazLiberation(),
-            PatentFactory.SolarWindEnergy(),
-            PatentFactory.ThreeDimensionalHomePrinting(),
-            PatentFactory.ToundraAgriculture(),
-            PatentFactory.AdvancedAlliages(),
-            PatentFactory.Comet(),
-            PatentFactory.ProtectedValley(),
-            PatentFactory.GiantIceAsteroid()
+            //PatentFactory.BubbleCity(),
+            //PatentFactory.FusionEnergy(),
+            //PatentFactory.GiantAsteroid(),
+            //PatentFactory.IdleGazLiberation(),
+            //PatentFactory.SolarWindEnergy(),
+            //PatentFactory.ThreeDimensionalHomePrinting(),
+            //PatentFactory.ToundraAgriculture(),
+            //PatentFactory.AdvancedAlliages(),
+            //PatentFactory.Comet(),
+            //PatentFactory.ProtectedValley(),
+            //PatentFactory.GiantIceAsteroid()
         };
-        public async Task LoadResources()
+        public  void LoadResources(CardReferencesHolder pack)
         {
             //C:\Users\bruno\Source\Repos\TM.Digital\PackageData
-            var pack = await PackSerializer.GetPacks(@"C:\Users\bruno\Source\Repos\TM.Digital\PackageData");
+            
             _allCorporations = new List<Corporation>(pack.Packs.SelectMany(p => p.Corporations));
             _allPatents = new List<Patent>(pack.Packs.SelectMany(p => p.Patents));
             _allCorporations.Shuffle();
@@ -44,10 +45,7 @@ namespace TM.Digital.Services
             AvailablePatents = new Queue<Patent>(_allPatents);
 
         }
-        public CardDrawer()
-        {
 
-        }
 
         private Queue<Corporation> AvailableCorporations { get; set; }
 

@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TM.Digital.Cards;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
@@ -30,14 +29,20 @@ namespace TM.Digital.UnitTests.Prerequisites
             p.Resources.First(r => r.ResourceType == ResourceType.Money)
                 .UnitCount = 10;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Steel)
+            p[ResourceType.Steel]
                 .UnitCount = 2;
+            p[ResourceType.Steel]
+                .MoneyValueModifier = 2;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
+            p[ResourceType.Titanium]
                 .UnitCount = 4;
+            p[ResourceType.Titanium]
+                .MoneyValueModifier = 3;
 
             Patent card = PatentFactory.NewPatent();
-            card.ModifiedCost = 12;
+            card.ModifiedCost = card.BaseCost = 12;
+
+            PrerequisiteHandler.VerifyResourcesUsage(card, new List<ActionPlayResourcesUsage>(), p);
 
             var canPlay = _target.CanPlayCard(card, new Board(), p);
 
@@ -52,14 +57,20 @@ namespace TM.Digital.UnitTests.Prerequisites
             p.Resources.First(r => r.ResourceType == ResourceType.Money)
                 .UnitCount = 15;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Steel)
+            p[ResourceType.Steel]
                 .UnitCount = 2;
+            p[ResourceType.Steel]
+                .MoneyValueModifier = 2;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
+            p[ResourceType.Titanium]
                 .UnitCount = 4;
+            p[ResourceType.Titanium]
+                .MoneyValueModifier = 3;
 
             Patent card = PatentFactory.NewPatent();
-            card.ModifiedCost = 12;
+            card.ModifiedCost = card.BaseCost = 12;
+
+            PrerequisiteHandler.VerifyResourcesUsage(card, new List<ActionPlayResourcesUsage>(), p);
 
             var canPlay = _target.CanPlayCard(card, new Board(), p);
 
@@ -74,16 +85,26 @@ namespace TM.Digital.UnitTests.Prerequisites
             p.Resources.First(r => r.ResourceType == ResourceType.Money)
                 .UnitCount = 15;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Steel)
+            p[ResourceType.Steel]
                 .UnitCount = 2;
+            p[ResourceType.Steel]
+                .MoneyValueModifier = 2;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
+            p[ResourceType.Titanium]
                 .UnitCount = 4;
-
+            p[ResourceType.Titanium]
+                .MoneyValueModifier = 3;
 
             Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Building);
-            card.ModifiedCost = 18;
+            card.BaseCost = 18;
+
+            PrerequisiteHandler.VerifyResourcesUsage(card, new List<ActionPlayResourcesUsage>
+            {new ActionPlayResourcesUsage
+                {
+                        ResourceType = ResourceType.Steel,UnitPlayed = 2,
+                    },
+            }, p);
 
             var canPlay = _target.CanPlayCard(card, new Board(), p);
 
@@ -98,17 +119,27 @@ namespace TM.Digital.UnitTests.Prerequisites
             p.Resources.First(r => r.ResourceType == ResourceType.Money)
                 .UnitCount = 15;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Steel)
+            p[ResourceType.Steel]
                 .UnitCount = 2;
+            p[ResourceType.Steel]
+                .MoneyValueModifier = 2;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
+            p[ResourceType.Titanium]
                 .UnitCount = 4;
-
+            p[ResourceType.Titanium]
+                .MoneyValueModifier = 3;
 
             Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Building);
-            card.ModifiedCost = 20;
+            card.BaseCost = card.ModifiedCost = 20;
 
+            PrerequisiteHandler.VerifyResourcesUsage(card, new List<ActionPlayResourcesUsage>
+            {new ActionPlayResourcesUsage
+                {
+                    ResourceType = ResourceType.Steel,UnitPlayed = 2,
+                },
+
+            }, p);
             var canPlay = _target.CanPlayCard(card, new Board(), p);
 
             Assert.IsFalse(canPlay);
@@ -122,12 +153,15 @@ namespace TM.Digital.UnitTests.Prerequisites
             p.Resources.First(r => r.ResourceType == ResourceType.Money)
                 .UnitCount = 10;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Steel)
+            p[ResourceType.Steel]
                 .UnitCount = 2;
+            p[ResourceType.Steel]
+                .MoneyValueModifier = 2;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
+            p[ResourceType.Titanium]
                 .UnitCount = 3;
-
+            p[ResourceType.Titanium]
+                .MoneyValueModifier = 3;
 
             Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Space);
@@ -138,7 +172,6 @@ namespace TM.Digital.UnitTests.Prerequisites
             Assert.IsFalse(canPlay);
         }
 
-
         [TestMethod]
         public void TestCostWithSpaceTagsAdnTitaniumEnough()
         {
@@ -147,16 +180,26 @@ namespace TM.Digital.UnitTests.Prerequisites
             p.Resources.First(r => r.ResourceType == ResourceType.Money)
                 .UnitCount = 10;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Steel)
+            p[ResourceType.Steel]
                 .UnitCount = 2;
+            p[ResourceType.Steel]
+                .MoneyValueModifier = 2;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
+            p[ResourceType.Titanium]
                 .UnitCount = 4;
-
+            p[ResourceType.Titanium]
+                .MoneyValueModifier = 3;
 
             Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Space);
-            card.ModifiedCost = 20;
+            card.ModifiedCost = card.BaseCost = 20;
+
+            PrerequisiteHandler.VerifyResourcesUsage(card, new List<ActionPlayResourcesUsage>
+            {new ActionPlayResourcesUsage
+                {
+                    ResourceType = ResourceType.Titanium,UnitPlayed = 4,
+                },
+                }, p);
 
             var canPlay = _target.CanPlayCard(card, new Board(), p);
 
@@ -167,36 +210,37 @@ namespace TM.Digital.UnitTests.Prerequisites
         public void TestCostWithSpaceTagsAdnTitaniumEnoughWithTitaniumModifierCard()
         {
             Player p = ModelFactory.NewPlayer("toto", false);
-            var playedPatent = PatentFactory.NewPatent();
-            playedPatent.MineralModifiers = new MineralModifiers
-            {
-                TitaniumModifier = new MineralModifier
-                {
-                    ResourceType = ResourceType.Titanium,
-                    Value = 1
-                }
-            };
-            p.PlayedCards.Add(playedPatent);
+
 
             p.Resources.First(r => r.ResourceType == ResourceType.Money)
                 .UnitCount = 10;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Steel)
+            p[ResourceType.Steel]
                 .UnitCount = 2;
+            p[ResourceType.Steel]
+                .MoneyValueModifier = 2;
 
-            p.Resources.First(r => r.ResourceType == ResourceType.Titanium)
+            p[ResourceType.Titanium]
                 .UnitCount = 3;
-
+            p[ResourceType.Titanium]
+                .MoneyValueModifier = 4;
 
             Patent card = PatentFactory.NewPatent();
             card.Tags.Add(Tags.Space);
-            card.ModifiedCost = 20;
+            card.ModifiedCost = card.ModifiedCost = 20;
+
+
+            PrerequisiteHandler.VerifyResourcesUsage(card, new List<ActionPlayResourcesUsage>
+            {new ActionPlayResourcesUsage
+                {
+                    ResourceType = ResourceType.Titanium,UnitPlayed = 4,
+                },
+            }, p);
+
 
             var canPlay = _target.CanPlayCard(card, new Board(), p);
 
             Assert.IsTrue(canPlay);
         }
-
-
     }
 }
