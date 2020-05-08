@@ -10,6 +10,7 @@
         xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid"
         xmlns:model="clr-namespace:TM.Digital.Model;assembly=TM.Digital.Model"
         xmlns:board="clr-namespace:TM.Digital.Editor.Board"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}"
         Title="MainWindow" Height="450" Width="800">
@@ -272,7 +273,16 @@
                     </Grid.RowDefinitions>
                     <dxprg:PropertyGridControl  x:Name="editorGrid" AllowExpanding="Force" SelectedObject="{Binding SelectedObject}"
                                                 SortMode="Definitions"
-                                            SelectionChanged="EditorGrid_OnSelectionChanged" Margin="5"/>
+                                            SelectionChanged="EditorGrid_OnSelectionChanged" Margin="5">
+
+                        <dxprg:PropertyGridControl.PropertyDefinitions>
+                            <dxprg:PropertyDefinition Path="Image" AllowExpanding="Never">
+                                <dxprg:PropertyDefinition.EditSettings>
+                                    <dxe:ImageEditSettings ShowMenuMode="Always" />
+                                </dxprg:PropertyDefinition.EditSettings>
+                            </dxprg:PropertyDefinition>
+                            </dxprg:PropertyGridControl.PropertyDefinitions>
+                    </dxprg:PropertyGridControl>
                     <!--<Button Grid.Row="1" Content="Refresh object" Command="{Binding Refresh}" Margin="5"></Button>-->
                 </Grid>
             </Grid>

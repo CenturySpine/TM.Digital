@@ -9,6 +9,15 @@
                     xmlns:templateSelectors="clr-namespace:TM.Digital.Ui.Resources.Resources.TemplateSelectors"
                     xmlns:effects="clr-namespace:TM.Digital.Model.Effects;assembly=TM.Digital.Model">
 
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Common.xaml"></ResourceDictionary>
+
+        <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Icons.xaml" />
+      
+
+    </ResourceDictionary.MergedDictionaries>
+
     <DataTemplate DataType="{x:Type effects:TilePassiveEffect}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -117,21 +126,31 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <ContentControl Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" Width="20" Height="20" Margin="2"/>
             <TextBlock Grid.Column="1" Text=" : " VerticalAlignment="Center" FontWeight="Bold"/>
-            <TextBlock Grid.Column="2" Text="{Binding Value, StringFormat='{}+{0}'}" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Grid.Column="2" Text="+" VerticalAlignment="Center" FontWeight="Bold" Margin="2"/>
+            <Grid Grid.Column="3" Width="20" Height="20">
+            <ContentControl  Content="{x:Static resources:ResourceType.Money}" ContentTemplateSelector="{StaticResource resBoardSelector}"
+                             />
+            <TextBlock  Text="{Binding Value}" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center"/>
+            </Grid>
         </Grid>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type cards:MineralModifiers}">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ContentControl Content="{Binding SteelModifier}" />
-            <ContentControl Grid.Row="1" Content="{Binding TitaniumModifier}" />
+            <ItemsControl ItemsSource="{Binding}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+
+                        <ContentControl Content="{Binding .}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <!--<ContentControl Content="{Binding SteelModifier}" />
+            <ContentControl Grid.Row="1" Content="{Binding TitaniumModifier}" />-->
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type cards:TagsEffects}">
@@ -266,7 +285,7 @@
             <TextBlock Grid.Column="1" Text=" : " VerticalAlignment="Center" Margin="2" FontWeight="Bold"></TextBlock>
 
             <!--effects -->
-            <ItemsControl Grid.Column="2" ItemsSource="{Binding ResourceEffects}">
+            <ItemsControl Grid.Column="2" ItemsSource="{Binding ResourceEffects}" ItemTemplateSelector="{StaticResource resDisplaySelector}">
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="{x:Type ContentPresenter}">
                         <Setter Property="Margin" Value="0"></Setter>
@@ -277,14 +296,10 @@
                         <StackPanel Orientation="Horizontal"></StackPanel>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
+                <!--<ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Amount}" VerticalAlignment="Center" Margin="2"></TextBlock>
-                            <ContentControl Content="{Binding ResourceType}" ContentTemplateSelector="{StaticResource resBoardSelector}" VerticalAlignment="Center" Margin="2" />
-                        </StackPanel>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                </ItemsControl.ItemTemplate>-->
             </ItemsControl>
         </Grid>
     </DataTemplate>
@@ -307,18 +322,24 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <Grid>
+                <Grid VerticalAlignment="Center">
                     <Grid.Style>
                         <Style TargetType="{x:Type Grid}">
-                            <Setter Property="Background" Value="LightGray"></Setter>
+                            <Setter Property="Background" Value="Transparent"></Setter>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ResourceKind}" Value="{x:Static resources:ResourceKind.Production}">
-                                    <Setter Property="Background" Value="SandyBrown"></Setter>
+                                    <Setter Property="Background" Value="SaddleBrown"></Setter>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <ContentControl Content="{Binding ResourceType}" Height="20" Width="20" Margin="3" ContentTemplateSelector="{StaticResource resBoardSelector}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Amount,Converter={StaticResource resNegDisplay}}" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource ST_Text_ResourceDisplay}" />
+
+                    <ContentControl Grid.Column="1" Content="{Binding ResourceType}" Height="20" Width="20" Margin="3" ContentTemplateSelector="{StaticResource resBoardSelector}">
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Style.Triggers>
@@ -329,6 +350,7 @@
                             </Style>
                         </ContentControl.Style>
                     </ContentControl>
+                    <TextBlock Grid.Column="1" Text="{Binding Amount, Converter={StaticResource resNegDisplay}}" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource ST_Text_MoneyDisplay}" FontWeight="Bold" />
                 </Grid>
 
                 <ContentControl Content="{Binding BoardLevelType}" Height="20" Width="20" ContentTemplateSelector="{StaticResource globalParamTemplateSelector}">
@@ -368,7 +390,7 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type cards:ActionFrom}">
         <Grid>
-            <Border BorderThickness="1" Padding="2">
+            <Border BorderThickness="1" Padding="0">
                 <Border.Style>
                     <Style TargetType="{x:Type Border}">
                         <Style.Triggers>
@@ -382,19 +404,23 @@
                     </Style>
                 </Border.Style>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding Amount}" Margin="2" VerticalAlignment="Center" FontWeight="Bold" ></TextBlock>
+                    <TextBlock Text="{Binding Amount,Converter={StaticResource resNegDisplay}}" Margin="2" VerticalAlignment="Center" FontWeight="Bold" Style="{StaticResource ST_Text_ResourceDisplay}">
+                    </TextBlock>
                     <Grid>
                         <Grid.Style>
                             <Style TargetType="{x:Type Grid}">
-                                <Setter Property="Background" Value="LightGray"></Setter>
+                                <Setter Property="Background" Value="Transparent"></Setter>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ResourceKind}" Value="{x:Static resources:ResourceKind.Production}">
-                                        <Setter Property="Background" Value="SandyBrown"></Setter>
+                                        <Setter Property="Background" Value="SaddleBrown"></Setter>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Grid.Style>
-                        <ContentControl Content="{Binding ResourceType}" Height="20" Width="20" Margin="3" ContentTemplateSelector="{StaticResource resBoardSelector}"></ContentControl>
+                        <ContentControl Content="{Binding ResourceType}" Height="25" Width="25" Margin="3" ContentTemplateSelector="{StaticResource resBoardSelector}" />
+                        <TextBlock Text="{Binding Amount,Converter={StaticResource resNegDisplay}}" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" Style="{StaticResource ST_Text_MoneyDisplay}">
+                            
+                        </TextBlock>
                     </Grid>
                 </StackPanel>
             </Border>

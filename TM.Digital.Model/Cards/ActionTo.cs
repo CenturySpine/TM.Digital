@@ -14,6 +14,8 @@ namespace TM.Digital.Model.Cards
 
         public int Amount { get; set; }
         public ResourceKind ResourceKind { get; set; }
+
+
         public TileEffect TileEffect { get; set; }
     }
 }

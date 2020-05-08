@@ -1,15 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
+using System.Resources;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Model.Cards
 {
+    public class MineralModifiers : List<MineralModifier>
+    {
+
+    }
     public class Card
     {
+        
+
         protected bool Equals(Card other)
         {
             return Guid.Equals(other.Guid);
@@ -27,6 +37,8 @@ namespace TM.Digital.Model.Cards
         {
             return Guid.GetHashCode();
         }
+        [Category("Description")]
+        public string ResourceName { get; set; }
 
         [Category("Description")]
         public Guid Guid { get; set; } = Guid.NewGuid();
@@ -75,7 +87,6 @@ namespace TM.Digital.Model.Cards
         [Category("Victory Points")]
         public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
 
-        [Browsable(false)]
         [Category("Resources Modifiers")]
         public MineralModifiers MineralModifiers { get; set; }
 
@@ -87,8 +98,8 @@ namespace TM.Digital.Model.Cards
         {
             return new List<Effect>(ResourcesEffects)
                 .Concat(TagEffects != null && TagEffects.Any() ? TagEffects.Cast<Effect>() : new List<Effect>())
-                .Concat(MineralModifiers?.SteelModifier != null ? new List<Effect> { MineralModifiers.SteelModifier } : new List<Effect>())
-                .Concat(MineralModifiers?.TitaniumModifier != null ? new List<Effect> { MineralModifiers.TitaniumModifier } : new List<Effect>())
+                .Concat(MineralModifiers != null ? new List<Effect>(MineralModifiers) : new List<Effect>())
+                //.Concat(MineralModifiers?.TitaniumModifier != null ? new List<Effect> { MineralModifiers.TitaniumModifier } : new List<Effect>())
                 .Concat(ConversionRates?.Heat != null ? new List<Effect> { ConversionRates.Heat } : new List<Effect>())
                 .Concat(ConversionRates?.PlantConversion != null ? new List<Effect> { ConversionRates.PlantConversion } : new List<Effect>())
 
@@ -105,5 +116,7 @@ namespace TM.Digital.Model.Cards
         [Browsable(false)]
 
         public bool ActionPlayed { get; set; }
+
+        public byte[] Image { get; set; }
     }
 }

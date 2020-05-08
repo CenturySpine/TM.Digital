@@ -6,6 +6,27 @@ using TM.Digital.Model.Cards;
 
 namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
 {
+    public class ResourceNegativeAmountDisplayConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null)
+            {
+                string rawValue = value.ToString();
+                if (rawValue.Contains("-"))
+                {
+                    return rawValue.Replace("-", "");
+                }
+            }
+
+            return string.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     public class TagEffectsGroupingConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

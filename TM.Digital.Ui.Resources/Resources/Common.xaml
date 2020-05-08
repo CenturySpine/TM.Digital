@@ -1,7 +1,40 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:TM.Digital.Client"
-                    xmlns:templateSelectors="clr-namespace:TM.Digital.Ui.Resources.Resources.TemplateSelectors">
+    
+                    xmlns:templateSelectors="clr-namespace:TM.Digital.Ui.Resources.Resources.TemplateSelectors"
+                    xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model">
+
     <BooleanToVisibilityConverter x:Key="boolToVisConverter" />
     <templateSelectors:TagEffectsGroupingConverter x:Key="tagseffectsGroupConverter"/>
+    <templateSelectors:ResourceNegativeAmountDisplayConverter x:Key="resNegDisplay"/>
+
+    <Style TargetType="{x:Type TextBlock}" x:Key="ST_Text_ResourceDisplay">
+        <Setter Property="Visibility" Value="Visible"></Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Amount}" Value="1">
+                <Setter Property="Visibility" Value="Collapsed"></Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Money}">
+                <Setter Property="Visibility" Value="Collapsed"></Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Amount}" Value="0">
+                <Setter Property="Visibility" Value="Collapsed"></Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type TextBlock}" x:Key="ST_Text_MoneyDisplay">
+        <Setter Property="Visibility" Value="Collapsed"></Setter>
+        <Style.Triggers>
+            <!--<DataTrigger Binding="{Binding Amount}" Value="1">
+                <Setter Property="Visibility" Value="Collapsed"></Setter>
+            </DataTrigger>-->
+            <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Money}">
+                <Setter Property="Visibility" Value="Visible"></Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Amount}" Value="0">
+                <Setter Property="Visibility" Value="Collapsed"></Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

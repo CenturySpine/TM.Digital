@@ -40,10 +40,10 @@ namespace TM.Digital.Services
                     case ActionTarget.AnyPlayer:
                         //var cards = allPlayers.SelectMany(p => p.AllPlayedCards).ToList();
                         places = allPlayers.Select(p => p.PlayerId).SelectMany(b => BoardTilesHandler.GetPlayerTiles(board, b, mod.EffectModifierLocationConstraint)).ToList();
-                        tags = allPlayers.SelectMany(c => c.AllPlayedCards.SelectMany(p=>p.Tags)).ToList();
+                        tags = allPlayers.SelectMany(c => c.AllPlayedCards.SelectMany(p => p.Tags)).ToList();
                         break;
                     case ActionTarget.AnyOpponent:
-                       //var cards = allPlayers.Except(new List<Player> { player }).SelectMany(p => p.AllPlayedCards).ToList();
+                        //var cards = allPlayers.Except(new List<Player> { player }).SelectMany(p => p.AllPlayedCards).ToList();
                         places = allPlayers.Except(new List<Player> { player }).Select(p => p.PlayerId).SelectMany(b => BoardTilesHandler.GetPlayerTiles(board, b, mod.EffectModifierLocationConstraint)).ToList();
                         tags = allPlayers.Except(new List<Player> { player }).SelectMany(c => c.AllPlayedCards.SelectMany(p => p.Tags)).ToList();
 
@@ -51,12 +51,12 @@ namespace TM.Digital.Services
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                if(mod.TagsModifier != Tags.None)
+                if (mod.TagsModifier != Tags.None)
                 {
                     var tagNumber = tags.Count(t => t == mod.TagsModifier);
                     return (int)Math.Floor((double)tagNumber / mod.ModifierRatio);
                 }
-                if(mod.TileModifier != TileType.None)
+                if (mod.TileModifier != TileType.None)
                 {
                     var tileNumber = places.Count(t => t.PlayedTile.Type == mod.TileModifier);
                     return (int)Math.Floor((double)tileNumber / mod.ModifierRatio);
@@ -68,7 +68,7 @@ namespace TM.Digital.Services
             Board board, CardDrawer cardDrawer)
         {
 
-            
+
             if (effect.ResourceType == ResourceType.Card)
             {
                 for (int i = 0; i < effect.Amount; i++)
@@ -133,17 +133,37 @@ namespace TM.Digital.Services
         public static async Task EvaluateResourceModifiers(Player player)
         {
             await Task.CompletedTask;
-            var allCards = player.PlayedCards.Concat(new List<Card> { player.Corporation }).ToList();
+            var allResourcesModifier = player.PlayedCards.Concat(new List<Card> { player.Corporation }).Where(r => r.MineralModifiers != null).SelectMany(r => r.MineralModifiers).ToList();
 
-            var titaniumModifier = GameConstants.TitaniumValue + allCards.Where(r => r.MineralModifiers?.TitaniumModifier?.Value > 0).Sum(t => t.MineralModifiers?.TitaniumModifier?.Value);
-            var steelModifier = GameConstants.SteelValue + allCards.Where(r => r.MineralModifiers?.SteelModifier?.Value > 0).Sum(t => t.MineralModifiers?.SteelModifier?.Value);
+            foreach (var modifier in allResourcesModifier.GroupBy(r => r.ResourceType))
+            {
+                var handler = player.Resources.First(r => r.ResourceType == modifier.Key);
+                if (handler != null)
+                {
+                    int initialValue = 0;
+                    switch (modifier.Key)
+                    {
+                        case ResourceType.None:
+                            break;
+                        case ResourceType.Steel:
+                            initialValue = GameConstants.SteelValue;
+                            break;
+                        case ResourceType.Titanium:
+                            initialValue = GameConstants.TitaniumValue;
+                            break;
+                    }
 
-            if (steelModifier != null)
-                player.Resources.First(r => r.ResourceType == ResourceType.Steel).MoneyValueModifier =
-                    steelModifier.Value;
-            if (titaniumModifier != null)
-                player.Resources.First(r => r.ResourceType == ResourceType.Titanium).MoneyValueModifier =
-                    titaniumModifier.Value;
+                    handler.MoneyValueModifier = initialValue + modifier.Sum(r => r.Value);
+                }
+
+            }
+
+            //force steel and titanium to their base value
+            if (player[ResourceType.Steel].MoneyValueModifier < GameConstants.SteelValue)
+                player[ResourceType.Steel].MoneyValueModifier = GameConstants.SteelValue;
+
+            if (player[ResourceType.Titanium].MoneyValueModifier < GameConstants.TitaniumValue)
+                player[ResourceType.Titanium].MoneyValueModifier = GameConstants.TitaniumValue;
         }
         public static async Task CheckCardsReductions(Model.Player.Player player)
         {
