@@ -7,17 +7,71 @@
                     xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model"
                     xmlns:board="clr-namespace:TM.Digital.Model.Board;assembly=TM.Digital.Model"
                     xmlns:templateSelectors="clr-namespace:TM.Digital.Ui.Resources.Resources.TemplateSelectors"
-                    xmlns:effects="clr-namespace:TM.Digital.Model.Effects;assembly=TM.Digital.Model">
+                    xmlns:effects="clr-namespace:TM.Digital.Model.Effects;assembly=TM.Digital.Model"
+                    xmlns:converters="clr-namespace:TM.Digital.Ui.Resources.Resources.Converters"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:prerequisite="clr-namespace:TM.Digital.Model.Prerequisite;assembly=TM.Digital.Model"
+                    mc:Ignorable="d"
+                    >
 
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Common.xaml"></ResourceDictionary>
 
         <ResourceDictionary Source="pack://application:,,,/TM.Digital.Ui.Resources;component/Resources/Icons.xaml" />
-      
+
 
     </ResourceDictionary.MergedDictionaries>
 
+
+    <DataTemplate DataType="{x:Type effects:ResourceEffectAlternatives}">
+        <ItemsControl   ItemsSource="{Binding ., Converter={StaticResource altResConv}}" HorizontalAlignment="Center">
+            <ItemsControl.Style>
+                <Style TargetType="{x:Type ItemsControl}">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Count}" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.Style>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"></WrapPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border d:DataContext="{d:DesignInstance {x:Type converters:AltResourceWrapper}}">
+                        <!--<Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="BorderBrush" Value="Green"></Setter>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"></Setter>
+                            </Style>
+                        </Border.Style>-->
+                        <StackPanel Orientation="Horizontal">
+
+                            <ContentControl Content="{Binding Target}" />
+                            <TextBlock Text=" / " VerticalAlignment="Center" FontWeight="Bold" >
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsLast}" Value="true">
+                                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type effects:TilePassiveEffect}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -66,6 +120,11 @@
                         <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
                     </Style>
                 </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid  >
@@ -132,9 +191,9 @@
             <TextBlock Grid.Column="1" Text=" : " VerticalAlignment="Center" FontWeight="Bold"/>
             <TextBlock Grid.Column="2" Text="+" VerticalAlignment="Center" FontWeight="Bold" Margin="2"/>
             <Grid Grid.Column="3" Width="20" Height="20">
-            <ContentControl  Content="{x:Static resources:ResourceType.Money}" ContentTemplateSelector="{StaticResource resBoardSelector}"
+                <ContentControl  Content="{x:Static resources:ResourceType.Money}" ContentTemplateSelector="{StaticResource resBoardSelector}"
                              />
-            <TextBlock  Text="{Binding Value}" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock  Text="{Binding Value}" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
     </DataTemplate>
@@ -222,12 +281,50 @@
             </Ellipse>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="1/" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"  FontSize="10" />
-                <TextBlock Text="{Binding VictoryPointRatio}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10" />
+                <TextBlock Text="{Binding Points, StringFormat='{}{0} / '}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"  FontSize="10" />
+                <TextBlock Text="{Binding VictoryPointRatio}" 
+                           VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10"
+                           >
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}" >
+                            <Setter Property="Visibility" Value="Visible"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding VictoryPointRatio}" Value="1">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+
+                </TextBlock>
                 <ContentControl Margin="1"
-                                Height="15" Width="15"
+                                Height="20" Width="20"
                                 Content="{Binding ResourceType}"
-                                VerticalContentAlignment="Center" ContentTemplateSelector="{StaticResource resBoardSelector}"></ContentControl>
+                                VerticalContentAlignment="Center" ContentTemplateSelector="{StaticResource resBoardSelector}">
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.None}">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+                <ContentControl Margin="1"
+                                Height="20" Width="20"
+                                Content="{Binding Tag}"
+                                VerticalContentAlignment="Center" ContentTemplateSelector="{StaticResource tagTemplateSelector}">
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tag}" Value="{x:Static cards:Tags.None}">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -305,8 +402,8 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type cards:ActionTo}">
-        <Grid Margin="2,0">
-            <StackPanel Orientation="Horizontal">
+        <Grid Margin="0" >
+            <!--<StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding Amount}" Margin="2" VerticalAlignment="Center" FontWeight="Bold">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
@@ -321,8 +418,8 @@
                             </Style.Triggers>
                         </Style>
                     </TextBlock.Style>
-                </TextBlock>
-                <Grid VerticalAlignment="Center">
+                </TextBlock>-->
+            <!--<Grid VerticalAlignment="Center">
                     <Grid.Style>
                         <Style TargetType="{x:Type Grid}">
                             <Setter Property="Background" Value="Transparent"></Setter>
@@ -332,51 +429,51 @@
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </Grid.Style>
-                    <Grid.ColumnDefinitions>
+                    </Grid.Style>-->
+            <!--<Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{Binding Amount,Converter={StaticResource resNegDisplay}}" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource ST_Text_ResourceDisplay}" />
+                    </Grid.ColumnDefinitions>-->
+            <!--<TextBlock Grid.Column="0" Text="{Binding Amount,Converter={StaticResource resNegDisplay}}" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource ST_Text_ResourceDisplay}" />-->
 
-                    <ContentControl Grid.Column="1" Content="{Binding ResourceType}" Height="20" Width="20" Margin="3" ContentTemplateSelector="{StaticResource resBoardSelector}">
-                        <ContentControl.Style>
-                            <Style TargetType="{x:Type ContentControl}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.None}">
-                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ContentControl.Style>
-                    </ContentControl>
-                    <TextBlock Grid.Column="1" Text="{Binding Amount, Converter={StaticResource resNegDisplay}}" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource ST_Text_MoneyDisplay}" FontWeight="Bold" />
-                </Grid>
+            <ContentControl Grid.Column="1" Content="{Binding ResourceEffect}"    >
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ResourceEffect}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+            <!--<TextBlock Grid.Column="1" Text="{Binding Amount, Converter={StaticResource resNegDisplay}}" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource ST_Text_MoneyDisplay}" FontWeight="Bold" />-->
+            <!--</Grid>-->
 
-                <ContentControl Content="{Binding BoardLevelType}" Height="20" Width="20" ContentTemplateSelector="{StaticResource globalParamTemplateSelector}">
-                    <ContentControl.Style>
-                        <Style TargetType="{x:Type ContentControl}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding BoardLevelType}" Value="{x:Static board:BoardLevelType.None}">
-                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
+            <ContentControl Content="{Binding BoardLevelEffect}"  >
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding BoardLevelEffect}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
 
-                <ContentControl Content="{Binding TileEffect}">
-                    <ContentControl.Style>
-                        <Style TargetType="{x:Type ContentControl}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding TileEffect}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
-            </StackPanel>
+            <ContentControl Content="{Binding TileEffect}">
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding TileEffect}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+            <!--</StackPanel>-->
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type tile:TileEffect}">
@@ -390,8 +487,8 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type cards:ActionFrom}">
         <Grid>
-            <Border BorderThickness="1" Padding="0">
-                <Border.Style>
+            <Border BorderThickness="1" Padding="0" >
+                <!--<Border.Style>
                     <Style TargetType="{x:Type Border}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ActionTarget}" Value="{x:Static cards:ActionTarget.AnyOtherCard}">
@@ -402,27 +499,35 @@
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Border.Style>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding Amount,Converter={StaticResource resNegDisplay}}" Margin="2" VerticalAlignment="Center" FontWeight="Bold" Style="{StaticResource ST_Text_ResourceDisplay}">
-                    </TextBlock>
-                    <Grid>
-                        <Grid.Style>
-                            <Style TargetType="{x:Type Grid}">
-                                <Setter Property="Background" Value="Transparent"></Setter>
+                </Border.Style>-->
+                <StackPanel Orientation="Horizontal" >
+                    
+                    <ContentControl Content="{Binding ResourceEffect}" />
+                    
+                    <ContentControl Content="{Binding ResourceEffectsAlternatives}" />
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Setter Property="Visibility" Value="Visible" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ResourceKind}" Value="{x:Static resources:ResourceKind.Production}">
-                                        <Setter Property="Background" Value="SaddleBrown"></Setter>
+                                    <DataTrigger Binding="{Binding ResourceTypeAlternativePayment}" Value="{x:Static resources:ResourceType.None}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Grid.Style>
-                        <ContentControl Content="{Binding ResourceType}" Height="25" Width="25" Margin="3" ContentTemplateSelector="{StaticResource resBoardSelector}" />
-                        <TextBlock Text="{Binding Amount,Converter={StaticResource resNegDisplay}}" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" Style="{StaticResource ST_Text_MoneyDisplay}">
-                            
-                        </TextBlock>
-                    </Grid>
+                        </StackPanel.Style>
+                        <TextBlock Text="( " VerticalAlignment="Center" />
+
+                        <ContentControl 
+                            Height="10" Width="10"
+                            Content="{Binding ResourceTypeAlternativePayment}" ContentTemplateSelector="{StaticResource resBoardSelector}">
+
+                        </ContentControl>
+                        <TextBlock Text=" )" VerticalAlignment="Center" />
+                    </StackPanel>
                 </StackPanel>
+
             </Border>
         </Grid>
     </DataTemplate>
@@ -473,16 +578,6 @@
 
                                     <TextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold" 
                                                FontSize="10">
-                                        <!--<TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Text" Value="{Binding Value}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsMax}" Value="true">
-                                                        <Setter Property="Text" Value="{Binding Value, StringFormat='max {0}'}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>-->
                                     </TextBlock>
 
                                 </Grid>
@@ -591,6 +686,120 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <ItemsControl ItemsSource="{Binding TilePrerequisites}" HorizontalAlignment="Left">
+                <ItemsControl.Style>
+                    <Style TargetType="{x:Type ItemsControl}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding TilePrerequisites.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Border BorderBrush="Black" BorderThickness="1" Width="60"  VerticalAlignment="Center">
+                                <Grid>
+
+
+                                    <TextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold" 
+                                               FontSize="10">
+                                    </TextBlock>
+
+                                </Grid>
+                            </Border>
+                            <Grid Margin="5,0,5,0">
+                                <Viewbox Height="25" Width="25">
+                                    <Grid>
+                                    <ContentControl Content="{Binding TileType}" ContentTemplateSelector="{StaticResource tileEffectTemplateSelector}"     
+                                                    VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    <Path  Stroke="Red" StrokeThickness="3">
+                                        <Path.Style>
+                                                <Style TargetType="{x:Type Path}" BasedOn="{StaticResource tileShape}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding PrerequisiteKind}" Value="{x:Static prerequisite:PrerequisiteKind.Board}">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                        </Path.Style>
+                                    </Path>
+                                    </Grid>
+                                </Viewbox>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ItemsControl ItemsSource="{Binding ResourcesPrerequisites}"                                             HorizontalAlignment="Left"
+            >
+                <ItemsControl.Style>
+                    <Style TargetType="{x:Type ItemsControl}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ResourcesPrerequisites.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                        <Border BorderBrush="Black" BorderThickness="1" Width="60" Height="15" VerticalAlignment="Center">
+
+                        
+                      
+                            
+
+
+                                <TextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold" 
+                                           FontSize="10" >
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}" >
+                                            <Setter Property="Visibility" Value="Visible"></Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Value}" Value="1">
+                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding ResourceType}" Value="{x:Static resources:ResourceType.Money}">
+                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                            
+                            
+                        </Border>
+                        <Grid                                             HorizontalAlignment="Center"
+                        >
+                            <Grid.Style>
+                                <Style TargetType="{x:Type Grid}">
+                                    <Setter Property="Background" Value="Transparent"></Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ResourceKind}" Value="{x:Static resources:ResourceKind.Production}">
+                                            <Setter Property="Background" Value="SaddleBrown"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <ContentControl Content="{Binding ResourceType}" Height="15" Width="15"
+                                            Margin="3"
+                                            ContentTemplateSelector="{StaticResource resBoardSelector}" HorizontalContentAlignment="Center"
+                                            HorizontalAlignment="Center"
+                            ></ContentControl>
+                        </Grid>
+                        </Grid>
+                    </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
     </DataTemplate>
 
@@ -601,14 +810,15 @@
             <Grid.ColumnDefinitions>
 
                 <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <ContentControl Content="{Binding ActionFrom}" HorizontalAlignment="Right" Grid.Column="0" />
+            <ContentControl Content="{Binding ActionFrom}" HorizontalAlignment="Center" Grid.Column="0" />
+
             <ContentControl ContentTemplate="{StaticResource dt_action}" HorizontalAlignment="Center" Grid.Column="1" />
 
-            <ItemsControl ItemsSource="{Binding ActionTo}" Grid.Column="2">
+            <ItemsControl ItemsSource="{Binding ActionTo}" Grid.Column="2" HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"></StackPanel>
@@ -616,7 +826,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ContentControl Content="{Binding}" HorizontalAlignment="Left" />
+                        <ContentControl Content="{Binding}" HorizontalAlignment="Stretch" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

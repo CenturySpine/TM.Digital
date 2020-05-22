@@ -1,25 +1,42 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 using TM.Digital.Model.Cards;
+using TM.Digital.Model.Effects;
+using TM.Digital.Ui.Resources.Resources.TemplateSelectors;
 
-namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
+namespace TM.Digital.Ui.Resources.Resources.Converters
 {
-    public class ResourceNegativeAmountDisplayConverter : IValueConverter
+    public class AltResourceWrapper
+    {
+        public object Target { get; set; }
+        public bool IsLast { get; set; }
+    }
+    public class AltResourcesConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value != null)
+            if (value is ResourceEffectAlternatives collection)
             {
-                string rawValue = value.ToString();
-                if (rawValue.Contains("-"))
+                List<AltResourceWrapper> alt = new List<AltResourceWrapper>();
+                for (int i = 0; i < collection.Count; i++)
                 {
-                    return rawValue.Replace("-", "");
+                    var initial = collection[i];
+                    AltResourceWrapper wrapper=new AltResourceWrapper();
+                    wrapper.Target = initial;
+                    if (i == collection.Count - 1)
+                    {
+                        wrapper.IsLast = true;
+                    }
+                    alt.Add(wrapper);
                 }
+
+                return alt;
             }
 
-            return string.Empty;
+            return new List<AltResourceWrapper>();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -19,7 +19,7 @@ namespace TM.Digital.Services
     public static class ActionPlayHandler
     {
         public static async Task<List<Action<Player, Board>>> Convert(Player playerObj, ResourceHandler resources,
-            Board board,CardDrawer cardDrawer)
+            Board board, CardDrawer cardDrawer)
         {
             await Task.CompletedTask;
             List<Action<Player, Board>> currentActions = new List<Action<Player, Board>>();
@@ -46,7 +46,7 @@ namespace TM.Digital.Services
                     playerObj[ResourceType.Heat].UnitCount -= conv;
 
                     //increase global parameter
-                   await BoardEffectHandler.IncreaseParameterLevel(board,BoardLevelType.Temperature,playerObj,1, cardDrawer);
+                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Temperature, playerObj, 1, cardDrawer);
 
                     break;
 
@@ -93,16 +93,22 @@ namespace TM.Digital.Services
             player.PlayedCards.Add(card);
 
             //resources effects for self
-            foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == ActionTarget.Self))
+            foreach (var cardResourceEffect in card.ResourcesEffects/*.Where(re => re.EffectDestination == ActionTarget.Self)*/)
             {
-                await EffectHandler.HandleResourceEffect(player, cardResourceEffect, allPlayers, board, cardDrawer);
+                Action<Player, Board> action =
+                await EffectHandler.HandleResourceEffect(player, cardResourceEffect, allPlayers, board, cardDrawer, card);
+                if (action != null)
+                {
+                    currentActions.Add(action);
+                }
             }
 
-            //resources effect for others
-            foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == ActionTarget.AnyPlayer))
-            {
-                currentActions.Add(ResourceEffectActionChoice(cardResourceEffect, allPlayers));
-            }
+            ////resources effect for others
+            //foreach (var cardResourceEffect in card.ResourcesEffects.Where(re => re.EffectDestination == ActionTarget.AnyPlayer))
+            //{
+
+            //    currentActions.Add(ResourceEffectActionChoice(cardResourceEffect, allPlayers));
+            //}
 
             foreach (var boardLevelEffect in card.BoardEffects)
             {
@@ -121,35 +127,7 @@ namespace TM.Digital.Services
             return currentActions;
         }
 
-        private static Action<Player, Board> ResourceEffectActionChoice(ResourceEffect cardResourceEffect, List<Player> allPlayers)
-        {
-            return new Action<Player, Board>(async (p, b) =>
-            {
-                ResourceEffectPlayerChooserList chooser = new ResourceEffectPlayerChooserList
-                {
-                    ChoicesList = allPlayers.Select(target =>
-                    {
-                        var targetPlayerREsource = target.Resources
-                            .First(r => r.ResourceType == cardResourceEffect.ResourceType);
-                        return new ResourceEffectPlayerChooser
-                        {
-                            TargetPlayerId = target.PlayerId,
-                            TargetPlayerName = target.Name,
-                            ResourceHandler = cardResourceEffect,
-                        };
-                    }).ToList()
-                };
-                chooser.ChoicesList.Add(new ResourceEffectPlayerChooser
-                {
-                    TargetPlayerId = GameSession._neutralPlayerId,
-                    TargetPlayerName = "Neutral Player / Nobody",
-                    ResourceHandler = cardResourceEffect,
-                });
 
-                await Hubconcentrator.Hub.Clients.All.SendAsync(ServerPushMethods.ResourceEffectForOtherPlayer,
-                    $"{p.PlayerId}", JsonSerializer.Serialize(chooser));
-            });
-        }
 
         private static Action<Player, Board> TileEffectAction(Player player, TileEffect choicesTileEffect, Board board)
         {
@@ -231,75 +209,86 @@ namespace TM.Digital.Services
             {
                 if (action.ActionFrom.ActionTarget == ActionTarget.Self)
                 {
-                    //spend resources
-                    var resourceCost = player[action.ActionFrom.ResourceType];
-                    switch (action.ActionFrom.ResourceKind)
+                    if (!action.ActionFrom.ResourceEffectsAlternatives.Any())
                     {
-                        case ResourceKind.Unit:
-                            resourceCost.UnitCount += action.ActionFrom.Amount;
-                            break;
-                        case ResourceKind.Production:
-                            resourceCost.Production += action.ActionFrom.Amount;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        return new List<Action<Player, Board>>();//TODO manage
                     }
+                    //spend resources
+                    await EffectHandler.HandleResourceEffect(player, action.ActionFrom.ResourceEffect, new List<Player>(), board,
+                        cardDrawer, null);
+
+                    //var resourceCost = player[action.ActionFrom.ResourceEffect.ResourceType];
+                    //switch (action.ActionFrom.ResourceEffect.ResourceKind)
+                    //{
+                    //    case ResourceKind.Unit:
+                    //        resourceCost.UnitCount += action.ActionFrom.ResourceEffect.Amount;
+                    //        break;
+                    //    case ResourceKind.Production:
+                    //        resourceCost.Production += action.ActionFrom.ResourceEffect.Amount;
+                    //        break;
+                    //    default:
+                    //        throw new ArgumentOutOfRangeException();
+                    //}
 
                     foreach (var actionTo in action.ActionTo)
                     {
-                        if (actionTo.ActionTarget == ActionTarget.Self)
+                        //if (actionTo.ActionTarget == ActionTarget.Self)
+                        //{
+                        //get action benefits
+
+                        if (actionTo.ResourceEffect != null)
+                            await EffectHandler.HandleResourceEffect(player, actionTo.ResourceEffect, new List<Player>(), board,
+                                cardDrawer, null);
+
+                        //for resources
+                        //if (actionTo.ResourceEffect != null && actionTo.ResourceEffect.ResourceType == ResourceType.Card && cardDrawer != null)
+                        //{
+                        //    for (int i = 0; i < actionTo.ResourceEffect.Amount; i++)
+                        //    {
+                        //        player.HandCards.Add(cardDrawer.DrawPatent());
+                        //    }
+
+                        //}
+                        //else if (actionTo.ResourceEffect != null)
+                        //{
+                        //    var resourceBenefit = player[actionTo.ResourceEffect.ResourceType];
+                        //    switch (actionTo.ResourceEffect.ResourceKind)
+                        //    {
+                        //        case ResourceKind.Unit:
+                        //            resourceBenefit.UnitCount += actionTo.ResourceEffect.Amount;
+                        //            break;
+                        //        case ResourceKind.Production:
+                        //            resourceBenefit.Production += actionTo.ResourceEffect.Amount;
+                        //            break;
+                        //        default:
+                        //            throw new ArgumentOutOfRangeException();
+                        //    }
+                        //}
+
+                        //for tile
+                        if (actionTo.TileEffect != null)
                         {
-                            //get action benefits
-
-                            //for resources
-                            if (actionTo.ResourceType == ResourceType.Card && cardDrawer != null)
-                            {
-                                for (int i = 0; i < actionTo.Amount; i++)
-                                {
-                                    player.HandCards.Add(cardDrawer.DrawPatent());
-                                }
-
-                            }
-                            else if (actionTo.ResourceType != ResourceType.None)
-                            {
-                                var resourceBenefit = player[actionTo.ResourceType];
-                                switch (actionTo.ResourceKind)
-                                {
-                                    case ResourceKind.Unit:
-                                        resourceBenefit.UnitCount += actionTo.Amount;
-                                        break;
-                                    case ResourceKind.Production:
-                                        resourceBenefit.Production += actionTo.Amount;
-                                        break;
-                                    default:
-                                        throw new ArgumentOutOfRangeException();
-                                }
-                            }
-
-                            //for tile
-                            if (actionTo.TileEffect != null)
-                            {
-                                currentActions.Add(TileEffectAction(player, actionTo.TileEffect, board));
-                            }
-
-                            //for global parameter
-                            if (actionTo.BoardLevelType != BoardLevelType.None)
-                            {
-                                await BoardEffectHandler.IncreaseParameterLevel(board, actionTo.BoardLevelType,player, actionTo.Amount, cardDrawer);
-
-                                //var parameter = board.Parameters.FirstOrDefault(p => p.Type == actionTo.BoardLevelType);
-                                //if (parameter != null)
-                                //{
-                                //    var value = actionTo.Amount * parameter.GlobalParameterLevel.Increment;
-
-
-                                //    parameter.GlobalParameterLevel.Level += value;
-                                //    player.TerraformationLevel += actionTo.Amount;
-
-
-                                //}
-                            }
+                            currentActions.Add(TileEffectAction(player, actionTo.TileEffect, board));
                         }
+
+                        //for global parameter
+                        if (actionTo.BoardLevelEffect != null)
+                        {
+                            await BoardEffectHandler.IncreaseParameterLevel(board, actionTo.BoardLevelEffect.BoardLevelType, player, actionTo.BoardLevelEffect.Level, cardDrawer);
+
+                            //var parameter = board.Parameters.FirstOrDefault(p => p.Type == actionTo.BoardLevelType);
+                            //if (parameter != null)
+                            //{
+                            //    var value = actionTo.Amount * parameter.GlobalParameterLevel.Increment;
+
+
+                            //    parameter.GlobalParameterLevel.Level += value;
+                            //    player.TerraformationLevel += actionTo.Amount;
+
+
+                            //}
+                        }
+                        //}
                     }
                 }
             }

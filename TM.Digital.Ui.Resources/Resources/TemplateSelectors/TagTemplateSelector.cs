@@ -7,6 +7,7 @@ namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
 {
     public class TagTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate None { get; set; }
         public DataTemplate Animal { get; set; }
         public DataTemplate Plant { get; set; }
 
@@ -30,7 +31,7 @@ namespace TM.Digital.Ui.Resources.Resources.TemplateSelectors
                 switch (t)
                 {
                     case Tags.None:
-                        return null;
+                        return None;
                     case Tags.Building:
                         return Building;
 

@@ -1,4 +1,6 @@
-﻿using TM.Digital.Model.Board;
+﻿using System.Collections.Generic;
+using TM.Digital.Model.Board;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 
@@ -6,15 +8,14 @@ namespace TM.Digital.Model.Cards
 {
     public class ActionTo
     {
-        public ActionTarget ActionTarget { get; set; }
+        //public ActionTarget ActionTarget { get; set; }
 
-        public ResourceType ResourceType { get; set; }
 
-        public BoardLevelType BoardLevelType { get; set; }
 
-        public int Amount { get; set; }
-        public ResourceKind ResourceKind { get; set; }
+        public BoardLevelEffect BoardLevelEffect { get; set; }
 
+        public List<ResourceEffect> ResourceEffectsAlternatives { get; set; }
+        public ResourceEffect ResourceEffect { get; set; }
 
         public TileEffect TileEffect { get; set; }
     }

@@ -104,11 +104,11 @@ namespace TM.Digital.Services
             _actionPlanner.ActionFinished += _actionPlanner_ActionFinished;
 
             _cardDrawer = new CardDrawer();
-             _cardDrawer.LoadResources(pack);
+            _cardDrawer.LoadResources(pack);
 
             _playerRandomization = new Random((int)(DateTime.Now.Millisecond / 3.5));
 
-            
+
             PlayerTack = new PlayersTracking();
         }
 
@@ -168,7 +168,7 @@ namespace TM.Digital.Services
                     {
                         await Logger.Log(player.Name, $"Selected action target : {targetPlayer.Name}");
 
-                        await EffectHandler.HandleResourceEffect(targetPlayer, place.ResourceHandler, Players.Select(p => p.Value).ToList(), Board, _cardDrawer);
+                        await EffectHandler.HandleResourceEffect(targetPlayer, place.ResourceHandler, Players.Select(p => p.Value).ToList(), Board, _cardDrawer, null);
                     }
                 }
 
@@ -493,7 +493,7 @@ namespace TM.Digital.Services
 
         private async Task UpdateGame(IHubContext<ClientNotificationHub> hubContext)
         {
-            foreach (var boardPlace in Board.BoardLines.SelectMany(b=>b.BoardPlaces))
+            foreach (var boardPlace in Board.BoardLines.SelectMany(b => b.BoardPlaces))
             {
                 boardPlace.CanBeChoosed = false;
             }

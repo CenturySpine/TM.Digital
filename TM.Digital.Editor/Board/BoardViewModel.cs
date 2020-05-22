@@ -6,13 +6,13 @@ using TM.Digital.Model;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Player;
 using TM.Digital.Services;
-using TM.Digital.Services.Common;
 using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Editor.Board
 {
-    public class BoardViewModel : PackManagerViewModelBase
+    public class BoardViewModel : NotifierBase
     {
+        public PackManager Pm { get; }
         private BoardGenerator _boardGen;
         private object _selectedObject;
 
@@ -21,11 +21,13 @@ namespace TM.Digital.Editor.Board
 
         //private string _boardName;
         private ObservableCollection<Model.Board.Board> _allBoards;
+
         private CardReferencesHolder packsData;
         private BoardPlace _copiedTile;
 
-        public BoardViewModel()
+        public BoardViewModel(PackManager pm)
         {
+            Pm = pm;
             _boardGen = BoardGenerator.Instance;
             SelectedObject = _boardGen.BoardShell();
 
@@ -55,9 +57,8 @@ namespace TM.Digital.Editor.Board
         {
             if (obj is BoardPlace bp && _copiedTile != null)
             {
-
                 bp.CopyFrom(_copiedTile);
-                
+
                 Refresh();
             }
         }
@@ -70,7 +71,6 @@ namespace TM.Digital.Editor.Board
             {
                 _copiedTile = bp.Clone();
             }
-
         }
 
         private void ExecuteSelectBoard(object obj)
@@ -79,7 +79,6 @@ namespace TM.Digital.Editor.Board
             {
                 SelectedObject = board;
             }
-
         }
 
         public bool IsEditor { get; set; }
@@ -113,7 +112,9 @@ namespace TM.Digital.Editor.Board
 
         private async void ExecuteLoad(object obj)
         {
-            packsData = await Load();
+            //await Pm.Load();
+
+            packsData = Pm.AllPack;
             if (packsData.Boards != null && packsData.Boards.Any())
             {
                 AllBoards.Clear();
@@ -133,13 +134,10 @@ namespace TM.Digital.Editor.Board
 
         private async void ExecuteSaveBoard(object obj)
         {
-
             if (SelectedObject is Model.Board.Board board)
             {
-
-
                 packsData.Boards = new List<Model.Board.Board>(AllBoards.Select(f => f));
-                Save(packsData);
+                Pm.Save();
             }
             else
             {
@@ -243,11 +241,7 @@ namespace TM.Digital.Editor.Board
 
         public void Refresh()
         {
-
-
-
-                OnPropertyChanged(nameof(SelectedObject));
-            
+            OnPropertyChanged(nameof(SelectedObject));
         }
     }
 }

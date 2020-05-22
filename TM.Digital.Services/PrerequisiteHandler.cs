@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Player;
+using TM.Digital.Model.Prerequisite;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
@@ -38,7 +39,9 @@ namespace TM.Digital.Services
             new ResourcesProductionReductionPrerequisite(),
             new ResourcesUnitReductionPrerequisite(),
             new TagsCountPrerequisite(),
-            new TilePlacementRequirements()
+            new TilePlacementRequirements(),
+            new ResourcePrerequisite(),
+            new TilePrerequisiteStrategy(),
         };
 
         internal static bool CanPlayCard(Patent patent, Model.Board.Board board, Model.Player.Player player)
@@ -153,22 +156,28 @@ namespace TM.Digital.Services
                 return !playerBoardAction.Played;
             }
 
-            var resource = player[playerBoardAction.ActionFrom.ResourceType];
+            if (playerBoardAction.ActionFrom.ResourceEffectsAlternatives != null &&
+                playerBoardAction.ActionFrom.ResourceEffectsAlternatives.Any())
+            {
+                return false;//TODO manage
+            }
+
+            var resource = player[playerBoardAction.ActionFrom.ResourceEffect.ResourceType];
 
             bool resourceVerify;
-            switch (playerBoardAction.ActionFrom.ResourceKind)
+            switch (playerBoardAction.ActionFrom.ResourceEffect.ResourceKind)
             {
                 case ResourceKind.Unit:
-                    resourceVerify = resource.UnitCount + playerBoardAction.ActionFrom.Amount >= 0;
+                    resourceVerify = resource.UnitCount + playerBoardAction.ActionFrom.ResourceEffect.Amount >= 0;
                     break;
                 case ResourceKind.Production:
                     if (resource.ResourceType == ResourceType.Money)
                     {
-                        resourceVerify = resource.Production + playerBoardAction.ActionFrom.Amount >= -5;
+                        resourceVerify = resource.Production + playerBoardAction.ActionFrom.ResourceEffect.Amount >= -5;
                     }
                     else
                     {
-                        resourceVerify = resource.Production + playerBoardAction.ActionFrom.Amount >= 0;
+                        resourceVerify = resource.Production + playerBoardAction.ActionFrom.ResourceEffect.Amount >= 0;
                     }
                     break;
 
@@ -186,6 +195,66 @@ namespace TM.Digital.Services
             {
                 playerAllPlayerAction.CanExecute = CanPlayAction(player, playerAllPlayerAction, board);
             }
+        }
+    }
+
+    public class TilePrerequisiteStrategy : IPrerequisiteStrategy
+    {
+        public bool CanPlayCard(Patent inputPatent, Board currentBoardState, Player patentOwner)
+        {
+            if (inputPatent.Prerequisites.TilePrerequisites != null &&
+                inputPatent.Prerequisites.TilePrerequisites.Any())
+            {
+                foreach (var tilePrereq in inputPatent.Prerequisites.TilePrerequisites)
+                {
+                    var targetTiles = BoardTilesHandler.GetPlayedTilesOfType(tilePrereq, currentBoardState);
+
+                    if (tilePrereq.PrerequisiteKind == PrerequisiteKind.Self)
+                    {
+                        var owned = targetTiles.Where(t => t.Owner.HasValue && t.Owner.Value == patentOwner.PlayerId).ToList();
+                        if (owned.Count < tilePrereq.Value)
+                            return false;
+                    }
+                    else
+                    {
+                        if (targetTiles.Count < tilePrereq.Value)
+                            return false;
+                    }
+
+
+                }
+
+                //return false;
+            }
+
+            return true;
+        }
+    }
+
+    internal class ResourcePrerequisite : IPrerequisiteStrategy
+    {
+        public bool CanPlayCard(Patent inputPatent, Board currentBoardState, Player patentOwner)
+        {
+            if (inputPatent.Prerequisites.ResourcesPrerequisites != null &&
+                inputPatent.Prerequisites.ResourcesPrerequisites.Any())
+            {
+                foreach (var resPrereq in inputPatent.Prerequisites.ResourcesPrerequisites)
+                {
+                    var handler = patentOwner[resPrereq.ResourceType];
+
+                    switch (resPrereq.ResourceKind)
+                    {
+                        case ResourceKind.Unit:
+                            return resPrereq.IsMax ? handler.UnitCount <= resPrereq.Value : handler.UnitCount >= resPrereq.Value;
+                        case ResourceKind.Production:
+                            return resPrereq.IsMax ? handler.Production <= resPrereq.Value : handler.Production >= resPrereq.Value;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

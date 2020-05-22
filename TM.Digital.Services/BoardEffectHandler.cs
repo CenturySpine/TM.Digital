@@ -40,7 +40,7 @@ namespace TM.Digital.Services
 
         }
 
-        public static async Task IncreaseParameterLevel(Board board, BoardLevelType parameter, Player playerObj, int incrementModifier,CardDrawer cardDrawer)
+        public static async Task IncreaseParameterLevel(Board board, BoardLevelType parameter, Player playerObj, int incrementModifier, CardDrawer cardDrawer)
         {
             var temp = board.Parameters.First(p => p.Type == parameter);
             if (HasReachedMaxParam(board, parameter))
@@ -62,12 +62,12 @@ namespace TM.Digital.Services
 
                         if (levelBoardParameterThresold?.BoardLevelEffect != null)
                         {
-                            await HandleBoardEffect(levelBoardParameterThresold.BoardLevelEffect, board, playerObj,cardDrawer);
+                            await HandleBoardEffect(levelBoardParameterThresold.BoardLevelEffect, board, playerObj, cardDrawer);
                         }
 
                         if (levelBoardParameterThresold?.ResourceEffect != null)
                         {
-                            await EffectHandler.HandleResourceEffect(playerObj, levelBoardParameterThresold.ResourceEffect, new List<Player>(), board, cardDrawer);//ok for now because thresold are oly for current player, but might be extended
+                            await EffectHandler.HandleResourceEffect(playerObj, levelBoardParameterThresold.ResourceEffect, new List<Player>(), board, cardDrawer, null);//ok for now because thresold are oly for current player, but might be extended
                         }
 
                         if (levelBoardParameterThresold?.TileEffect != null)

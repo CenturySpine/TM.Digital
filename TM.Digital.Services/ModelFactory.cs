@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Corporations;
+using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
@@ -45,19 +46,23 @@ namespace TM.Digital.Services
                         Actions =                     new Action
                         {
                             ActionFrom = new ActionFrom
-                            {
+                            {                                ResourceEffect = new ResourceEffect()
+                                {
                                 ResourceType = ResourceType.Money,
                                 ResourceKind = ResourceKind.Unit,
-                                Amount = -11,
+                                Amount = -11,},
                                 ActionTarget = ActionTarget.Self
                             },
                             ActionTo = new List<ActionTo>
                             {
                                 new ActionTo
                                 {
+                                    ResourceEffect = new ResourceEffect()
+                                        {
                                     ResourceKind = ResourceKind.Production,
                                     ResourceType = ResourceType.Energy,
-                                    Amount = 1,ActionTarget = ActionTarget.Self
+                                    Amount = 1,
+                                        },
                                 }
                             }
                         }
@@ -69,18 +74,22 @@ namespace TM.Digital.Services
                         Actions =                     new Action
                         {
                             ActionFrom = new ActionFrom
-                            {
+                            {                                ResourceEffect = new ResourceEffect()
+                                {
                                 ResourceType = ResourceType.Money,
                                 ResourceKind = ResourceKind.Unit,
-                                Amount = -14,
+                                Amount = -14,},
                                 ActionTarget = ActionTarget.Self
                             },
                             ActionTo = new List<ActionTo>
                             {
                                 new ActionTo
                                 {
+                                    BoardLevelEffect = new BoardLevelEffect()
+                                        {
                                     BoardLevelType = BoardLevelType.Temperature,
-                                    Amount = 1
+                                    Level = 1
+                                        }
                                 }
                             }
                         }
@@ -91,10 +100,11 @@ namespace TM.Digital.Services
                         Actions =                     new Action
                         {
                             ActionFrom = new ActionFrom
-                            {
+                            {                                ResourceEffect = new ResourceEffect()
+                                {
                                 ResourceType = ResourceType.Money,
                                 ResourceKind = ResourceKind.Unit,
-                                Amount = -18,
+                                Amount = -18,},
                                 ActionTarget = ActionTarget.Self
                             },
                             ActionTo = new List<ActionTo>
@@ -116,10 +126,11 @@ namespace TM.Digital.Services
                         Actions =                     new Action
                         {
                             ActionFrom = new ActionFrom
-                            {
+                            {                                ResourceEffect = new ResourceEffect()
+                                {
                                 ResourceType = ResourceType.Money,
                                 ResourceKind = ResourceKind.Unit,
-                                Amount = -23,
+                                Amount = -23, },
                                 ActionTarget = ActionTarget.Self
                             },
                             ActionTo = new List<ActionTo>
@@ -143,9 +154,12 @@ namespace TM.Digital.Services
                         {
                             ActionFrom = new ActionFrom
                             {
+                                ResourceEffect = new ResourceEffect()
+                                    {
                                 ResourceType = ResourceType.Money,
                                 ResourceKind = ResourceKind.Unit,
                                 Amount = -25,
+                                    },
                                 ActionTarget = ActionTarget.Self
                             },
                             ActionTo = new List<ActionTo>
@@ -160,9 +174,12 @@ namespace TM.Digital.Services
                                     },
                                 }, new ActionTo
                                 {
+                                    ResourceEffect = new ResourceEffect()
+                                        {
                                     Amount = 1,
                                     ResourceType = ResourceType.Money,
                                     ResourceKind = ResourceKind.Production
+                                        }
                                 }
                             }
                         }

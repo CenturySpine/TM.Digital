@@ -26,4 +26,9 @@ namespace TM.Digital.Model.Effects
             };
         }
     }
+
+    public class ResourceEffectAlternatives : List<ResourceEffect>
+    {
+
+    }
 }

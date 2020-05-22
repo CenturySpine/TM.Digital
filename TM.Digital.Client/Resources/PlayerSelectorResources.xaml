@@ -181,82 +181,82 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
-                
+
                 <StackPanel  Orientation="Horizontal"  Grid.Row="3" Background="Chocolate">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-<ItemsControl   ItemsSource="{Binding Player.BoardActions}" Margin="5"
+                        <ItemsControl   ItemsSource="{Binding Player.BoardActions}" Margin="5"
                                     Background="Aqua">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding  DataContext.ExecuteActionCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding  DataContext.ExecuteActionCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
                                         CommandParameter="{Binding}"
                 IsEnabled="{Binding Actions.CanExecute}">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="{x:Type Button}">
-                                            <Grid ShowGridLines="True" x:Name="actionGrid">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="200" />
-                                                    <ColumnDefinition Width="*" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5" />
-                                                <ContentControl Grid.Column="0" Content="{Binding Actions}" />
-                                            </Grid>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsEnabled" Value="false">
-                                                    <Setter TargetName="actionGrid" Property="Opacity" Value="0.5"></Setter>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-</ScrollViewer>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Grid ShowGridLines="True" x:Name="actionGrid">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="200" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5" />
+                                                    <ContentControl Grid.Column="0" Content="{Binding Actions}" />
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="false">
+                                                        <Setter TargetName="actionGrid" Property="Opacity" Value="0.5"></Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
                     <ScrollViewer  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl Grid.Row="1" ItemsSource="{Binding Player.AllPlayerActions}"
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding Player.AllPlayerActions}"
                                       Margin="5"
                                       Background="Chartreuse">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding  DataContext.ExecuteActionCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding  DataContext.ExecuteActionCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
                                         CommandParameter="{Binding}"
                 IsEnabled="{Binding CanExecute}">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="{x:Type Button}">
-                                            <Grid ShowGridLines="True" x:Name="actionGrid">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="200" />
-                                                    <ColumnDefinition Width="*" />
-                                                </Grid.ColumnDefinitions>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Grid ShowGridLines="True" x:Name="actionGrid">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="200" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
 
-                                                <ContentControl Grid.Column="0" Content="{Binding .}" />
-                                            </Grid>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsEnabled" Value="false">
-                                                    <Setter TargetName="actionGrid" Property="Opacity" Value="0.5"></Setter>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                                    <ContentControl Grid.Column="0" Content="{Binding .}" />
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="false">
+                                                        <Setter TargetName="actionGrid" Property="Opacity" Value="0.5"></Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </ScrollViewer>
                 </StackPanel>
                 <ScrollViewer  Grid.Row="4" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" >
                     <Grid>
-                        
-                            <ItemsControl  ItemsSource="{Binding PatentsSelectors}" >
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel ></WrapPanel>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
 
-                            </ItemsControl>
-                        
+                        <ItemsControl  ItemsSource="{Binding PatentsSelectors}" >
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel ></WrapPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                        </ItemsControl>
+
                     </Grid>
                 </ScrollViewer>
             </Grid>

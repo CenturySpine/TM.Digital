@@ -1,47 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
-using System.Resources;
-using System.Text.Json.Serialization;
-using System.Xml.Serialization;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 
 namespace TM.Digital.Model.Cards
 {
-    public class MineralModifiers : List<MineralModifier>
-    {
-
-    }
     public class Card
     {
-        
+        [Browsable(false)]
+        public bool ActionPlayed { get; set; }
 
-        protected bool Equals(Card other)
-        {
-            return Guid.Equals(other.Guid);
-        }
+        [Category("Action")]
+        public List<Action> Actions { get; set; } = new List<Action>();
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Card)obj);
-        }
+        [Category("Effect")]
+        public List<BoardLevelEffect> BoardEffects { get; set; } = new List<BoardLevelEffect>();
 
-        public override int GetHashCode()
-        {
-            return Guid.GetHashCode();
-        }
+        [Category("Victory Points")]
+        public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
+
         [Category("Description")]
-        public string ResourceName { get; set; }
+        public CardType CardType { get; set; }
+
+        [Category("Victory Points")]
+        public StandardVictoryPoint CardVictoryPoints { get; set; }
+
+        public string Comment { get; set; }
+
+        [Browsable(false)]
+        [Category("Resources Modifiers")]
+        public ConversionRates ConversionRates { get; set; }
+
+        public string Description { get; set; }
 
         [Category("Description")]
         public Guid Guid { get; set; } = Guid.NewGuid();
+
+        [Category("Resources Modifiers")]
+        public MineralModifiers MineralModifiers { get; set; }
 
         [Category("Description")]
         public string Name { get; set; }
@@ -49,50 +48,28 @@ namespace TM.Digital.Model.Cards
         [Category("Description")]
         public string OfficialNumberTag { get; set; }
 
-        [Category("Description")]
-        public CardType CardType { get; set; }
+        [Category("Effect")]
+        public ResourceEffectAlternatives ResourceEffectAlternatives { get; set; }
 
-        [Category("Description")]
-        public TagsList Tags { get; set; }
+        [Browsable(false)]
+        public int ResourcesCount { get; set; }
 
         [Category("Effect")]
         public List<ResourceEffect> ResourcesEffects { get; set; } = new List<ResourceEffect>();
 
-        [Category("Effect")]
-        public List<ResourceEffect> ResourceEffectAlternatives { get; set; }
-
-        [Category("Effect")]
-        public List<BoardLevelEffect> BoardEffects { get; set; } = new List<BoardLevelEffect>();
+        public ResourceType ResourceType { get; set; }
 
         [Category("Effect")]
         public TagsEffects TagEffects { get; set; } = new TagsEffects();
+
+        [Category("Description")]
+        public TagsList Tags { get; set; }
 
         [Category("Effect")]
         public List<TileEffect> TileEffects { get; set; } = new List<TileEffect>();
 
         [Category("Effect")]
         public TilePassiveEffects TilePassiveEffects { get; set; } = new TilePassiveEffects();
-
-        [Category("Action")]
-        public List<Action> Actions { get; set; } = new List<Action>();
-
-        public ResourceType ResourceType { get; set; }
-
-        [Browsable(false)]
-        public int ResourcesCount { get; set; }
-
-        [Category("Victory Points")]
-        public StandardVictoryPoint CardVictoryPoints { get; set; }
-
-        [Category("Victory Points")]
-        public ResourcesVictoryPoints CardResourcesVictoryPoints { get; set; }
-
-        [Category("Resources Modifiers")]
-        public MineralModifiers MineralModifiers { get; set; }
-
-        [Browsable(false)]
-        [Category("Resources Modifiers")]
-        public ConversionRates ConversionRates { get; set; }
 
         public List<Effect> AllEffects()
         {
@@ -111,12 +88,26 @@ namespace TM.Digital.Model.Cards
                 .ToList();
         }
 
-        public string Comment { get; set; }
-        public string Description { get; set; }
-        [Browsable(false)]
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Card)obj);
+        }
 
-        public bool ActionPlayed { get; set; }
+        public override int GetHashCode()
+        {
+            return Guid.GetHashCode();
+        }
 
-        public byte[] Image { get; set; }
+        protected bool Equals(Card other)
+        {
+            return Guid.Equals(other.Guid);
+        }
+    }
+
+    public class MineralModifiers : List<MineralModifier>
+    {
     }
 }

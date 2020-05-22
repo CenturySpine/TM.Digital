@@ -13,6 +13,7 @@
         Animal,
         Microbe,
         Fleet,
-        Science
+        Science,
+        Floater,
     }
 }

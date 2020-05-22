@@ -356,7 +356,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="res_microbe">
-        <Grid Height="20" Width="20">
+        <Grid >
             <Border BorderBrush="Black" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="1" Opacity="0.5"></DropShadowEffect>
@@ -474,7 +474,13 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="dt_tag_None">
+        <Grid >
+        </Grid>
+    </DataTemplate>
+
     <templateSelectors:TagTemplateSelector x:Key="tagTemplateSelector"
+                                           None="{StaticResource dt_tag_None}"
                                Animal="{StaticResource dt_tag_animal}"
                                Plant="{StaticResource dt_tag_plant}"
                                Science="{StaticResource dt_tag_science}"

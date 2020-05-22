@@ -174,24 +174,24 @@
                 <!--Effects-->
                 <StackPanel Grid.Row="5" Grid.Column="1"  Orientation="Horizontal" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">
                     <ItemsControl ItemsSource="{Binding ResourcesEffects}" HorizontalAlignment="Center">
-                    <ItemsControl.Style>
-                        <Style TargetType="{x:Type ItemsControl}">
-                            <Setter Property="Visibility" Value="Visible" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ResourcesEffects.Count}" Value="0">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ItemsControl.Style>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"></WrapPanel>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-
-                <ItemsControl   ItemsSource="{Binding ResourceEffectAlternatives}" HorizontalAlignment="Center">
+                        <ItemsControl.Style>
+                            <Style TargetType="{x:Type ItemsControl}">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ResourcesEffects.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ItemsControl.Style>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"></WrapPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <ContentControl Content="{Binding ResourceEffectAlternatives}" />
+                    <!--<ItemsControl   ItemsSource="{Binding ResourceEffectAlternatives}" HorizontalAlignment="Center">
                     <ItemsControl.Style>
                         <Style TargetType="{x:Type ItemsControl}">
                             <Setter Property="Visibility" Value="Visible" />
@@ -223,7 +223,7 @@
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                </ItemsControl>-->
                 </StackPanel>
 
                 <ItemsControl Grid.Row="4" Grid.Column="0"  ItemsSource="{Binding BoardEffects}" HorizontalAlignment="Center">

@@ -10,7 +10,6 @@ namespace TM.Digital.Editor.Board
     {
         public BoardTester()
         {
-            
             InitializeComponent();
         }
 

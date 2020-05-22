@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TM.Digital.Model.Prerequisite;
 
 namespace TM.Digital.Model.Cards
 {
@@ -6,5 +7,8 @@ namespace TM.Digital.Model.Cards
     {
         public List<TagsPrerequisite> TagsPrerequisites { get; set; }
         public List<GlobalPrerequisite> GlobalPrerequisites { get; set; }
+        public List<ResourcesPrerequisite> ResourcesPrerequisites { get; set; }
+
+        public List<TilePrerequisite> TilePrerequisites { get; set; }
     }
 }

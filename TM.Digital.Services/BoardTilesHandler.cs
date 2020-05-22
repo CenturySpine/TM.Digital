@@ -6,6 +6,7 @@ using TM.Digital.Model.Board;
 using TM.Digital.Model.Cards;
 using TM.Digital.Model.Effects;
 using TM.Digital.Model.Player;
+using TM.Digital.Model.Prerequisite;
 using TM.Digital.Model.Resources;
 using TM.Digital.Model.Tile;
 using TM.Digital.Services.Common;
@@ -296,7 +297,7 @@ namespace TM.Digital.Services
                     foreach (var bonus in bonusGroup)
                     {
                         await EffectHandler.HandleResourceEffect(playerId, bonus, new List<Player>(), board,
-                            cardDrawer);
+                            cardDrawer, null);
                         //var resource = playerId.Resources.FirstOrDefault(t => t.ResourceType == bonus.Key);
                         //if (resource != null)
                         //{
@@ -332,7 +333,7 @@ namespace TM.Digital.Services
                 if (pendingTileEffect.Type == TileType.Ocean)
                 {
                     //await Logger.Log(playerId.Name, $"Ocean placed, increasing global parameter and player's terraformation level");
-                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Oceans, playerId, 1,cardDrawer);
+                    await BoardEffectHandler.IncreaseParameterLevel(board, BoardLevelType.Oceans, playerId, 1, cardDrawer);
                     //board.Parameters.First(p => p.Type == BoardLevelType.Oceans).GlobalParameterLevel.Level += 1;
                     //playerId.TerraformationLevel += 1;
                 }
@@ -368,6 +369,17 @@ namespace TM.Digital.Services
         }
 
 
+        public static List<Tile> GetPlayedTilesOfType(TilePrerequisite tilePrereqTileType, Board board)
+        {
 
+            var targets = tilePrereqTileType.LocationConstraint == EffectModifierLocationConstraint.Anywhere ? board.BoardLines.SelectMany(l => l.BoardPlaces).Concat(board.IsolatedPlaces) :
+
+             board.BoardLines.SelectMany(l => l.BoardPlaces);
+
+            return targets
+            .Where(p => p.PlayedTile != null && p.PlayedTile.Type == tilePrereqTileType.TileType)
+            .Select(p => p.PlayedTile)
+            .ToList();
+        }
     }
 }

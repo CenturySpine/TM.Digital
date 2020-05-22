@@ -2,11 +2,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     
                     xmlns:templateSelectors="clr-namespace:TM.Digital.Ui.Resources.Resources.TemplateSelectors"
-                    xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model">
+                    xmlns:resources="clr-namespace:TM.Digital.Model.Resources;assembly=TM.Digital.Model"
+                    xmlns:converters="clr-namespace:TM.Digital.Ui.Resources.Resources.Converters">
 
     <BooleanToVisibilityConverter x:Key="boolToVisConverter" />
-    <templateSelectors:TagEffectsGroupingConverter x:Key="tagseffectsGroupConverter"/>
-    <templateSelectors:ResourceNegativeAmountDisplayConverter x:Key="resNegDisplay"/>
+    <converters:TagEffectsGroupingConverter x:Key="tagseffectsGroupConverter"/>
+    <converters:ResourceNegativeAmountDisplayConverter x:Key="resNegDisplay"/>
+    <converters:AltResourcesConverter x:Key="altResConv"/>
 
     <Style TargetType="{x:Type TextBlock}" x:Key="ST_Text_ResourceDisplay">
         <Setter Property="Visibility" Value="Visible"></Setter>

@@ -1,17 +1,14 @@
 ﻿<UserControl x:Class="TM.Digital.Editor.Board.BoardTester"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:TM.Digital.Editor.Board"
              xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid"
-             xmlns:viewModelCore="clr-namespace:TM.Digital.Ui.Resources.ViewModelCore;assembly=TM.Digital.Ui.Resources"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance {x:Type local:BoardViewModel}}">
     <UserControl.Resources>
-
-
     </UserControl.Resources>
     <Grid ShowGridLines="True">
 
@@ -38,31 +35,25 @@
             </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition />
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Button Content="Load" Command="{Binding LoadCommand}"></Button>
+            <!--<Button Content="Load" Command="{Binding LoadCommand}"></Button>-->
             <UniformGrid Grid.Row="1" Columns="2">
-                <ComboBox x:Name="boardPicker"  ItemsSource="{Binding AllBoards}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedObject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></ComboBox>
-                <Button Content="Select" Command="{Binding SelectBoardCommand}" CommandParameter="{Binding ElementName=boardPicker, Path=SelectedItem}"></Button>
+                <ComboBox x:Name="BoardPicker"  ItemsSource="{Binding AllBoards}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedObject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></ComboBox>
+                <Button Content="Select" Command="{Binding SelectBoardCommand}" CommandParameter="{Binding ElementName=BoardPicker, Path=SelectedItem}"></Button>
             </UniformGrid>
             <Button Grid.Row="2" Content="New board" Command="{Binding NewBoardCommand}"></Button>
-            <!--<CheckBox Content="Surrounding test mode" Margin="5" IsChecked="{Binding SurroundingTestMode}"></CheckBox>
-            <Button Content="New tile" Margin="2"
-                    Command="{Binding Newtilecommand}" ></Button>
-            <Button Content="Place" Margin="2"
-                    Command="{Binding GetAuthorizedPlacesCommand}" ></Button>-->
 
-            <dxprg:PropertyGridControl Grid.Row="3" x:Name="editorGrid" AllowExpanding="Force" SelectedObject="{Binding SelectedObject, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
+
+            <dxprg:PropertyGridControl Grid.Row="3" AllowExpanding="Force" SelectedObject="{Binding SelectedObject, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
                                        SelectionChanged="EditorGrid_OnSelectionChanged"
             ></dxprg:PropertyGridControl>
 
-            <!--<TextBlock Grid.Row="4" Text="Board Name"/>
-            <TextBox Grid.Row="5" Text="{Binding BoardName}"></TextBox>-->
             <Button Grid.Row="5" Content="Save Board" Command="{Binding SavBoardCommand}"></Button>
             <Button Grid.Row="6" Content="Delete Board" Command="{Binding DeleteBoardCommand}"></Button>
         </Grid>

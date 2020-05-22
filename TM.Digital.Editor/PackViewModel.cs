@@ -8,12 +8,6 @@ using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Editor
 {
-    public class PackPresenter
-    {
-        public string Name { get; set; }
-        public PackViewModel Content { get; set; }
-    }
-
     public class PackViewModel : NotifierBase
     {
         private object _selectedObject;
@@ -58,7 +52,7 @@ namespace TM.Digital.Editor
             AddPatentCommand = new RelayCommand(ExecuteAddPatent);
             AddPreludeCommand = new RelayCommand(ExecuteAddPrelude);
 
-            Deletecommand = new RelayCommand(ExecuteDelete);
+            DeleteCommand = new RelayCommand(ExecuteDelete);
             SelectedSort = "Name";
         }
 
@@ -155,7 +149,7 @@ namespace TM.Digital.Editor
             }
         }
 
-        public RelayCommand Deletecommand { get; set; }
+        public RelayCommand DeleteCommand { get; set; }
 
         public string Name
         {

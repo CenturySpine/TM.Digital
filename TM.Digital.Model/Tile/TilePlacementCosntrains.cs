@@ -9,6 +9,7 @@
         NothingAround,
         StandardForest,
         NoctisCity,
-        NotReservedForOcean
+        NotReservedForOcean,
+        NearForest
     }
 }

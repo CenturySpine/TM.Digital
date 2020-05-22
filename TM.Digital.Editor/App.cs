@@ -11,13 +11,17 @@ namespace TM.Digital.Editor
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var mainVm = new MainViewModel();
-            mainVm.BoardViewModel = new BoardViewModel();
-            await mainVm.Initialize();
-            await mainVm.BoardViewModel.Initialize();
-            
-            var main = new MainWindow(mainVm);
 
+            PackManager pm = new PackManager();
+            await pm.Initialize();
+            var mainVm = new MainViewModel(pm)
+            {
+                BoardViewModel = new BoardViewModel(pm)
+            };
+
+            //await mainVm.BoardViewModel.Initialize();
+
+            var main = new MainWindow(mainVm);
 
             App.Current.MainWindow = main;
             Current.MainWindow?.Show();

@@ -3,8 +3,9 @@
     public enum ActionTarget
     {
         Self,
-        CurrentCard,
-        AnyOtherCard,
+        ToCurrentCard,
+        ToAnyOtherCard,
+        FromAnyOtherCard,
         AnyPlayer,
         AnyOpponent
     }
