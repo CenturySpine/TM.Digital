@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
 using TM.Digital.Model;
@@ -10,15 +8,8 @@ using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Editor
 {
-
-    public class PackPresenter
-    {
-        public string Name { get; set; }
-        public PackViewModel Content { get; set; }
-    }
     public class PackViewModel : NotifierBase
     {
-
         private object _selectedObject;
         private ExtensionPack _pack;
         private ObservableCollection<Corporation> _corporations;
@@ -27,7 +18,6 @@ namespace TM.Digital.Editor
         private string _name;
         private string _search;
         private string _destinationPack;
-
 
         public PackViewModel(ExtensionPack extensionPack)
         {
@@ -46,18 +36,15 @@ namespace TM.Digital.Editor
             Preludes = new ObservableCollection<Prelude>(extensionPack.Preludes);
             PreludesView = CollectionViewSource.GetDefaultView(Preludes);
             PreludesView.Filter = FilterCard;
-            PreludesView.SortDescriptions.Add(new SortDescription("OfficialNumberTag",ListSortDirection.Ascending));
+            PreludesView.SortDescriptions.Add(new SortDescription("OfficialNumberTag", ListSortDirection.Ascending));
 
             Refresh = new RelayCommand(ExecuteRefresh);
             AddCorporationCommand = new RelayCommand(ExecuteAddcorporation);
             AddPatentCommand = new RelayCommand(ExecuteAddPatent);
             AddPreludeCommand = new RelayCommand(ExecuteAddPrelude);
 
-
             Deletecommand = new RelayCommand(ExecuteDelete);
         }
-
-
 
         private bool FilterCard(object obj)
         {
@@ -89,7 +76,6 @@ namespace TM.Digital.Editor
 
         private void ExecuteDelete(object obj)
         {
-
             if (SelectedObject == null)
             {
                 return;
@@ -138,7 +124,6 @@ namespace TM.Digital.Editor
         {
             var patent = new Patent()
             {
-
             };
             Patents.Add(patent);
             PatentsView.Refresh();
@@ -149,7 +134,6 @@ namespace TM.Digital.Editor
         {
             var corp = new Corporation()
             {
-
             };
             Corporations.Add(corp);
             CorporationView.Refresh();
@@ -160,7 +144,6 @@ namespace TM.Digital.Editor
         {
             var corp = new Prelude();
             {
-
             };
             Preludes.Add(corp);
             PreludesView.Refresh();
@@ -169,7 +152,6 @@ namespace TM.Digital.Editor
 
         private void ExecuteRefresh(object obj)
         {
-
             if (SelectedObject is Prelude)
             {
                 PreludesView.Refresh();
@@ -182,10 +164,7 @@ namespace TM.Digital.Editor
             {
                 CorporationView.Refresh();
             }
-   
-            
         }
-
 
         public object SelectedObject
         {
@@ -198,7 +177,5 @@ namespace TM.Digital.Editor
         public RelayCommand AddPreludeCommand { get; set; }
 
         public RelayCommand Refresh { get; }
-
-
     }
 }

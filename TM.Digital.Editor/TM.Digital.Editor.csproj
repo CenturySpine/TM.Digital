@@ -4,11 +4,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevExpress.WindowsDesktop.Wpf.PropertyGrid" Version="19.2.7" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +17,10 @@
     <ProjectReference Include="..\TM.Digital.Services.Common\TM.Digital.Services.Common.csproj" />
     <ProjectReference Include="..\TM.Digital.Services\TM.Digital.Services.csproj" />
     <ProjectReference Include="..\TM.Digital.Ui.Resources\TM.Digital.Ui.Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="PropertyGridControl\InspectionStrategies\" />
   </ItemGroup>
 
 </Project>

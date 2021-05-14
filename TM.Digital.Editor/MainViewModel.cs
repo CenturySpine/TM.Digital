@@ -13,12 +13,6 @@ using TM.Digital.Ui.Resources.ViewModelCore;
 
 namespace TM.Digital.Editor
 {
-    public class EditorConfig
-    {
-        public string PackageLocation { get; set; }
-        public string SavePackageLocation { get; set; }
-    }
-
     public class MainViewModel : NotifierBase
     {
         private const string packs = "packs.json";
